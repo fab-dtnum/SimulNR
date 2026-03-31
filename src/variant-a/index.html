@@ -10,26 +10,13 @@
 </head>
 <body data-variant="a">
 
-  <header role="banner" class="fr-header">
-    <div class="fr-header__body">
-      <div class="fr-container">
-        <div class="fr-header__body-row">
-          <div class="fr-header__brand fr-enlarge-link">
-            <div class="fr-header__brand-top">
-              <div class="fr-header__logo">
-                <p class="fr-logo">République<br>Française</p>
-              </div>
-            </div>
-            <div class="fr-header__service">
-              <p class="fr-header__service-title">impots.gouv.fr</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+  <div data-fragment="../shared/header.html"></div>
 
   <main role="main" id="content">
+    <div class="fr-container fr-mt-4w">
+      <div data-fragment="../shared/breadcrumb.html"></div>
+    </div>
+
     <div class="fr-container fr-my-6w">
 
       <!-- Bandeau variante (à retirer en production) -->
@@ -43,7 +30,10 @@
       <div class="sim-wrapper">
 
         <!-- Titre -->
-        <h1 class="sim-titre">Simulateur de l'impôt 2026 sur les revenus 2025 des non-résidents</h1>
+        <div class="sim-titre-bloc fr-mb-4w">
+          <span class="fr-icon-money-euro-circle-line sim-titre-icone" aria-hidden="true"></span>
+          <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
+        </div>
 
         <!-- Introduction -->
         <div>
@@ -242,35 +232,7 @@
     </div>
   </main>
 
-  <footer class="fr-footer" role="contentinfo">
-    <div class="fr-container">
-      <div class="fr-footer__body">
-        <div class="fr-footer__brand fr-enlarge-link">
-          <p class="fr-logo">République<br>Française</p>
-        </div>
-        <div class="fr-footer__content">
-          <ul class="fr-footer__content-list">
-            <li class="fr-footer__content-item">
-              <a class="fr-footer__content-link" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
-            </li>
-            <li class="fr-footer__content-item">
-              <a class="fr-footer__content-link" href="https://impots.gouv.fr">impots.gouv.fr</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="fr-footer__bottom">
-        <ul class="fr-footer__bottom-list">
-          <li class="fr-footer__bottom-item">
-            <a class="fr-footer__bottom-link" href="#">Accessibilité : non conforme</a>
-          </li>
-          <li class="fr-footer__bottom-item">
-            <a class="fr-footer__bottom-link" href="#">Mentions légales</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </footer>
+  <div data-fragment="../shared/footer.html"></div>
 
   <script type="module" src="/node_modules/@gouvfr/dsfr/dist/dsfr.module.min.js"></script>
   <script type="text/javascript" nomodule src="/node_modules/@gouvfr/dsfr/dist/dsfr.nomodule.min.js"></script>
