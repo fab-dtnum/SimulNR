@@ -1,0 +1,14 @@
+{
+  "name": "simul-nr",
+  "version": "0.1.0",
+  "description": "Simulateur d'impôt pour non-résidents français",
+  "scripts": {
+    "start": "http-server . -p 3000 -o /src/index.html"
+  },
+  "devDependencies": {
+    "http-server": "^14.0.0"
+  },
+  "dependencies": {
+    "@gouvfr/dsfr": "^1.14.0"
+  }
+}

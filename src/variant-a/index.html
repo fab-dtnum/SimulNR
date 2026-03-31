@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="system">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulateur impôt non-résidents — Variante A (formulaire long)</title>
+  <link rel="stylesheet" href="/node_modules/@gouvfr/dsfr/dist/dsfr.min.css">
+  <link rel="stylesheet" href="/node_modules/@gouvfr/dsfr/dist/utility/icons/icons.min.css">
+  <link rel="stylesheet" href="../shared/simulateur.css">
+</head>
+<body data-variant="a">
+
+  <header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo">
+                <p class="fr-logo">République<br>Française</p>
+              </div>
+            </div>
+            <div class="fr-header__service">
+              <p class="fr-header__service-title">impots.gouv.fr</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main" id="content">
+    <div class="fr-container fr-my-6w">
+
+      <!-- Bandeau variante (à retirer en production) -->
+      <div class="fr-notice fr-notice--info fr-mb-4w">
+        <div class="fr-notice__body">
+          <p class="fr-notice__title">Variante A — Formulaire long</p>
+          <p>Toutes les questions sont affichées sur une seule page. <a href="../index.html">Revenir au choix de variante</a></p>
+        </div>
+      </div>
+
+      <div class="sim-wrapper">
+
+        <!-- Titre -->
+        <h1 class="sim-titre">Simulateur de l'impôt 2026 sur les revenus 2025 des non-résidents</h1>
+
+        <!-- Introduction -->
+        <div>
+          <p class="sim-intro">Complétez les rubriques pour calculer votre imposition.</p>
+          <p class="sim-intro-hint">Tous les montants sont à indiquer en euros.</p>
+        </div>
+
+        <!-- Formulaire -->
+        <form>
+
+          <!-- ── FOYER FISCAL ── -->
+          <section class="sim-section" aria-labelledby="titre-foyer-fiscal">
+            <div class="sim-section__head">
+              <h2 class="sim-section__title" id="titre-foyer-fiscal">
+                <span class="fr-icon-user-line" aria-hidden="true"></span>
+                Foyer fiscal
+              </h2>
+              <p class="sim-section__desc">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer. <a href="https://www.impots.gouv.fr" target="_blank" rel="noopener">En savoir plus</a></p>
+            </div>
+
+            <!-- Carte formulaire Situation personnelle -->
+            <div class="sim-form-card">
+              <div class="sim-tuile__title-row">
+                <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
+                <h3 class="sim-form-card__section-title">Situation personnelle</h3>
+              </div>
+
+              <!-- Année de naissance -->
+              <div class="fr-input-group">
+                <label class="fr-label" for="annee-naissance">
+                  Votre année de naissance
+                </label>
+                <input
+                  class="fr-input"
+                  type="number"
+                  id="annee-naissance"
+                  name="annee-naissance"
+                  min="1900"
+                  max="2010"
+                  placeholder="Ex : 1975"
+                  autocomplete="bday-year"
+                  data-resume-type="annee"
+                  required
+                >
+              </div>
+
+              <!-- Situation familiale -->
+              <fieldset class="fr-fieldset" id="situation-familiale" aria-labelledby="situation-familiale-legend">
+                <legend class="fr-fieldset__legend fr-text--regular" id="situation-familiale-legend">
+                  Quelle est votre situation familiale ?
+                </legend>
+                <div class="fr-fieldset__content">
+                  <div class="fr-radio-group">
+                    <input type="radio" id="sit-mariage" name="situation-familiale" value="mariage-pacs" required>
+                    <label class="fr-label" for="sit-mariage">Mariage ou pacs</label>
+                  </div>
+                  <div class="fr-radio-group">
+                    <input type="radio" id="sit-celibat" name="situation-familiale" value="celibat-divorce">
+                    <label class="fr-label" for="sit-celibat">Célibat ou divorce</label>
+                  </div>
+                  <div class="fr-radio-group">
+                    <input type="radio" id="sit-veuvage" name="situation-familiale" value="veuvage">
+                    <label class="fr-label" for="sit-veuvage">Veuvage (veuf ou veuve)</label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Année de naissance du conjoint — affiché uniquement si Mariage ou pacs -->
+              <div class="fr-input-group" id="conjoint-group" hidden>
+                <label class="fr-label" for="annee-naissance-conjoint">
+                  Année de naissance de votre conjoint(e) ou partenaire de pacs
+                </label>
+                <input
+                  class="fr-input"
+                  type="number"
+                  id="annee-naissance-conjoint"
+                  name="annee-naissance-conjoint"
+                  min="1900"
+                  max="2010"
+                  placeholder="Ex : 1975"
+                >
+              </div>
+
+              <!-- Demi-parts supplémentaires -->
+              <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend">
+                <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
+                  Si votre foyer est concerné, sélectionnez la ou les situations suivantes :
+                </legend>
+                <div class="fr-fieldset__content">
+                  <div class="fr-checkbox-group">
+                    <input type="checkbox" id="dp-solo-enfant" name="demi-parts" value="solo-enfant">
+                    <label class="fr-label" for="dp-solo-enfant">
+                      Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant.
+                      <span class="fr-hint-text">
+                        - majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
+                        - décédé après l'âge de 16 ans ou par suite de faits de guerre ;<br>
+                        - vous avez élevé cet enfant pendant au moins cinq années au cours desquelles vous viviez seul.
+                      </span>
+                    </label>
+                  </div>
+                  <div class="fr-checkbox-group">
+                    <input type="checkbox" id="dp-invalidite" name="demi-parts" value="invalidite">
+                    <label class="fr-label" for="dp-invalidite">
+                      Pension (militaire, accident du travail) pour une invalidité d'au moins 40 %, carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
+                    </label>
+                  </div>
+                  <div class="fr-checkbox-group">
+                    <input type="checkbox" id="dp-pension-guerre" name="demi-parts" value="pension-guerre">
+                    <label class="fr-label" for="dp-pension-guerre">
+                      Carte du combattant, pension militaire d'invalidité ou de victime de guerre.
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Tuile Personne à charge (stub — non implémenté dans ce prototype) -->
+            <div class="sim-tuile">
+              <div class="sim-tuile__info">
+                <div class="sim-tuile__title-row">
+                  <span class="fr-icon-team-line sim-tuile__icone" aria-hidden="true"></span>
+                  <span class="sim-tuile__name">Personne à charge</span>
+                </div>
+                <p class="sim-tuile__desc">Enfant et les personnes associées ou personne invalide vivant sous votre toit.</p>
+              </div>
+              <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line sim-tuile__btn">
+                Ajouter
+              </button>
+            </div>
+          </section>
+
+          <!-- ── REVENUS ── -->
+          <section class="sim-section fr-mt-4w" aria-labelledby="titre-revenus">
+            <div class="sim-section__head">
+              <h2 class="sim-section__title" id="titre-revenus">
+                <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+                Revenus
+              </h2>
+              <p class="sim-section__desc">
+                Si vous ne savez pas quels revenus sont imposables en France pour votre situation, consultez cette page :
+                <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" target="_blank" rel="noopener">principaux revenus à déclarer</a>.
+              </p>
+            </div>
+            <div class="sim-tuiles-list" data-fragment="../shared/revenus-tiles.html">
+              <!-- Les tuiles revenus sont chargées par loader.js -->
+            </div>
+          </section>
+
+          <!-- ── DÉFICITS ET EXONÉRATION ── -->
+          <section class="sim-section fr-mt-4w" aria-labelledby="titre-deficits">
+            <div class="sim-section__head">
+              <h2 class="sim-section__title" id="titre-deficits">
+                <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+                Déficits et exonération
+              </h2>
+            </div>
+            <div class="sim-tuiles-list">
+
+              <!-- Stub — non implémenté dans ce prototype -->
+              <div class="sim-tuile">
+                <div class="sim-tuile__info">
+                  <div class="sim-tuile__title-row">
+                    <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                    <span class="sim-tuile__name">Déficits globaux</span>
+                  </div>
+                  <p class="sim-tuile__desc">Les déficits globaux des années antérieures non imputés sont indiqués à la fin de votre dernier avis d'imposition.</p>
+                </div>
+                <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line sim-tuile__btn">
+                  Ajouter
+                </button>
+              </div>
+
+              <!-- Stub — non implémenté dans ce prototype -->
+              <div class="sim-tuile">
+                <div class="sim-tuile__info">
+                  <div class="sim-tuile__title-row">
+                    <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                    <span class="sim-tuile__name">Exonération CSG-CRDS</span>
+                  </div>
+                </div>
+                <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line sim-tuile__btn">
+                  Ajouter
+                </button>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ── BOUTON CALCULER ── -->
+          <button type="submit" class="fr-btn fr-mt-4w sim-btn-calculer">
+            Calculer
+          </button>
+
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="fr-footer" role="contentinfo">
+    <div class="fr-container">
+      <div class="fr-footer__body">
+        <div class="fr-footer__brand fr-enlarge-link">
+          <p class="fr-logo">République<br>Française</p>
+        </div>
+        <div class="fr-footer__content">
+          <ul class="fr-footer__content-list">
+            <li class="fr-footer__content-item">
+              <a class="fr-footer__content-link" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+            </li>
+            <li class="fr-footer__content-item">
+              <a class="fr-footer__content-link" href="https://impots.gouv.fr">impots.gouv.fr</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="fr-footer__bottom">
+        <ul class="fr-footer__bottom-list">
+          <li class="fr-footer__bottom-item">
+            <a class="fr-footer__bottom-link" href="#">Accessibilité : non conforme</a>
+          </li>
+          <li class="fr-footer__bottom-item">
+            <a class="fr-footer__bottom-link" href="#">Mentions légales</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/node_modules/@gouvfr/dsfr/dist/dsfr.module.min.js"></script>
+  <script type="text/javascript" nomodule src="/node_modules/@gouvfr/dsfr/dist/dsfr.nomodule.min.js"></script>
+  <script type="module" src="../shared/loader.js"></script>
+  <script type="module" src="../shared/tiles.js"></script>
+</body>
+</html>
