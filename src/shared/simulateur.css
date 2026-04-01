@@ -8,7 +8,7 @@
 /* ── CONTENEUR PRINCIPAL ────────────────────────────────────────────────────── */
 
 .sim-wrapper {
-  max-width: 780px;
+  max-width: 480px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

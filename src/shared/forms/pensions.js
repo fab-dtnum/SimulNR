@@ -1,5 +1,5 @@
 export function template() {
-  return `
+  return /* html */`
     <div class="fr-input-group">
       <label class="fr-label" for="pensions-montant">
         Montant annuel brut des pensions

@@ -1,5 +1,5 @@
 export function template() {
-  return `
+  return /* html */`
     <div class="fr-input-group">
       <label class="fr-label" for="fonciers-loyers">
         Montant annuel brut des loyers

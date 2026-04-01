@@ -1,5 +1,5 @@
 export function template() {
-  return `
+  return /* html */`
     <p class="fr-text--sm">
       Vos recettes annuelles de locations meublées non professionnelles relèvent de la catégorie LMNP.
       <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer"
