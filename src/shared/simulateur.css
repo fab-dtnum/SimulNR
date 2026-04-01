@@ -28,7 +28,7 @@
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
-  background-color: #f0f0ff;
+  background-color: var(--background-alt-blue-france);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,7 +43,7 @@
 }
 
 .sim-titre {
-  color: #000091;
+  color: var(--text-title-blue-france);
   font-size: 1.75rem;
   line-height: 2.25rem;
   font-weight: 700;
@@ -56,15 +56,15 @@
   font-size: 1rem;
   line-height: 1.625rem;
   font-weight: 400;
-  color: #3a3a3a;
+  color: var(--text-default-grey);
   margin: 0;
 }
 
 .sim-intro-hint {
   font-size: 0.75rem;
   line-height: 1.25rem;
-  color: #666;
-  margin: 0.25rem 0 0;
+  color: var(--text-mention-grey);
+  margin: 0;
 }
 
 /* ── SECTIONS ───────────────────────────────────────────────────────────────── */
@@ -81,21 +81,22 @@
   gap: 0.25rem;
 }
 
-.sim-section__title {
+.sim-section__title,
+.sim-sous-formulaire__titre {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 1.375rem;
   line-height: 1.75rem;
   font-weight: 700;
-  color: #000091;
+  color: var(--text-title-blue-france);
   margin: 0;
 }
 
 .sim-section__desc {
   font-size: 0.75rem;
   line-height: 1.25rem;
-  color: #666;
+  color: var(--text-mention-grey);
   margin: 0;
 }
 
@@ -115,7 +116,6 @@
   align-items: center;
   background-color: var(--background-alt-grey);
   border: 1px solid var(--border-default-grey);
-  padding: 1rem 1.5rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -130,7 +130,6 @@
   gap: 0.125rem;
   flex: 1;
   min-width: 0;
-  padding-right: 1rem;
 }
 
 .sim-tuile__title-row {
@@ -142,20 +141,20 @@
 .sim-tuile__icone {
   flex-shrink: 0;
   --icon-size: 1rem;
-  color: #000091;
+  color: var(--text-title-blue-france);
 }
 
 .sim-tuile__name {
   font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 700;
-  color: #161616;
+  color: var(--text-title-grey);
 }
 
 .sim-tuile__desc {
   font-size: 0.75rem;
   line-height: 1.25rem;
-  color: #666;
+  color: var(--text-mention-grey);
   margin: 0;
 }
 
@@ -166,10 +165,10 @@
 
 /* ── CARTE FORMULAIRE INLINE (VARIANTE A) ───────────────────────────────────── */
 
-.sim-form-card {
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
-  padding: 1.5rem;
+.sim-form-card,
+.sim-tuile-ouvert {
+  background-color: var(--background-default);
+  border: 1px solid var(--border-default-grey);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -182,7 +181,7 @@
   font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 700;
-  color: #161616;
+  color: var(--text-title-grey);
   margin: 0;
 }
 
@@ -200,12 +199,6 @@
 }
 
 .sim-tuile-ouvert {
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -232,7 +225,7 @@
 }
 
 .sim-wrapper--sous-formulaire {
-  background-color: #fff;
+  background-color: var(--background-default);
 }
 
 .sim-sous-formulaire {
@@ -253,21 +246,10 @@
   gap: 0.25rem;
 }
 
-.sim-sous-formulaire__titre {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.375rem;
-  line-height: 1.75rem;
-  font-weight: 700;
-  color: #000091;
-  margin: 0;
-}
-
 .sim-sous-formulaire__hint {
   font-size: 0.75rem;
   line-height: 1.25rem;
-  color: #666;
+  color: var(--text-mention-grey);
   margin: 0;
 }
 
@@ -286,9 +268,9 @@
   gap: 1rem;
   font-size: 0.875rem;
   line-height: 1.5rem;
-  color: #3a3a3a;
+  color: var(--text-default-grey);
   padding: 0.25rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-default-grey);
 }
 
 .sim-resume__ligne:last-child {
@@ -319,12 +301,4 @@
     padding: 0.5rem;
   }
 
-  .sim-tuile {
-    padding: 0.875rem 1rem;
-  }
-
-  .sim-form-card,
-  .sim-tuile-ouvert {
-    padding: 1rem;
-  }
 }
