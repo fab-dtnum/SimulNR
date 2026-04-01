@@ -114,14 +114,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--background-alt-grey);
+  background-color: var(--background-alt-grey) !important;
   border: 1px solid var(--border-default-grey);
   width: 100%;
   box-sizing: border-box;
+  cursor: pointer;
+  text-align: left;
 }
 
-.sim-tuile:hover {
-  background-color: var(--background-alt-grey-hover);
+.sim-tuile:hover:not(:disabled) {
+  background-color: var(--background-alt-grey-hover) !important;
 }
 
 .sim-tuile__info {
@@ -161,6 +163,27 @@
 .sim-tuile__btn {
   flex-shrink: 0;
   align-self: center;
+}
+
+.sim-tuile__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  pointer-events: none;
+  padding: 0.5rem 1rem;
+  min-height: 2.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  color: var(--text-action-high-blue-france);
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.sim-tuile__action-icon::before {
+  --icon-size: 1rem;
 }
 
 /* ── CARTE FORMULAIRE INLINE (VARIANTE A) ───────────────────────────────────── */
@@ -225,7 +248,8 @@
 }
 
 .sim-wrapper--sous-formulaire {
-  background-color: var(--background-default);
+  border: 1px solid var(--border-default-blue-france);
+  padding: 1.5rem;
 }
 
 .sim-sous-formulaire {
@@ -254,6 +278,11 @@
 }
 
 /* ── VARIANTE B : RÉSUMÉ ────────────────────────────────────────────────────── */
+
+.sim-tuile-ouvert--b {
+  background-color: var(--background-default);
+  border: 1px solid var(--border-default-blue-france);
+}
 
 .sim-resume {
   display: flex;

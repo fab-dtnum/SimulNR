@@ -57,17 +57,18 @@
                 <div class="sim-tuile-wrapper" data-tile="situation-personnelle">
 
                   <!-- Fermé -->
-                  <div class="sim-tuile fr-py-2w fr-px-3w">
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
                     <div class="sim-tuile__info fr-pr-2w">
                       <div class="sim-tuile__title-row">
                         <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
                         <span class="sim-tuile__name">Situation personnelle</span>
                       </div>
                     </div>
-                    <button type="button" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn sim-tuile__btn--ajouter">
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
                       Compléter
-                    </button>
-                  </div>
+                    </span>
+                  </button>
 
                   <!-- Résumé après enregistrement -->
                   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
@@ -78,7 +79,7 @@
                       </div>
                     </div>
                     <div class="sim-resume" hidden></div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
                       Modifier
                     </button>
                   </div>
@@ -86,7 +87,7 @@
                 </div>
 
                 <!-- Tuile Personne à charge (stub — non implémenté dans ce prototype) -->
-                <div class="sim-tuile fr-py-2w fr-px-3w">
+                <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
                   <div class="sim-tuile__info fr-pr-2w">
                     <div class="sim-tuile__title-row">
                       <span class="fr-icon-team-line sim-tuile__icone" aria-hidden="true"></span>
@@ -94,10 +95,11 @@
                     </div>
                     <p class="sim-tuile__desc">Enfant et les personnes associées ou personne invalide vivant sous votre toit.</p>
                   </div>
-                  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line sim-tuile__btn">
+                  <span class="sim-tuile__action">
+                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
                     Ajouter
-                  </button>
-                </div>
+                  </span>
+                </button>
 
               </div>
             </section>
@@ -130,7 +132,7 @@
               <div class="sim-tuiles-list">
 
                 <!-- Stub — non implémenté dans ce prototype -->
-                <div class="sim-tuile fr-py-2w fr-px-3w">
+                <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
                   <div class="sim-tuile__info fr-pr-2w">
                     <div class="sim-tuile__title-row">
                       <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
@@ -138,23 +140,25 @@
                     </div>
                     <p class="sim-tuile__desc">Les déficits globaux des années antérieures non imputés sont indiqués à la fin de votre dernier avis d'imposition.</p>
                   </div>
-                  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-add-line sim-tuile__btn">
+                  <span class="sim-tuile__action">
+                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
                     Ajouter
-                  </button>
-                </div>
+                  </span>
+                </button>
 
                 <!-- Stub — non implémenté dans ce prototype -->
-                <div class="sim-tuile fr-py-2w fr-px-3w">
+                <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
                   <div class="sim-tuile__info fr-pr-2w">
                     <div class="sim-tuile__title-row">
                       <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
                       <span class="sim-tuile__name">Exonération CSG-CRDS</span>
                     </div>
                   </div>
-                  <button type="button" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn">
-                    Compléter
-                  </button>
-                </div>
+                  <span class="sim-tuile__action">
+                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                    Ajouter
+                  </span>
+                </button>
 
               </div>
             </section>
