@@ -31,7 +31,27 @@
             <div class="fr-artwork sim-titre-picto" aria-hidden="true">
               <img src="/node_modules/@gouvfr/dsfr/dist/artwork/pictograms/institutions/money.svg" alt="">
             </div>
-            <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
+            <div class="sim-titre-content">
+              <div class="sim-titre-row">
+                <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
+                <p class="sim-titre-badge">Beta</p>
+              </div>
+              <div class="fr-translate fr-nav">
+                <div class="fr-nav__item">
+                  <button class="fr-translate__btn fr-btn fr-btn--tertiary fr-icon-calendar-line"
+                          aria-controls="annee-selector-b" aria-expanded="false"
+                          title="Sélectionner l'année d'imposition">
+                    Impôt 2026 sur les revenus 2025
+                  </button>
+                  <div class="fr-collapse fr-translate__menu fr-menu" id="annee-selector-b">
+                    <ul class="fr-menu__list">
+                      <li><a class="fr-translate__language fr-nav__link" aria-current="true" href="#">Impôt 2026 sur les revenus 2025</a></li>
+                      <li><a class="fr-translate__language fr-nav__link" href="#">Impôt 2025 sur les revenus 2024</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Introduction -->
@@ -45,10 +65,7 @@
             <!-- ── FOYER FISCAL ── -->
             <section class="sim-section" aria-labelledby="titre-foyer-fiscal">
               <div class="sim-section__head">
-                <h2 class="sim-section__title" id="titre-foyer-fiscal">
-                  <span class="fr-icon-user-line" aria-hidden="true"></span>
-                  Foyer fiscal
-                </h2>
+                <h2 class="sim-section__title" id="titre-foyer-fiscal">Foyer fiscal</h2>
                 <p class="sim-section__desc">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer. <a href="https://www.impots.gouv.fr" target="_blank" rel="noopener">En savoir plus</a></p>
               </div>
               <div class="sim-tuiles-list">
@@ -107,10 +124,7 @@
             <!-- ── REVENUS ── -->
             <section class="sim-section fr-mt-4w" aria-labelledby="titre-revenus">
               <div class="sim-section__head">
-                <h2 class="sim-section__title" id="titre-revenus">
-                  <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
-                  Revenus
-                </h2>
+                <h2 class="sim-section__title" id="titre-revenus">Revenus</h2>
                 <p class="sim-section__desc">
                   Si vous ne savez pas quels revenus sont imposables en France pour votre situation, consultez cette page :
                   <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" target="_blank" rel="noopener">principaux revenus à déclarer</a>.
@@ -124,10 +138,7 @@
             <!-- ── DÉFICITS ET EXONÉRATION ── -->
             <section class="sim-section fr-mt-4w" aria-labelledby="titre-deficits">
               <div class="sim-section__head">
-                <h2 class="sim-section__title" id="titre-deficits">
-                  <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
-                  Déficits et exonération
-                </h2>
+                <h2 class="sim-section__title" id="titre-deficits">Déficits et exonération</h2>
               </div>
               <div class="sim-tuiles-list">
 
