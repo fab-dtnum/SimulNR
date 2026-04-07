@@ -31,7 +31,7 @@
               <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
               <p class="sim-titre-badge">Beta</p>
             </div>
-            <div class="fr-translate fr-nav">
+            {# <div class="fr-translate fr-nav">
               <div class="fr-nav__item">
                 <button class="fr-translate__btn fr-btn fr-btn--tertiary fr-icon-calendar-line"
                         aria-controls="annee-selector-a" aria-expanded="false"
@@ -45,13 +45,13 @@
                   </ul>
                 </div>
               </div>
-            </div>
+            </div> #}
           </div>
         </div>
 
         <!-- Introduction -->
         <div>
-          <p class="sim-intro">Complétez les rubriques pour calculer votre imposition.</p>
+          <p class="sim-intro">Complétez les rubriques pour calculer votre imposition.Complétez les rubriques pour calculer votre imposition.</p>
           <p class="sim-intro-hint fr-mt-1v">Tous les montants sont à indiquer en euros.</p>
         </div>
 
@@ -66,99 +66,12 @@
             </div>
 
             <!-- Carte formulaire Situation personnelle -->
-            <div class="sim-form-card fr-p-3w">
+            <div class="sim-form-card fr-p-3w" data-tile="situationPersonnelle">
               <div class="sim-tuile__title-row">
                 <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
                 <h3 class="sim-form-card__section-title">Situation personnelle</h3>
               </div>
-
-              <!-- Année de naissance -->
-              <div class="fr-input-group fr-fieldset__element--year">
-                <label class="fr-label" for="annee-naissance">
-                  Votre année de naissance
-                </label>
-                <input
-                  class="fr-input"
-                  type="number"
-                  id="annee-naissance"
-                  name="annee-naissance"
-                  min="1900"
-                  max="2010"
-                  placeholder="Ex : 1975"
-                  autocomplete="bday-year"
-                  data-resume-type="annee"
-                  required
-                >
-              </div>
-
-              <!-- Situation familiale -->
-              <fieldset class="fr-fieldset" id="situation-familiale" aria-labelledby="situation-familiale-legend">
-                <legend class="fr-fieldset__legend fr-text--regular" id="situation-familiale-legend">
-                  Quelle est votre situation familiale ?
-                </legend>
-                <div class="fr-fieldset__content">
-                  <div class="fr-radio-group">
-                    <input type="radio" id="sit-mariage" name="situation-familiale" value="mariage-pacs" required>
-                    <label class="fr-label" for="sit-mariage">Mariage ou pacs</label>
-                  </div>
-                  <div class="fr-radio-group">
-                    <input type="radio" id="sit-celibat" name="situation-familiale" value="celibat-divorce">
-                    <label class="fr-label" for="sit-celibat">Célibat ou divorce</label>
-                  </div>
-                  <div class="fr-radio-group">
-                    <input type="radio" id="sit-veuvage" name="situation-familiale" value="veuvage">
-                    <label class="fr-label" for="sit-veuvage">Veuvage (veuf ou veuve)</label>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- Année de naissance du conjoint — affiché uniquement si Mariage ou pacs -->
-              <div class="fr-input-group fr-fieldset__element--year" id="conjoint-group" hidden>
-                <label class="fr-label" for="annee-naissance-conjoint">
-                  Année de naissance de votre conjoint(e) ou partenaire de pacs
-                </label>
-                <input
-                  class="fr-input"
-                  type="number"
-                  id="annee-naissance-conjoint"
-                  name="annee-naissance-conjoint"
-                  min="1900"
-                  max="2010"
-                  placeholder="Ex : 1975"
-                >
-              </div>
-
-              <!-- Demi-parts supplémentaires -->
-              <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend">
-                <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
-                  Si votre foyer est concerné, sélectionnez la ou les situations suivantes :
-                </legend>
-                <div class="fr-fieldset__content">
-                  <div class="fr-checkbox-group">
-                    <input type="checkbox" id="dp-solo-enfant" name="demi-parts" value="solo-enfant">
-                    <label class="fr-label" for="dp-solo-enfant">
-                      Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant.
-                      <span class="fr-hint-text">
-                        - majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
-                        - décédé après l'âge de 16 ans ou par suite de faits de guerre ;<br>
-                        - vous avez élevé cet enfant pendant au moins cinq années au cours desquelles vous viviez seul.
-                      </span>
-                    </label>
-                  </div>
-                  <div class="fr-checkbox-group">
-                    <input type="checkbox" id="dp-invalidite" name="demi-parts" value="invalidite">
-                    <label class="fr-label" for="dp-invalidite">
-                      Pension (militaire, accident du travail) pour une invalidité d'au moins 40 %, carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
-                    </label>
-                  </div>
-                  <div class="fr-checkbox-group">
-                    <input type="checkbox" id="dp-pension-guerre" name="demi-parts" value="pension-guerre">
-                    <label class="fr-label" for="dp-pension-guerre">
-                      Carte du combattant, pension militaire d'invalidité ou de victime de guerre.
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
+              <div data-fields></div>
             </div>
 
             <!-- Tuile Personne à charge (stub — non implémenté dans ce prototype) -->

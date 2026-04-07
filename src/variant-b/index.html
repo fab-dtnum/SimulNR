@@ -36,7 +36,7 @@
                 <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
                 <p class="sim-titre-badge">Beta</p>
               </div>
-              <div class="fr-translate fr-nav">
+              {# <div class="fr-translate fr-nav">
                 <div class="fr-nav__item">
                   <button class="fr-translate__btn fr-btn fr-btn--tertiary fr-icon-calendar-line"
                           aria-controls="annee-selector-b" aria-expanded="false"
@@ -50,13 +50,13 @@
                     </ul>
                   </div>
                 </div>
-              </div>
+              </div> #}
             </div>
           </div>
 
           <!-- Introduction -->
           <div>
-            <p class="sim-intro">Complétez les rubriques pour calculer votre imposition.</p>
+            <p class="sim-intro">Complétez les rubriques pertinentes pour votre situation, puis cliquez sur le bouton calculer pour estimer votre imposition.</p>
           </div>
 
           <!-- Formulaire -->
@@ -71,7 +71,7 @@
               <div class="sim-tuiles-list">
 
                 <!-- Tuile Situation personnelle -->
-                <div class="sim-tuile-wrapper" data-tile="situation-personnelle">
+                <div class="sim-tuile-wrapper" data-tile="situationPersonnelle">
 
                   <!-- Fermé -->
                   <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
@@ -186,7 +186,7 @@
         <!-- ══════════════════════════════════════════════════ -->
         <!-- SOUS-FORMULAIRE — SITUATION PERSONNELLE            -->
         <!-- ══════════════════════════════════════════════════ -->
-        <div class="sim-sous-formulaire" data-tile="situation-personnelle" hidden>
+        <div class="sim-sous-formulaire" data-tile="situationPersonnelle" hidden>
 
           <div class="sim-sous-formulaire__top">
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">
@@ -202,77 +202,7 @@
             <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
           </div>
 
-          <div class="fr-input-group">
-            <label class="fr-label" for="annee-naissance">
-              Votre année de naissance
-            </label>
-            <input class="fr-input" type="number" id="annee-naissance" name="annee-naissance"
-                   min="1900" max="2010" placeholder="Ex : 1975"
-                   data-resume-type="annee" data-resume-label="Année de naissance" required>
-          </div>
-
-          <fieldset class="fr-fieldset" id="situation-familiale" aria-labelledby="situation-familiale-legend"
-                    data-resume-label="Situation familiale">
-            <legend class="fr-fieldset__legend fr-text--regular" id="situation-familiale-legend">
-              Quelle est votre situation familiale ?
-            </legend>
-            <div class="fr-fieldset__content">
-              <div class="fr-radio-group">
-                <input type="radio" id="sit-mariage" name="situation-familiale" value="mariage-pacs" required>
-                <label class="fr-label" for="sit-mariage">Mariage ou pacs</label>
-              </div>
-              <div class="fr-radio-group">
-                <input type="radio" id="sit-celibat" name="situation-familiale" value="celibat-divorce">
-                <label class="fr-label" for="sit-celibat">Célibat ou divorce</label>
-              </div>
-              <div class="fr-radio-group">
-                <input type="radio" id="sit-veuvage" name="situation-familiale" value="veuvage">
-                <label class="fr-label" for="sit-veuvage">Veuvage (veuf ou veuve)</label>
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- Affiché uniquement si Mariage ou pacs -->
-          <div class="fr-input-group" id="conjoint-group" hidden>
-            <label class="fr-label" for="annee-naissance-conjoint">
-              Année de naissance de votre conjoint(e) ou partenaire de pacs
-            </label>
-            <input class="fr-input" type="number" id="annee-naissance-conjoint" name="annee-naissance-conjoint"
-                   min="1900" max="2010" placeholder="Ex : 1975"
-                   data-resume-type="annee" data-resume-label="Année de naissance partenaire">
-          </div>
-
-          <fieldset class="fr-fieldset" id="b-demi-parts" aria-labelledby="b-demi-parts-legend">
-            <legend class="fr-fieldset__legend fr-text--regular" id="b-demi-parts-legend">
-              Si votre foyer est concerné, sélectionnez la ou les situations suivantes :
-              <span class="fr-hint-text">Facultatif</span>
-            </legend>
-            <div class="fr-fieldset__content">
-              <div class="fr-checkbox-group">
-                <input type="checkbox" id="b-dp-solo-enfant" name="b-demi-parts" value="solo-enfant">
-                <label class="fr-label" for="b-dp-solo-enfant">
-                  Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant.
-                  <span class="fr-hint-text">
-                    - majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
-                    - décédé après l'âge de 16 ans ou par suite de faits de guerre ;<br>
-                    - vous avez élevé cet enfant pendant au moins cinq années au cours desquelles vous viviez seul.
-                  </span>
-                </label>
-              </div>
-              <div class="fr-checkbox-group">
-                <input type="checkbox" id="b-dp-invalidite" name="b-demi-parts" value="invalidite">
-                <label class="fr-label" for="b-dp-invalidite">
-                  Pension (militaire, accident du travail) pour une invalidité d'au moins 40 %, carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
-                </label>
-              </div>
-              <div class="fr-checkbox-group">
-                <input type="checkbox" id="b-dp-pension-guerre" name="b-demi-parts" value="pension-guerre">
-                <label class="fr-label" for="b-dp-pension-guerre">
-                  Carte du combattant, pension militaire d'invalidité ou de victime de guerre.
-                </label>
-              </div>
-            </div>
-          </fieldset>
+          <div data-fields></div>
 
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">
             Enregistrer

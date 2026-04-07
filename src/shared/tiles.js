@@ -12,6 +12,12 @@ import { validateForm, initBlurValidation } from './validation.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ── Variante A : injection du formulaire situation personnelle (toujours visible) ──
+  if (document.body.dataset.variant === 'a') {
+    const formCard = document.querySelector('.sim-form-card[data-tile]');
+    if (formCard) injecterChamps(formCard, formCard.dataset.tile);
+  }
+
   // ── Variante A : validation au submit du formulaire ─────────────────────────
   const form = document.querySelector('form');
   if (form && document.body.dataset.variant === 'a') {
@@ -19,6 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       let isValid = true;
 
+      // Valider la carte situation personnelle (toujours visible)
+      const formCard = document.querySelector('.sim-form-card[data-tile]');
+      if (formCard) {
+        const tileName = formCard.dataset.tile;
+        const messages = FORMS[tileName]?.messages ?? {};
+        if (!validateForm(formCard, messages)) isValid = false;
+      }
+
+      // Valider les tuiles ouvertes
       document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
         const panel = wrapper.querySelector('.sim-tuile-ouvert--a:not([hidden])');
         if (!panel) return;
@@ -83,22 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Champs conditionnels ────────────────────────────────────────────────
-  // Utilise la délégation pour couvrir les champs injectés dynamiquement.
-  document.addEventListener('change', (e) => {
-    const el = e.target;
-    if (el.type !== 'radio') return;
 
-    // Champ conjoint — Situation personnelle
-    if (el.name === 'situation-familiale') {
-      const isMarriage = el.value === 'mariage-pacs';
-      const group = document.getElementById('conjoint-group');
-      if (!group) return;
-      group.hidden = !isMarriage;
-      const input = group.querySelector('input');
-      if (input) input.required = isMarriage;
-    }
-  });
 });
 
 // ── Injection des champs (source unique : forms.js) ──────────────────────────
