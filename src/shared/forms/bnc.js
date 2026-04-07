@@ -1,3 +1,10 @@
+export const messages = {
+  'bnc-montant': {
+    valueMissing:   'Le montant des bénéfices non commerciaux nets est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+};
+
 export function template() {
   return /* html */`
     <div class="fr-input-group">

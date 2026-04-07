@@ -1,3 +1,20 @@
+export const messages = {
+  'lmnp-regime': {
+    valueMissing: 'Veuillez indiquer si vous êtes au régime réel.',
+  },
+  'lmnp-chambres': {
+    valueMissing: 'Veuillez indiquer si la location concerne des chambres chez l\'habitant.',
+  },
+  'lmnp-loyers': {
+    valueMissing:   'Le montant des loyers est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+  'lmnp-revenus-nets': {
+    valueMissing:   'Le montant des revenus nets locatifs est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+};
+
 export function template() {
   return /* html */`
     <p class="fr-text--sm">

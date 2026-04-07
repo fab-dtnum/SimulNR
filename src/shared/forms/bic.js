@@ -1,3 +1,10 @@
+export const messages = {
+  'bic-montant': {
+    valueMissing:   'Le montant des bénéfices industriels et commerciaux nets est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+};
+
 export function template() {
   return /* html */`
     <div class="fr-input-group">

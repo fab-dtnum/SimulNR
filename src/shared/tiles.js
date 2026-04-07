@@ -8,8 +8,31 @@
  */
 
 import * as FORMS from './forms.js';
+import { validateForm, initBlurValidation } from './validation.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Variante A : validation au submit du formulaire ─────────────────────────
+  const form = document.querySelector('form');
+  if (form && document.body.dataset.variant === 'a') {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let isValid = true;
+
+      document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
+        const panel = wrapper.querySelector('.sim-tuile-ouvert--a:not([hidden])');
+        if (!panel) return;
+        const tileName = wrapper.dataset.tile;
+        const messages = FORMS[tileName]?.messages ?? {};
+        if (!validateForm(panel, messages)) isValid = false;
+      });
+
+      if (isValid) {
+        // TODO : soumettre les données
+      }
+    });
+  }
+
   document.addEventListener('click', (e) => {
     const variant = document.body.dataset.variant || 'a';
 
@@ -89,6 +112,7 @@ function injecterChamps(container, tileName) {
   if (typeof FORMS[tileName].init === 'function') {
     FORMS[tileName].init(fieldsEl);
   }
+  initBlurValidation(fieldsEl, FORMS[tileName]?.messages ?? {});
 }
 
 // ── Variante A ──────────────────────────────────────────────────────────────
@@ -153,6 +177,9 @@ function scrollVersSommet() {
 
 function enregistrerFormulaire(formPage) {
   const tileName = formPage.dataset.tile;
+  const messages = FORMS[tileName]?.messages ?? {};
+  if (!validateForm(formPage, messages)) return;
+
   const wrapper = document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"]`);
 
   if (wrapper) {

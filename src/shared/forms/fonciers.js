@@ -1,3 +1,16 @@
+export const messages = {
+  'fonciers-loyers': {
+    valueMissing:   'Le montant des loyers est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+  'fonciers-regime': {
+    valueMissing: 'Veuillez indiquer si vous êtes au régime réel.',
+  },
+  'fonciers-travaux': {
+    valueMissing: 'Veuillez indiquer si vous avez réalisé des travaux de rénovation énergétique.',
+  },
+};
+
 export function template() {
   return /* html */`
     <div class="fr-input-group">
