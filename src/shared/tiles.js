@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (variant === 'a') {
         ouvrirTuileA(wrapper);
       } else {
+        _dernierBoutonActif = btnAjouter;
         naviguerVersFormulaire(wrapper.dataset.tile);
       }
       return;
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnModifier) {
       const wrapper = btnModifier.closest('.sim-tuile-wrapper');
       if (wrapper && variant === 'b') {
+        _dernierBoutonActif = btnModifier;
         naviguerVersFormulaire(wrapper.dataset.tile);
       }
       return;
@@ -143,6 +145,7 @@ function supprimerTuile(wrapper) {
 // ── Variante B : navigation ─────────────────────────────────────────────────
 
 let _scrollAvantFormulaire = null;
+let _dernierBoutonActif = null;
 
 function naviguerVersFormulaire(tileName) {
   const vueEnsemble = document.getElementById('vue-ensemble');
@@ -155,9 +158,12 @@ function naviguerVersFormulaire(tileName) {
   const wrapper = document.querySelector('.sim-wrapper');
   if (wrapper) wrapper.classList.add('sim-wrapper--sous-formulaire');
   scrollVersSommet();
+  // Déplacer le focus sur le titre du sous-formulaire pour les lecteurs d'écran
+  const titre = formPage.querySelector('h2');
+  if (titre) { titre.tabIndex = -1; titre.focus(); }
 }
 
-function naviguerVersVueEnsemble({ scroll = true } = {}) {
+function naviguerVersVueEnsemble({ scroll = true, focusEl = null } = {}) {
   document.querySelectorAll('.sim-sous-formulaire').forEach(f => { f.hidden = true; });
   const vueEnsemble = document.getElementById('vue-ensemble');
   if (vueEnsemble) vueEnsemble.hidden = false;
@@ -166,6 +172,10 @@ function naviguerVersVueEnsemble({ scroll = true } = {}) {
   if (scroll && _scrollAvantFormulaire !== null) {
     window.scrollTo({ top: _scrollAvantFormulaire, behavior: 'instant' });
   }
+  // Restaurer le focus sur l'élément déclenchant ou sur l'élément fourni
+  const cible = focusEl ?? _dernierBoutonActif;
+  if (cible) cible.focus();
+  _dernierBoutonActif = null;
 }
 
 function scrollVersSommet() {
@@ -199,6 +209,16 @@ function enregistrerFormulaire(formPage) {
     wrapper.querySelector('.sim-tuile').hidden = true;
     const panelB = wrapper.querySelector('.sim-tuile-ouvert--b');
     if (panelB) panelB.hidden = false;
+
+    // Contextualiser le bouton "Modifier" pour les lecteurs d'écran
+    const btnModifier = panelB?.querySelector('.sim-tuile__btn--modifier');
+    if (btnModifier) {
+      const nomTuile = wrapper.querySelector('.sim-tuile__name')?.textContent.trim() ?? tileName;
+      btnModifier.setAttribute('aria-label', `Modifier ${nomTuile}`);
+    }
+
+    naviguerVersVueEnsemble({ focusEl: btnModifier ?? null });
+    return;
   }
 
   naviguerVersVueEnsemble();

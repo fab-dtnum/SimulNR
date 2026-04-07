@@ -1,6 +1,6 @@
 export const messages = {
   'annee-naissance': {
-    valueMissing:   'Votre année de naissance est obligatoire.',
+    valueMissing:   'Veuillez préciser votre année de naissance.',
     rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2010.',
     rangeOverflow:  'L\'année doit être comprise entre 1900 et 2010.',
   },
@@ -8,9 +8,9 @@ export const messages = {
     valueMissing: 'Veuillez sélectionner votre situation familiale.',
   },
   'annee-naissance-conjoint': {
-    valueMissing:   'L\'année de naissance de votre conjoint(e) est obligatoire.',
-    rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2010.',
-    rangeOverflow:  'L\'année doit être comprise entre 1900 et 2010.',
+    valueMissing:   'Veuillez préciser l\'année de naissance de votre conjoint(e).',
+    rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2026.',
+    rangeOverflow:  'L\'année doit être comprise entre 1900 et 2026.',
   },
 };
 
@@ -21,7 +21,7 @@ export function template() {
         Votre année de naissance
       </label>
       <input class="fr-input" type="number" id="annee-naissance" name="annee-naissance"
-             min="1900" max="2010" placeholder="Ex : 1975"
+             min="1900" max="2026" placeholder="Ex : 1975"
              autocomplete="bday-year"
              data-resume-type="annee" data-resume-label="Année de naissance" required>
     </div>
@@ -52,7 +52,7 @@ export function template() {
         Année de naissance de votre conjoint(e) ou partenaire de pacs
       </label>
       <input class="fr-input" type="number" id="annee-naissance-conjoint" name="annee-naissance-conjoint"
-             min="1900" max="2010" placeholder="Ex : 1975"
+             min="1900" max="2026" placeholder="Ex : 1975"
              data-resume-type="annee" data-resume-label="Année de naissance partenaire">
     </div>
 

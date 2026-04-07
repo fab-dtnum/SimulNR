@@ -68,21 +68,6 @@
   margin: 0;
 }
 
-.sim-titre-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.5rem;
-  text-transform: uppercase;
-  color: var(--purple-glycine-sun-319);
-  background-color: var(--purple-glycine-950);
-  border-radius: 0.25rem;
-  margin: 0;
-  white-space: nowrap;
-}
-
 /* ── INTRODUCTION ───────────────────────────────────────────────────────────── */
 
 .sim-intro {
@@ -248,10 +233,6 @@
 
 /* ── BOUTON CALCULER ────────────────────────────────────────────────────────── */
 
-.sim-btn-calculer {
-  width: 100%;
-  justify-content: center;
-}
 
 /* ── TUILE AVEC ÉTAT OUVERT ─────────────────────────────────────────────────── */
 
