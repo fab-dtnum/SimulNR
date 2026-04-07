@@ -183,11 +183,6 @@
   margin: 0;
 }
 
-.sim-tuile__btn {
-  flex-shrink: 0;
-  align-self: center;
-}
-
 .sim-tuile__action {
   display: inline-flex;
   align-items: center;

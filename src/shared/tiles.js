@@ -227,8 +227,8 @@ function enregistrerFormulaire(formPage) {
 function collecterResume(formPage) {
   const lignes = [];
 
-  // Champs numériques monétaires
-  formPage.querySelectorAll('input[type="number"][data-resume-label]').forEach(input => {
+  // Champs numériques monétaires (hors champs année traités séparément)
+  formPage.querySelectorAll('input[type="number"][data-resume-label]:not([data-resume-type="annee"])').forEach(input => {
     if (!input.value || input.closest('[hidden]')) return;
     const val = parseInt(input.value, 10).toLocaleString('fr-FR') + '\u00a0€';
     lignes.push({ label: input.dataset.resumeLabel, valeur: val });
