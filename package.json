@@ -7,8 +7,5 @@
   },
   "devDependencies": {
     "http-server": "^14.0.0"
-  },
-  "dependencies": {
-    "@gouvfr/dsfr": "^1.14.0"
   }
 }
