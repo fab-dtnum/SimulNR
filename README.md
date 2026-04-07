@@ -15,7 +15,7 @@ npm start
 # → http://localhost:3000/src/
 ```
 
-La page d'accueil propose les deux variantes A et B.
+Cliquer sur le logo Marianne dans le header du site permet de retourner à la proposition entre les deux variantes A et B.
 
 ## Structure
 
