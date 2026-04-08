@@ -1,4 +1,4 @@
-# Simulateur impôt non-résidents
+# Prototype d'interfaces d'un simulateur de l'impôt des non-résidents
 
 Prototype HTML pour tests utilisateurs et accessibilité. Deux variantes de formulaire à comparer.
 ⚠️ Attention ce simulateur n'est pas fonctionnel pour les calculs de l'imposition. Ceci est uniquement un prototype de tests UX.
