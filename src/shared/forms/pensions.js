@@ -1,3 +1,4 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'pensions-montant': {
     valueMissing:   'Le montant annuel brut des pensions est obligatoire.',

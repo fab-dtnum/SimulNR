@@ -1,3 +1,4 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'bic-montant': {
     valueMissing:   'Le montant des bénéfices industriels et commerciaux nets est obligatoire.',

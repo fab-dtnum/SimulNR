@@ -8,6 +8,20 @@
  *   clearError(field)
  */
 
+// ── Messages par défaut ──────────────────────────────────────────────────────
+
+const defaultMessages = {
+  valueMissing:      'Ce champ est obligatoire.',
+  valueMissingRadio: 'Veuillez sélectionner une option.',
+  typeMismatch:      'Format invalide.',
+  rangeUnderflow:  field => `La valeur doit être supérieure ou égale à ${field.min}.`,
+  rangeOverflow:   field => `La valeur doit être inférieure ou égale à ${field.max}.`,
+  badInput:        'Le format saisi est invalide.',
+  patternMismatch: 'Le format saisi est invalide.',
+  tooShort:        field => `Minimum ${field.minLength} caractères requis.`,
+  generic:         'Valeur invalide.',
+};
+
 // ── API publique ─────────────────────────────────────────────────────────────
 
 /**
@@ -36,7 +50,7 @@ export function validateForm(container, messages = {}) {
         if (!anyChecked) {
           const fieldset = field.closest('fieldset');
           if (fieldset) {
-            const msg = messages[field.name]?.valueMissing ?? 'Veuillez sélectionner une option.';
+            const msg = messages[field.name]?.valueMissing ?? defaultMessages.valueMissingRadio;
             setFieldsetError(fieldset, field.name, msg);
             if (!firstError) firstError = { el: fieldset, firstInput: field };
           }
@@ -209,11 +223,16 @@ function removeElement(id) {
 
 function resolveMessage(field, messages) {
   const v = field.validity;
-  if (v.valueMissing)    return messages.valueMissing    ?? 'Ce champ est obligatoire.';
-  if (v.typeMismatch)    return messages.typeMismatch    ?? 'Format invalide.';
-  if (v.rangeUnderflow)  return messages.rangeUnderflow  ?? `La valeur doit être supérieure ou égale à ${field.min}.`;
-  if (v.rangeOverflow)   return messages.rangeOverflow   ?? `La valeur doit être inférieure ou égale à ${field.max}.`;
-  if (v.patternMismatch) return messages.patternMismatch ?? 'Le format saisi est invalide.';
-  if (v.tooShort)        return messages.tooShort        ?? `Minimum ${field.minLength} caractères requis.`;
-  return messages.generic ?? 'Valeur invalide.';
+  const resolve = key => {
+    const msg = messages[key] ?? defaultMessages[key];
+    return typeof msg === 'function' ? msg(field) : msg;
+  };
+  if (v.valueMissing)    return resolve('valueMissing');
+  if (v.typeMismatch)    return resolve('typeMismatch');
+  if (v.badInput)        return resolve('badInput');
+  if (v.rangeUnderflow)  return resolve('rangeUnderflow');
+  if (v.rangeOverflow)   return resolve('rangeOverflow');
+  if (v.patternMismatch) return resolve('patternMismatch');
+  if (v.tooShort)        return resolve('tooShort');
+  return resolve('generic');
 }

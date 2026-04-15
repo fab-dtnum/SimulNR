@@ -1,7 +1,8 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'annee-naissance': {
     valueMissing:   'Veuillez préciser votre année de naissance.',
-    rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2010.',
+    rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2026.',
     rangeOverflow:  'L\'année doit être comprise entre 1900 et 2026.',
   },
   'situation-familiale': {

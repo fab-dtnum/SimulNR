@@ -1,6 +1,7 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'agricoles-montant': {
-    valueMissing:   'Le montant des revenus agricoles nets est obligatoire.',
+    valueMissing:   'Veuillez préciser le montant des revenus agricoles nets.',
     rangeUnderflow: 'Le montant ne peut pas être négatif.',
   },
 };

@@ -1,3 +1,4 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'lmnp-regime': {
     valueMissing: 'Veuillez indiquer si vous êtes au régime réel.',

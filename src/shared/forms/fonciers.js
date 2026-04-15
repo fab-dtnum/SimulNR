@@ -1,3 +1,4 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'fonciers-loyers': {
     valueMissing:   'Le montant des loyers est obligatoire.',

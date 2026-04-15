@@ -1,3 +1,4 @@
+// ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'salaires-montant': {
     valueMissing:   'Le montant des salaires nets imposables est obligatoire.',
