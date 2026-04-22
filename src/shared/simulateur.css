@@ -68,23 +68,6 @@
   margin: 0;
 }
 
-/* ── INTRODUCTION ───────────────────────────────────────────────────────────── */
-
-.sim-intro {
-  font-size: 1rem;
-  line-height: 1.625rem;
-  font-weight: 400;
-  color: var(--text-default-grey);
-  margin: 0;
-}
-
-.sim-intro-hint {
-  font-size: 0.75rem;
-  line-height: 1.25rem;
-  color: var(--text-mention-grey);
-  margin: 0;
-}
-
 /* ── SECTIONS ───────────────────────────────────────────────────────────────── */
 
 .sim-section {

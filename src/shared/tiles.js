@@ -12,26 +12,12 @@ import { validateForm, initBlurValidation } from './validation.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── Variante A : injection du formulaire situation personnelle (toujours visible) ──
-  if (document.body.dataset.variant === 'a') {
-    const formCard = document.querySelector('.sim-form-card[data-tile]');
-    if (formCard) injecterChamps(formCard, formCard.dataset.tile);
-  }
-
   // ── Variante A : validation au submit du formulaire ─────────────────────────
   const form = document.querySelector('form');
   if (form && document.body.dataset.variant === 'a') {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       let isValid = true;
-
-      // Valider la carte situation personnelle (toujours visible)
-      const formCard = document.querySelector('.sim-form-card[data-tile]');
-      if (formCard) {
-        const tileName = formCard.dataset.tile;
-        const messages = FORMS[tileName]?.messages ?? {};
-        if (!validateForm(formCard, messages)) isValid = false;
-      }
 
       // Valider les tuiles ouvertes
       document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
@@ -238,6 +224,18 @@ function collecterResume(formPage) {
   formPage.querySelectorAll('input[data-resume-type="annee"][data-resume-label]').forEach(input => {
     if (!input.value || input.closest('[hidden]')) return;
     lignes.push({ label: input.dataset.resumeLabel, valeur: input.value });
+  });
+
+  // Champs texte
+  formPage.querySelectorAll('input[type="text"][data-resume-label]').forEach(input => {
+    if (!input.value || input.closest('[hidden]')) return;
+    lignes.push({ label: input.dataset.resumeLabel, valeur: input.value });
+  });
+
+  // Listes déroulantes
+  formPage.querySelectorAll('select[data-resume-label]').forEach(select => {
+    if (!select.value || select.closest('[hidden]')) return;
+    lignes.push({ label: select.dataset.resumeLabel, valeur: select.options[select.selectedIndex].text });
   });
 
   // Groupes radio

@@ -17,20 +17,11 @@ export const messages = {
 
 export function template() {
   return /* html */`
-    <div class="fr-input-group">
-      <label class="fr-label" for="annee-naissance">
-        Votre année de naissance
-      </label>
-      <input class="fr-input" type="number" id="annee-naissance" name="annee-naissance"
-             min="1900" max="2026" placeholder="Ex : 1975"
-             autocomplete="bday-year"
-             data-resume-type="annee" data-resume-label="Année de naissance" required>
-    </div>
-
     <fieldset class="fr-fieldset" id="situation-familiale" aria-labelledby="situation-familiale-legend"
               data-resume-label="Situation familiale">
       <legend class="fr-fieldset__legend fr-text--regular" id="situation-familiale-legend">
         Quelle est votre situation familiale ?
+        <span class="fr-hint-text">Si vous êtes en union libre et non veuf, sélectionner "célibat".</span>
       </legend>
       <div class="fr-fieldset__content">
         <div class="fr-radio-group">
@@ -48,25 +39,36 @@ export function template() {
       </div>
     </fieldset>
 
+    <div class="fr-input-group">
+      <label class="fr-label" for="annee-naissance">
+        Votre année de naissance
+        <span class="fr-hint-text">Exemple : 1980</span>
+      </label>
+      <input class="fr-input" type="number" id="annee-naissance" name="annee-naissance"
+             min="1900" max="2026"
+             autocomplete="bday-year"
+             data-resume-type="annee" data-resume-label="Année de naissance" required>
+    </div>
+
     <div class="fr-input-group" id="conjoint-group" hidden>
       <label class="fr-label" for="annee-naissance-conjoint">
-        Année de naissance de votre conjoint(e) ou partenaire de pacs
+        Année de naissance de votre conjoint, conjointe ou partenaire de pacs
+        <span class="fr-hint-text">Exemple : 1980</span>
       </label>
       <input class="fr-input" type="number" id="annee-naissance-conjoint" name="annee-naissance-conjoint"
-             min="1900" max="2026" placeholder="Ex : 1975"
+             min="1900" max="2026"
              data-resume-type="annee" data-resume-label="Année de naissance partenaire">
     </div>
 
     <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend">
       <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
-        Si votre foyer est concerné, sélectionnez la ou les situations suivantes :
-        <span class="fr-hint-text">Facultatif</span>
+        Cochez la case ou les cases qui correspondent à votre situation :
       </legend>
       <div class="fr-fieldset__content">
-        <div class="fr-checkbox-group">
+        <div class="fr-checkbox-group" id="dp-solo-enfant-group" hidden>
           <input type="checkbox" id="dp-solo-enfant" name="demi-parts" value="solo-enfant">
           <label class="fr-label" for="dp-solo-enfant">
-            Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant.
+            Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant :
             <span class="fr-hint-text">
               - majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
               - décédé après l'âge de 16 ans ou par suite de faits de guerre ;<br>
@@ -77,13 +79,19 @@ export function template() {
         <div class="fr-checkbox-group">
           <input type="checkbox" id="dp-invalidite" name="demi-parts" value="invalidite">
           <label class="fr-label" for="dp-invalidite">
-            Pension (militaire, accident du travail) pour une invalidité d'au moins 40 %, carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
+            Pension (militaire, accident du travail) pour une invalidité d'au moins 40 % , carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
           </label>
         </div>
         <div class="fr-checkbox-group">
           <input type="checkbox" id="dp-pension-guerre" name="demi-parts" value="pension-guerre">
           <label class="fr-label" for="dp-pension-guerre">
             Carte du combattant, pension militaire d'invalidité ou de victime de guerre.
+          </label>
+        </div>
+        <div class="fr-checkbox-group">
+          <input type="checkbox" id="dp-aucune" name="demi-parts" value="aucune">
+          <label class="fr-label" for="dp-aucune">
+            Aucune de ces situations ne me concerne.
           </label>
         </div>
       </div>
@@ -95,12 +103,22 @@ export function init(container) {
   const radios = container.querySelectorAll('input[name="situation-familiale"]');
   radios.forEach(radio => {
     radio.addEventListener('change', () => {
-      const isMarriage = radio.value === 'mariage-pacs' && radio.checked;
-      const group = container.querySelector('#conjoint-group');
-      if (!group) return;
-      group.hidden = !isMarriage;
-      const input = group.querySelector('input');
-      if (input) input.required = isMarriage;
+      const value = radio.value;
+      const isMarriage = value === 'mariage-pacs';
+      const isSolo = value === 'celibat-divorce' || value === 'veuvage';
+
+      const conjointGroup = container.querySelector('#conjoint-group');
+      if (conjointGroup) {
+        conjointGroup.hidden = !isMarriage;
+        const input = conjointGroup.querySelector('input');
+        if (input) input.required = isMarriage;
+      }
+
+      const soloGroup = container.querySelector('#dp-solo-enfant-group');
+      if (soloGroup) {
+        soloGroup.hidden = !isSolo;
+        if (!isSolo) soloGroup.querySelector('input').checked = false;
+      }
     });
   });
 }

@@ -19,7 +19,7 @@
     </div>
 
     <div class="fr-container fr-my-6w">
-      
+
       <div class="sim-wrapper">
 
         <!-- ══════════════════════════════════════════════════ -->
@@ -37,27 +37,17 @@
                 <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
                 <p class="fr-badge fr-badge--purple-glycine fr-badge--no-icon">Beta</p>
               </div>
-              <!-- <div class="fr-translate fr-nav">
-                <div class="fr-nav__item">
-                  <button class="fr-translate__btn fr-btn fr-btn--tertiary fr-icon-calendar-line"
-                          aria-controls="annee-selector-b" aria-expanded="false"
-                          title="Sélectionner l'année d'imposition">
-                    Impôt 2026 sur les revenus 2025
-                  </button>
-                  <div class="fr-collapse fr-translate__menu fr-menu" id="annee-selector-b">
-                    <ul class="fr-menu__list">
-                      <li><a class="fr-translate__language fr-nav__link" aria-current="true" href="#">Impôt 2026 sur les revenus 2025</a></li>
-                      <li><a class="fr-translate__language fr-nav__link" href="#">Impôt 2025 sur les revenus 2024</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
             </div>
+          </div>
+
+          <!-- Alerte -->
+          <div class="fr-alert fr-alert--info fr-alert--sm">
+            <p>Ce simulateur calcule uniquement l'imposition pour les revenus perçus en tant que non résident.</p>
           </div>
 
           <!-- Introduction -->
           <div>
-            <p class="sim-intro">Complétez les rubriques pertinentes pour votre situation, puis cliquez sur le bouton calculer pour estimer votre imposition.</p>
+            <p class="fr-text--lg fr-mb-1w">Complétez les rubriques pertinentes pour votre situation, puis cliquez sur le bouton calculer pour estimer votre imposition.</p>
           </div>
 
           <!-- Formulaire -->
@@ -67,8 +57,11 @@
             <section class="sim-section" aria-labelledby="titre-foyer-fiscal">
               <div class="sim-section__head">
                 <h2 class="sim-section__title" id="titre-foyer-fiscal">Foyer fiscal</h2>
-                <p class="sim-section__desc">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer. <a href="https://www.impots.gouv.fr" target="_blank" rel="noopener">En savoir plus</a></p>
+                <p class="sim-section__desc">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer. <a href="https://www.impots.gouv.fr" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener">Comprendre les règles du foyer fiscal</a></p>
               </div>
+
+              <p class="fr-badge fr-badge--info fr-badge--no-icon" id="nombre-parts-badge">Nombre de parts : <strong>1</strong></p>
+
               <div class="sim-tuiles-list">
 
                 <!-- Tuile Situation personnelle -->
@@ -104,20 +97,39 @@
 
                 </div>
 
-                <!-- Tuile Personne à charge (stub — non implémenté dans ce prototype) -->
-                <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
-                  <div class="sim-tuile__info fr-pr-2w">
-                    <div class="sim-tuile__title-row">
-                      <span class="fr-icon-team-line sim-tuile__icone" aria-hidden="true"></span>
-                      <span class="sim-tuile__name">Personne à charge</span>
+                <!-- Tuile Personne à charge -->
+                <div class="sim-tuile-wrapper" data-tile="personneACharge">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-team-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="sim-tuile__name">Personne à charge</span>
+                      </div>
+                      <p class="sim-tuile__desc">Vos enfants et les personnes associées, ou les personnes invalides vivants sous votre toit.</p>
                     </div>
-                    <p class="sim-tuile__desc">Enfant et les personnes associées ou personne invalide vivant sous votre toit.</p>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Ajouter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-team-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="sim-tuile__name">Personne à charge</span>
+                      </div>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                      Modifier
+                    </button>
                   </div>
-                  <span class="sim-tuile__action">
-                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
-                    Ajouter
-                  </span>
-                </button>
+
+                </div>
 
               </div>
             </section>
@@ -127,8 +139,8 @@
               <div class="sim-section__head">
                 <h2 class="sim-section__title" id="titre-revenus">Revenus</h2>
                 <p class="sim-section__desc">
-                  Si vous ne savez pas quels revenus sont imposables en France pour votre situation, consultez cette page :
-                  <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" target="_blank" rel="noopener">principaux revenus à déclarer</a>.
+                  Vos revenus de source française et imposables en France, selon la convention fiscale conclue avec votre État de résidence.
+                  <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener">Connaitre les revenus à déclarer</a>
                 </p>
               </div>
               <div class="sim-tuiles-list" data-fragment="../shared/revenus-tiles.html">
@@ -148,9 +160,9 @@
                   <div class="sim-tuile__info fr-pr-2w">
                     <div class="sim-tuile__title-row">
                       <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
-                      <span class="sim-tuile__name">Déficits globaux</span>
+                      <span class="sim-tuile__name">Déficits globaux et CSG déductible</span>
                     </div>
-                    <p class="sim-tuile__desc">Les déficits globaux des années antérieures non imputés sont indiqués à la fin de votre dernier avis d'imposition.</p>
+                    <p class="sim-tuile__desc">Les déficits globaux des années précédentes et le montant éventuels de CSG déductible sont indiqués à la fin de votre dernier avis d'imposition.</p>
                   </div>
                   <span class="sim-tuile__action">
                     <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
@@ -165,6 +177,7 @@
                       <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
                       <span class="sim-tuile__name">Exonération CSG-CRDS</span>
                     </div>
+                    <p class="sim-tuile__desc">Cette rubrique sur l'exonération de la CSG (Contribution Sociale Généralisée) et de la CRDS (Contribution pour le Remboursement de la Dette Sociale) est disponible si des revenus locatifs sont ajoutés.</p>
                   </div>
                   <span class="sim-tuile__action">
                     <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
@@ -210,6 +223,25 @@
           </button>
 
         </div><!-- /situation-personnelle -->
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — PERSONNE À CHARGE                -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="personneACharge" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-team-line" aria-hidden="true"></span>
+              Personne à charge
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /personneACharge -->
 
 
         <!-- ══════════════════════════════════════════════════ -->
