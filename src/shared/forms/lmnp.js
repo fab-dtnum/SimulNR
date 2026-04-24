@@ -63,9 +63,11 @@ export function template() {
         Loyers annuels bruts
         <span class="fr-hint-text">En euros</span>
       </label>
-      <input class="fr-input" type="number" id="lmnp-loyers" name="lmnp-loyers"
-             min="0" placeholder="Ex : 15 000"
-             data-resume-label="Loyers annuels bruts" required>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="lmnp-loyers" name="lmnp-loyers"
+               min="0" placeholder="Ex : 15 000"
+               data-resume-label="Loyers annuels bruts" required>
+      </div>
     </div>
 
     <div class="fr-input-group">
@@ -73,9 +75,11 @@ export function template() {
         Revenus nets locatifs
         <span class="fr-hint-text">En euros</span>
       </label>
-      <input class="fr-input" type="number" id="lmnp-revenus-nets" name="lmnp-revenus-nets"
-             min="0" placeholder="Ex : 10 000"
-             data-resume-label="Revenus nets locatifs" required>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="lmnp-revenus-nets" name="lmnp-revenus-nets"
+               min="0" placeholder="Ex : 10 000"
+               data-resume-label="Revenus nets locatifs" required>
+      </div>
     </div>
 
     <div class="fr-input-group">
@@ -83,9 +87,11 @@ export function template() {
         Déficits LMNP des années antérieures
         <span class="fr-hint-text">Facultatif. En euros.</span>
       </label>
-      <input class="fr-input" type="number" id="lmnp-deficits" name="lmnp-deficits"
-             min="0" placeholder="Ex : 2 000"
-             data-resume-label="Déficits LMNP">
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="lmnp-deficits" name="lmnp-deficits"
+               min="0" placeholder="Ex : 2 000"
+               data-resume-label="Déficits LMNP">
+      </div>
     </div>
   `;
 }

@@ -19,9 +19,11 @@ export function template() {
         Montant brut des loyers, hors charges locatives
         <span class="fr-hint-text">Indiquez le montant total sur l'année perçu par votre foyer. Exemple : 7000</span>
       </label>
-      <input class="fr-input" type="number" id="fonciers-loyers" name="fonciers-loyers"
-             min="0"
-             data-resume-label="Loyers annuels bruts" required>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="fonciers-loyers" name="fonciers-loyers"
+               min="0"
+               data-resume-label="Loyers annuels bruts" required>
+      </div>
     </div>
 
     <fieldset class="fr-fieldset" id="fonciers-regime" aria-labelledby="fonciers-regime-legend"
@@ -48,9 +50,11 @@ export function template() {
         Montant de vos charges déductibles, hors intérêts d'emprunt
         <span class="fr-hint-text">Indiquez le montant total sur l'année. Exemple : 4000</span>
       </label>
-      <input class="fr-input" type="number" id="fonciers-charges" name="fonciers-charges"
-             min="0"
-             data-resume-label="Charges déductibles">
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="fonciers-charges" name="fonciers-charges"
+               min="0"
+               data-resume-label="Charges déductibles">
+      </div>
     </div>
 
     <div class="fr-input-group" data-fonciers-regime-field hidden>
@@ -58,9 +62,11 @@ export function template() {
         Montant de vos intérêts d'emprunt
         <span class="fr-hint-text">Indiquez le montant total sur l'année. Exemple : 2500</span>
       </label>
-      <input class="fr-input" type="number" id="fonciers-interets" name="fonciers-interets"
-             min="0"
-             data-resume-label="Intérêts d'emprunt">
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="fonciers-interets" name="fonciers-interets"
+               min="0"
+               data-resume-label="Intérêts d'emprunt">
+      </div>
     </div>
 
     <fieldset class="fr-fieldset" id="fonciers-travaux" aria-labelledby="fonciers-travaux-legend"
@@ -87,9 +93,11 @@ export function template() {
         Si vous en avez, quel est le montant des <strong>déficits fonciers</strong> restants des années précédentes ? (optionnel)
         <span class="fr-hint-text">Les déficits restants des années précédentes sont indiqués à la fin de votre dernier avis d'imposition. Si les déficits concernent plusieurs années sur votre avis d'imposition, additionnez-les et indiquez le total. Exemple : 1500</span>
       </label>
-      <input class="fr-input" type="number" id="fonciers-deficits" name="fonciers-deficits"
-             min="0"
-             data-resume-label="Déficits fonciers">
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="fonciers-deficits" name="fonciers-deficits"
+               min="0"
+               data-resume-label="Déficits fonciers">
+      </div>
     </div>
   `;
 }

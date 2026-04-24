@@ -35,7 +35,7 @@ export function template() {
 
     <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
-        Quelle est la situation de votre enfant ?
+        Comment cet enfant est-il pris en charge ?
       </legend>
       <div class="fr-fieldset__content">
         <div class="fr-radio-group">

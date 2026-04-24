@@ -13,9 +13,11 @@ export function template() {
         Montant annuel brut des pensions
         <span class="fr-hint-text">En euros</span>
       </label>
-      <input class="fr-input" type="number" id="pensions-montant" name="pensions-montant"
-             min="0" placeholder="Ex : 18 000"
-             data-resume-label="Montant annuel brut" required>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="pensions-montant" name="pensions-montant"
+               min="0" placeholder="Ex : 18 000"
+               data-resume-label="Montant annuel brut" required>
+      </div>
     </div>
   `;
 }

@@ -13,9 +13,11 @@ export function template() {
         Salaires et traitements nets imposables
         <span class="fr-hint-text">En euros</span>
       </label>
-      <input class="fr-input" type="number" id="salaires-montant" name="salaires-montant"
-             min="0" placeholder="Ex : 35 000"
-             data-resume-label="Salaires nets imposables" required>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="salaires-montant" name="salaires-montant"
+               min="0" placeholder="Ex : 35 000"
+               data-resume-label="Salaires nets imposables" required>
+      </div>
     </div>
   `;
 }
