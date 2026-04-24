@@ -157,20 +157,40 @@
               </div>
               <div class="sim-tuiles-list">
 
-                <!-- Stub — non implémenté dans ce prototype -->
-                <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
-                  <div class="sim-tuile__info fr-pr-2w">
-                    <div class="sim-tuile__title-row">
-                      <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
-                      <span class="sim-tuile__name">Déficits globaux et CSG déductible</span>
+                <!-- Tuile Déficits globaux et CSG déductible -->
+                <div class="sim-tuile-wrapper" data-tile="deficitsGlobaux">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="sim-tuile__name">Déficits globaux et CSG déductible</span>
+                      </div>
+                      <p class="sim-tuile__desc">Les déficits globaux des années précédentes et le montant éventuel de CSG déductible sont indiqués à la fin de votre dernier avis d'imposition.</p>
                     </div>
-                    <p class="sim-tuile__desc">Les déficits globaux des années précédentes et le montant éventuels de CSG déductible sont indiqués à la fin de votre dernier avis d'imposition.</p>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Compléter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="sim-tuile__name">Déficits globaux et CSG déductible</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Déficits globaux et CSG déductible"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                      Modifier
+                    </button>
                   </div>
-                  <span class="sim-tuile__action">
-                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
-                    Ajouter
-                  </span>
-                </button>
+
+                </div>
 
                 <!-- Stub — non implémenté dans ce prototype -->
                 <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
@@ -371,6 +391,24 @@
           <div data-fields></div>
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
         </div><!-- /agricoles -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — DÉFICITS GLOBAUX                 -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="deficitsGlobaux" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+              Déficits globaux et CSG déductible
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /deficitsGlobaux -->
 
       </div><!-- /sim-wrapper -->
     </div>
