@@ -46,6 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Demi-parts : mise à jour en direct (variant A) ou via le sous-formulaire (variant B)
+  document.addEventListener('change', (e) => {
+    if (e.target.name === 'demi-parts') mettreAJourNombreParts();
+  });
+
   document.addEventListener('click', (e) => {
     const variant = document.body.dataset.variant || 'a';
 
@@ -72,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         // Fiche clonée hors wrapper : supprimer directement
         btnSupprimer.closest('.sim-tuile-ouvert')?.remove();
+        mettreAJourNombreParts();
       }
       return;
     }
@@ -139,6 +145,7 @@ function ouvrirTuileA(wrapper) {
     clone.hidden = false;
     wrapper.before(clone);
     injecterChamps(clone, tileName);
+    mettreAJourNombreParts();
     return;
   }
 
@@ -253,6 +260,7 @@ function enregistrerFormulaire(formPage) {
         if (btnModifier) btnModifier.setAttribute('aria-label', 'Modifier Personne à charge');
 
         wrapper.before(clone);
+        mettreAJourNombreParts();
       }
 
       // Réinitialiser le sous-formulaire pour la prochaine saisie
@@ -274,6 +282,7 @@ function enregistrerFormulaire(formPage) {
         'input[name="demi-parts"]:checked:not([value="aucune"])'
       );
       lignes.push({ label: '1/2 part supplémentaire', valeur: demiPartSpecifique ? 'Oui' : 'Non' });
+      mettreAJourNombreParts();
     }
 
     const resumeEl = wrapper.querySelector('.sim-resume');
@@ -302,6 +311,28 @@ function enregistrerFormulaire(formPage) {
   }
 
   naviguerVersVueEnsemble();
+}
+
+function mettreAJourNombreParts() {
+  const badge = document.getElementById('nombre-parts-badge');
+  if (!badge) return;
+
+  let parts = 1;
+
+  // +1 par personne à charge (fiches clonées visibles, hors template caché dans le wrapper)
+  parts += document.querySelectorAll(
+    '.sim-tuile-ouvert[data-tile="personneACharge"]:not([hidden])'
+  ).length;
+
+  // +0.5 si au moins une demi-part spécifique est cochée
+  if (document.querySelector('input[name="demi-parts"]:checked:not([value="aucune"])')) {
+    parts += 0.5;
+  }
+
+  const strong = badge.querySelector('strong');
+  if (strong) {
+    strong.textContent = Number.isInteger(parts) ? String(parts) : parts.toLocaleString('fr-FR');
+  }
 }
 
 function collecterResume(formPage) {
