@@ -5,12 +5,24 @@
  *
  * Détecte la variante via data-variant="a"|"b" sur le body.
  * Les champs de formulaire sont injectés dynamiquement depuis forms.js.
+ *
+ * Tuiles répétables (data-tile-repeatable) : chaque entrée sauvegardée crée
+ * une fiche indépendante insérée avant le wrapper ; le bouton "Ajouter" reste
+ * toujours visible.
  */
 
 import * as FORMS from './forms.js';
 import { validateForm, initBlurValidation } from './validation.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Variante A : injection des panels pré-ouverts au chargement ─────────────
+  if (document.body.dataset.variant === 'a') {
+    document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
+      const panel = wrapper.querySelector('.sim-tuile-ouvert--a:not([hidden])');
+      if (panel) injecterChamps(panel, wrapper.dataset.tile);
+    });
+  }
 
   // ── Variante A : validation au submit du formulaire ─────────────────────────
   const form = document.querySelector('form');
@@ -19,11 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       let isValid = true;
 
-      // Valider les tuiles ouvertes
-      document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
-        const panel = wrapper.querySelector('.sim-tuile-ouvert--a:not([hidden])');
-        if (!panel) return;
-        const tileName = wrapper.dataset.tile;
+      // Valider tous les panels ouverts, y compris les fiches répétables clonées
+      document.querySelectorAll('.sim-tuile-ouvert--a:not([hidden])').forEach(panel => {
+        const wrapper = panel.closest('.sim-tuile-wrapper');
+        const tileName = wrapper?.dataset.tile ?? panel.dataset.tile;
+        if (!tileName) return;
         const messages = FORMS[tileName]?.messages ?? {};
         if (!validateForm(panel, messages)) isValid = false;
       });
@@ -51,21 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Supprimer → referme la tuile
+    // Supprimer → referme ou supprime la fiche
     const btnSupprimer = e.target.closest('.sim-tuile__btn--supprimer');
     if (btnSupprimer) {
       const wrapper = btnSupprimer.closest('.sim-tuile-wrapper');
-      supprimerTuile(wrapper);
+      if (wrapper) {
+        supprimerTuile(wrapper);
+      } else {
+        // Fiche clonée hors wrapper : supprimer directement
+        btnSupprimer.closest('.sim-tuile-ouvert')?.remove();
+      }
       return;
     }
 
     // Modifier → ré-ouvre le formulaire (variante B)
     const btnModifier = e.target.closest('.sim-tuile__btn--modifier');
-    if (btnModifier) {
+    if (btnModifier && variant === 'b') {
       const wrapper = btnModifier.closest('.sim-tuile-wrapper');
-      if (wrapper && variant === 'b') {
+      const tileEl = wrapper ?? btnModifier.closest('[data-tile]');
+      if (tileEl) {
         _dernierBoutonActif = btnModifier;
-        naviguerVersFormulaire(wrapper.dataset.tile);
+        naviguerVersFormulaire(tileEl.dataset.tile);
       }
       return;
     }
@@ -109,6 +127,21 @@ function ouvrirTuileA(wrapper) {
   const tileName = wrapper.dataset.tile;
   const panel = wrapper.querySelector('.sim-tuile-ouvert--a');
   if (!panel) return;
+
+  if ('tileRepeatable' in wrapper.dataset) {
+    // Cloner le template et l'insérer avant le wrapper
+    const clone = panel.cloneNode(true);
+    clone.dataset.tile = tileName;
+    clone.querySelectorAll('[data-fields]').forEach(el => {
+      el.innerHTML = '';
+      delete el.dataset.injected;
+    });
+    clone.hidden = false;
+    wrapper.before(clone);
+    injecterChamps(clone, tileName);
+    return;
+  }
+
   injecterChamps(panel, tileName);
   wrapper.querySelector('.sim-tuile').hidden = true;
   panel.hidden = false;
@@ -179,9 +212,71 @@ function enregistrerFormulaire(formPage) {
   const wrapper = document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"]`);
 
   if (wrapper) {
-    const lignes = collecterResume(formPage);
-    const resumeEl = wrapper.querySelector('.sim-resume');
 
+    // ── Tuile répétable ───────────────────────────────────────────────────────
+    if ('tileRepeatable' in wrapper.dataset) {
+      let lignes = collecterResume(formPage);
+      const panelTemplate = wrapper.querySelector('.sim-tuile-ouvert--b');
+
+      if (panelTemplate) {
+        const clone = panelTemplate.cloneNode(true);
+        clone.dataset.tile = tileName;
+        clone.hidden = false;
+
+        // Remplissage spécifique personne à charge
+        const prenom = formPage.querySelector('input[name="pac-intitule"]')?.value.trim();
+        const prenomEl = clone.querySelector('[data-pac-prenom]');
+        if (prenomEl) prenomEl.textContent = prenom || 'Personne à charge';
+
+        const situationSelect = formPage.querySelector('select[name="pac-situation"]');
+        const situationTexte = situationSelect?.selectedIndex > 0
+          ? situationSelect.options[situationSelect.selectedIndex].text : '';
+        const situationEl = clone.querySelector('[data-pac-situation]');
+        if (situationEl) {
+          situationEl.textContent = situationTexte;
+          situationEl.hidden = !situationTexte;
+        }
+
+        lignes = lignes.filter(l => l.label !== 'Prénom' && l.label !== 'Situation');
+        const resumeEl = clone.querySelector('.sim-resume');
+        if (resumeEl && lignes.length > 0) {
+          resumeEl.innerHTML = lignes.map(({ label, valeur }) =>
+            `<div class="sim-resume__ligne">
+              <span class="sim-resume__label">${label}</span>
+              <strong class="sim-resume__valeur">${valeur}</strong>
+            </div>`
+          ).join('');
+          resumeEl.hidden = false;
+        }
+
+        const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
+        if (btnModifier) btnModifier.setAttribute('aria-label', 'Modifier Personne à charge');
+
+        wrapper.before(clone);
+      }
+
+      // Réinitialiser le sous-formulaire pour la prochaine saisie
+      formPage.querySelectorAll('[data-fields]').forEach(el => {
+        el.innerHTML = '';
+        delete el.dataset.injected;
+      });
+
+      const btnAjouter = wrapper.querySelector('.sim-tuile__btn--ajouter');
+      naviguerVersVueEnsemble({ focusEl: btnAjouter ?? null });
+      return;
+    }
+
+    // ── Tuile standard ────────────────────────────────────────────────────────
+    let lignes = collecterResume(formPage);
+
+    if (tileName === 'situationPersonnelle') {
+      const demiPartSpecifique = formPage.querySelector(
+        'input[name="demi-parts"]:checked:not([value="aucune"])'
+      );
+      lignes.push({ label: '1/2 part supplémentaire', valeur: demiPartSpecifique ? 'Oui' : 'Non' });
+    }
+
+    const resumeEl = wrapper.querySelector('.sim-resume');
     if (resumeEl && lignes.length > 0) {
       resumeEl.innerHTML = lignes.map(({ label, valeur }) =>
         `<div class="sim-resume__ligne">
@@ -196,7 +291,6 @@ function enregistrerFormulaire(formPage) {
     const panelB = wrapper.querySelector('.sim-tuile-ouvert--b');
     if (panelB) panelB.hidden = false;
 
-    // Contextualiser le bouton "Modifier" pour les lecteurs d'écran
     const btnModifier = panelB?.querySelector('.sim-tuile__btn--modifier');
     if (btnModifier) {
       const nomTuile = wrapper.querySelector('.sim-tuile__name')?.textContent.trim() ?? tileName;
@@ -213,39 +307,33 @@ function enregistrerFormulaire(formPage) {
 function collecterResume(formPage) {
   const lignes = [];
 
-  // Champs numériques monétaires (hors champs année traités séparément)
-  formPage.querySelectorAll('input[type="number"][data-resume-label]:not([data-resume-type="annee"])').forEach(input => {
-    if (!input.value || input.closest('[hidden]')) return;
-    const val = parseInt(input.value, 10).toLocaleString('fr-FR') + '\u00a0€';
-    lignes.push({ label: input.dataset.resumeLabel, valeur: val });
-  });
+  formPage.querySelectorAll('[data-resume-label]').forEach(el => {
+    if (el.closest('[hidden]')) return;
 
-  // Champs année (sans symbole €)
-  formPage.querySelectorAll('input[data-resume-type="annee"][data-resume-label]').forEach(input => {
-    if (!input.value || input.closest('[hidden]')) return;
-    lignes.push({ label: input.dataset.resumeLabel, valeur: input.value });
-  });
+    if (el.tagName === 'FIELDSET') {
+      const checked = el.querySelector('input[type="radio"]:checked');
+      if (!checked) return;
+      const labelEl = el.querySelector(`label[for="${checked.id}"]`);
+      const valeur = checked.dataset.resumeValue
+        ?? (labelEl ? labelEl.textContent.trim() : checked.value);
+      lignes.push({ label: el.dataset.resumeLabel, valeur });
 
-  // Champs texte
-  formPage.querySelectorAll('input[type="text"][data-resume-label]').forEach(input => {
-    if (!input.value || input.closest('[hidden]')) return;
-    lignes.push({ label: input.dataset.resumeLabel, valeur: input.value });
-  });
+    } else if (el.tagName === 'SELECT') {
+      if (!el.value) return;
+      lignes.push({ label: el.dataset.resumeLabel, valeur: el.options[el.selectedIndex].text });
 
-  // Listes déroulantes
-  formPage.querySelectorAll('select[data-resume-label]').forEach(select => {
-    if (!select.value || select.closest('[hidden]')) return;
-    lignes.push({ label: select.dataset.resumeLabel, valeur: select.options[select.selectedIndex].text });
-  });
+    } else if (el.type === 'text') {
+      if (!el.value) return;
+      lignes.push({ label: el.dataset.resumeLabel, valeur: el.value });
 
-  // Groupes radio
-  formPage.querySelectorAll('fieldset[data-resume-label]').forEach(fieldset => {
-    if (fieldset.closest('[hidden]')) return;
-    const checked = fieldset.querySelector('input[type="radio"]:checked');
-    if (checked) {
-      const labelEl = fieldset.querySelector(`label[for="${checked.id}"]`);
-      const valeur = labelEl ? labelEl.textContent.trim() : checked.value;
-      lignes.push({ label: fieldset.dataset.resumeLabel, valeur });
+    } else if (el.type === 'number') {
+      if (!el.value) return;
+      if (el.dataset.resumeType === 'annee') {
+        lignes.push({ label: el.dataset.resumeLabel, valeur: el.value });
+      } else {
+        const val = parseInt(el.value, 10).toLocaleString('fr-FR') + ' €';
+        lignes.push({ label: el.dataset.resumeLabel, valeur: val });
+      }
     }
   });
 

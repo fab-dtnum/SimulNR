@@ -22,7 +22,7 @@ export function template() {
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-loyers" name="fonciers-loyers"
                min="0"
-               data-resume-label="Loyers annuels bruts" required>
+               data-resume-label="Loyers bruts" required>
       </div>
     </div>
 
@@ -34,11 +34,11 @@ export function template() {
       </legend>
       <div class="fr-fieldset__content">
         <div class="fr-radio-group">
-          <input type="radio" id="fonciers-regime-oui" name="fonciers-regime" value="oui" required>
+          <input type="radio" id="fonciers-regime-oui" name="fonciers-regime" value="oui" data-resume-value="Réel" required>
           <label class="fr-label" for="fonciers-regime-oui">Oui</label>
         </div>
         <div class="fr-radio-group">
-          <input type="radio" id="fonciers-regime-non" name="fonciers-regime" value="non">
+          <input type="radio" id="fonciers-regime-non" name="fonciers-regime" value="non" data-resume-value="Micro">
           <label class="fr-label" for="fonciers-regime-non">Non</label>
         </div>
       </div>
@@ -96,7 +96,7 @@ export function template() {
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-deficits" name="fonciers-deficits"
                min="0"
-               data-resume-label="Déficits fonciers">
+               data-resume-label="Déficits fonciers précédents">
       </div>
     </div>
   `;

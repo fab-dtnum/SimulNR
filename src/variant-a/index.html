@@ -60,39 +60,21 @@
 
             <div class="sim-tuiles-list">
 
-              <!-- Tuile Situation personnelle -->
+              <!-- Tuile Situation personnelle (toujours ouverte en variante A) -->
               <div class="sim-tuile-wrapper" data-tile="situationPersonnelle">
-
-                <!-- Fermé -->
-                <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
-                  <div class="sim-tuile__info fr-pr-2w">
-                    <div class="sim-tuile__title-row">
-                      <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
-                      <span class="sim-tuile__name">Situation personnelle</span>
-                    </div>
-                  </div>
-                  <span class="sim-tuile__action">
-                    <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
-                    Compléter
-                  </span>
-                </button>
-
-                <!-- Ouvert inline -->
-                <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
+                <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w">
                   <div class="sim-tuile-ouvert__header">
                     <div class="sim-tuile__title-row">
                       <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
                       <span class="sim-tuile__name">Situation personnelle</span>
                     </div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Situation personnelle"></button>
                   </div>
                   <div data-fields></div>
                 </div>
-
               </div>
 
               <!-- Tuile Personne à charge -->
-              <div class="sim-tuile-wrapper" data-tile="personneACharge">
+              <div class="sim-tuile-wrapper" data-tile="personneACharge" data-tile-repeatable>
 
                 <!-- Fermé -->
                 <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">

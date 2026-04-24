@@ -33,7 +33,8 @@ export function template() {
       </select>
     </div>
 
-    <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend" hidden>
+    <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
+              data-resume-label="Prise en charge" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
         Comment cet enfant est-il pris en charge ?
       </legend>
@@ -49,9 +50,10 @@ export function template() {
       </div>
     </fieldset>
 
-    <fieldset class="fr-fieldset" id="pac-invalidite" aria-labelledby="pac-invalidite-legend" hidden>
+    <fieldset class="fr-fieldset" id="pac-invalidite" aria-labelledby="pac-invalidite-legend"
+              data-resume-label="Carte invalidité ou CMI-invalidité" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="pac-invalidite-legend">
-        Votre enfant a-t-il une carte d'invalidité ou de la CMI-invalidité ?
+        Cet enfant a-t-il une carte d'invalidité ou de la CMI-invalidité ?
       </legend>
       <div class="fr-fieldset__content">
         <div class="fr-radio-group">
@@ -67,13 +69,14 @@ export function template() {
 
     <div class="fr-input-group">
       <label class="fr-label" for="pac-intitule">
-        Intitulé pour la personne (optionnel) <span class="fr-hint-text">Cet intitulé est uniquement utilisé pour vous aider à identifier cette personne dans la suite du formulaire.</span>
+        Prénom (optionnel) <span class="fr-hint-text">Le prénom est uniquement utilisé pour vous aider à identifier cette personne dans la suite du formulaire.</span>
       </label>
       <input class="fr-input" type="text" id="pac-intitule" name="pac-intitule"
-             data-resume-label="Intitulé">
+             data-resume-label="Prénom">
     </div>
 
-    <fieldset class="fr-fieldset" id="pac-seul" aria-labelledby="pac-seul-legend" hidden>
+    <fieldset class="fr-fieldset" id="pac-seul" aria-labelledby="pac-seul-legend"
+              data-resume-label="Parent seul" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="pac-seul-legend">
         Vivez-vous seul avec vos enfants ou des personnes invalides recueillies sous votre toit ?
       </legend>

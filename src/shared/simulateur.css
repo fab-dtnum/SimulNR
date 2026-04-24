@@ -313,6 +313,14 @@
   white-space: nowrap;
 }
 
+.sim-resume__situation {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  color: var(--text-default-grey);
+  margin: 0;
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────────────────── */
 
 @media (max-width: 767px) {
