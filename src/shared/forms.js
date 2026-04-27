@@ -15,5 +15,6 @@ import * as bnc       from './forms/bnc.js';
 import * as bic       from './forms/bic.js';
 import * as agricoles       from './forms/agricoles.js';
 import * as deficitsGlobaux from './forms/deficits-globaux.js';
+import * as exonerationCsg  from './forms/exoneration-csg.js';
 
-export { situationPersonnelle, personneACharge, fonciers, pensions, salaires, lmnp, bnc, bic, agricoles, deficitsGlobaux };
+export { situationPersonnelle, personneACharge, fonciers, pensions, salaires, lmnp, bnc, bic, agricoles, deficitsGlobaux, exonerationCsg };

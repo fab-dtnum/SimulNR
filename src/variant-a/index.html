@@ -161,20 +161,37 @@
 
               </div>
 
-              <!-- Stub — non implémenté dans ce prototype -->
-              <button type="button" class="sim-tuile fr-py-2w fr-px-3w" disabled>
-                <div class="sim-tuile__info fr-pr-2w">
-                  <div class="sim-tuile__title-row">
-                    <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
-                    <span class="sim-tuile__name">Exonération CSG-CRDS</span>
+              <!-- Tuile Exonération CSG-CRDS -->
+              <div class="sim-tuile-wrapper" data-tile="exonerationCsg">
+
+                <!-- Fermé -->
+                <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w" disabled>
+                  <div class="sim-tuile__info fr-pr-2w">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="sim-tuile__name">Exonération CSG-CRDS</span>
+                    </div>
+                    <p class="sim-tuile__desc">Cette rubrique sur l'exonération de la CSG (Contribution Sociale Généralisée) et de la CRDS (Contribution pour le Remboursement de la Dette Sociale) est disponible si des revenus locatifs sont ajoutés.</p>
                   </div>
-                  <p class="sim-tuile__desc">Cette rubrique sur l'exonération de la CSG (Contribution Sociale Généralisée) et de la CRDS (Contribution pour le Remboursement de la Dette Sociale) est disponible si des revenus locatifs sont ajoutés.</p>
+                  <span class="sim-tuile__action">
+                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                    Ajouter
+                  </span>
+                </button>
+
+                <!-- Ouvert inline -->
+                <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
+                  <div class="sim-tuile-ouvert__header">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="sim-tuile__name">Exonération CSG-CRDS</span>
+                    </div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Exonération CSG-CRDS"></button>
+                  </div>
+                  <div data-fields></div>
                 </div>
-                <span class="sim-tuile__action">
-                  <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
-                  Ajouter
-                </span>
-              </button>
+
+              </div>
 
             </div>
           </section>

@@ -132,6 +132,18 @@
   background-color: var(--background-alt-grey-hover) !important;
 }
 
+.sim-tuile:disabled {
+  cursor: default;
+  border-color: var(--border-disabled-grey);
+}
+
+.sim-tuile:disabled .sim-tuile__name,
+.sim-tuile:disabled .sim-tuile__icone,
+.sim-tuile:disabled .sim-tuile__desc,
+.sim-tuile:disabled .sim-tuile__action {
+  color: var(--text-disabled-grey);
+}
+
 .sim-tuile__info {
   display: flex;
   flex-direction: column;
@@ -336,6 +348,19 @@
   font-weight: 700;
   color: var(--text-default-grey);
   margin: 0;
+}
+
+/* ── DOUBLE CHAMPS CÔTE À CÔTE ──────────────────────────────────────────────── */
+
+.sim-double-champs {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.sim-double-champs > * {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────────────────── */

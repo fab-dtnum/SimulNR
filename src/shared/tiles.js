@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!wrapper) return;
       if (variant === 'a') {
         ouvrirTuileA(wrapper);
+        majExonerationCsgDisabled();
       } else {
         _dernierBoutonActif = btnAjouter;
         naviguerVersFormulaire(wrapper.dataset.tile);
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSupprimer.closest('.sim-tuile-ouvert')?.remove();
         mettreAJourNombreParts();
       }
+      majExonerationCsgDisabled();
       return;
     }
 
@@ -270,6 +272,7 @@ function enregistrerFormulaire(formPage) {
       });
 
       const btnAjouter = wrapper.querySelector('.sim-tuile__btn--ajouter');
+      majExonerationCsgDisabled();
       naviguerVersVueEnsemble({ focusEl: btnAjouter ?? null });
       return;
     }
@@ -306,6 +309,7 @@ function enregistrerFormulaire(formPage) {
       btnModifier.setAttribute('aria-label', `Modifier ${nomTuile}`);
     }
 
+    majExonerationCsgDisabled();
     naviguerVersVueEnsemble({ focusEl: btnModifier ?? null });
     return;
   }
@@ -333,6 +337,17 @@ function mettreAJourNombreParts() {
   if (strong) {
     strong.textContent = Number.isInteger(parts) ? String(parts) : parts.toLocaleString('fr-FR');
   }
+}
+
+// ── Exonération CSG-CRDS : activation conditionnelle ────────────────────────
+
+function majExonerationCsgDisabled() {
+  const actif =
+    !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]') ||
+    !!document.querySelector('.sim-tuile-wrapper[data-tile="lmnp"] .sim-tuile[hidden]');
+  document.querySelectorAll('.sim-tuile-wrapper[data-tile="exonerationCsg"] .sim-tuile').forEach(btn => {
+    btn.disabled = !actif;
+  });
 }
 
 function collecterResume(formPage) {
