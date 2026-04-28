@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       let isValid = true;
+      let premierErreur = null;
 
       // Valider tous les panels ouverts, y compris les fiches répétables clonées
       document.querySelectorAll('.sim-tuile-ouvert--a:not([hidden])').forEach(panel => {
@@ -37,12 +38,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const tileName = wrapper?.dataset.tile ?? panel.dataset.tile;
         if (!tileName) return;
         const messages = FORMS[tileName]?.messages ?? {};
-        if (!validateForm(panel, messages)) isValid = false;
+        if (!validateForm(panel, messages)) {
+          isValid = false;
+          premierErreur ??= panel.querySelector('.fr-input-group--error, .fr-fieldset--error');
+        }
       });
+
+      // Vérifier qu'au moins un revenu est présent
+      const errRev = validerRevenus();
+      if (errRev) {
+        isValid = false;
+        premierErreur ??= errRev;
+      }
+
+      if (!isValid && premierErreur) {
+        premierErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
 
       if (isValid) {
         // TODO : soumettre les données
       }
+    });
+  }
+
+  // ── Variante B : validation au submit du formulaire ─────────────────────────
+  if (form && document.body.dataset.variant === 'b') {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // 1. Situation personnelle obligatoire
+      const errSP = validerSituationPersonnelleB();
+      if (errSP) {
+        errSP.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 2. Au moins un revenu ajouté
+      const errRev = validerRevenus();
+      if (errRev) {
+        errRev.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // TODO : soumettre les données
     });
   }
 
@@ -211,6 +249,18 @@ function naviguerVersVueEnsemble({ scroll = true, focusEl = null } = {}) {
   if (cible) cible.focus();
   _dernierBoutonActif = null;
   _cloneEnCoursDEdition = null;
+
+  // Effacer les erreurs de validation si la condition est maintenant résolue
+  const spWrapper = document.querySelector('.sim-tuile-wrapper[data-tile="situationPersonnelle"]');
+  if (spWrapper?.classList.contains('sim-tuile-wrapper--erreur') && spWrapper.querySelector('.sim-tuile')?.hidden) {
+    spWrapper.classList.remove('sim-tuile-wrapper--erreur');
+    spWrapper.querySelector('.sim-tuile__msg-erreur')?.remove();
+  }
+  const errRevenu = document.getElementById('erreur-revenus');
+  const section = document.querySelector('section[aria-labelledby="titre-revenus"]');
+  if (errRevenu && section?.querySelector('.sim-tuile-wrapper .sim-tuile[hidden]')) {
+    errRevenu.hidden = true;
+  }
 }
 
 function scrollVersSommet() {
@@ -333,7 +383,7 @@ function enregistrerFormulaire(formPage) {
 
     const btnModifier = panelB?.querySelector('.sim-tuile__btn--modifier');
     if (btnModifier) {
-      const nomTuile = wrapper.querySelector('.sim-tuile__name')?.textContent.trim() ?? tileName;
+      const nomTuile = wrapper.querySelector('.sim-tuile .fr-h6')?.textContent.trim() ?? tileName;
       btnModifier.setAttribute('aria-label', `Modifier ${nomTuile}`);
     }
 
@@ -399,6 +449,58 @@ function majExonerationCsgDisabled() {
   document.querySelectorAll('.sim-tuile-wrapper[data-tile="exonerationCsg"] .sim-tuile').forEach(btn => {
     btn.disabled = !actif;
   });
+}
+
+// ── Validation du bouton Calculer ────────────────────────────────────────────
+
+function validerSituationPersonnelleB() {
+  const wrapper = document.querySelector('.sim-tuile-wrapper[data-tile="situationPersonnelle"]');
+  if (!wrapper) return null;
+
+  const tuile = wrapper.querySelector('.sim-tuile');
+  const estComplete = tuile?.hidden === true;
+
+  if (!estComplete) {
+    wrapper.classList.add('sim-tuile-wrapper--erreur');
+    let errEl = wrapper.querySelector('.sim-tuile__msg-erreur');
+    if (!errEl) {
+      errEl = document.createElement('div');
+      errEl.className = 'fr-messages-group sim-tuile__msg-erreur';
+      errEl.innerHTML = '<p class="fr-message fr-message--error">Veuillez compléter cette rubrique.</p>';
+      tuile?.after(errEl);
+    }
+    errEl.hidden = false;
+    return wrapper;
+  }
+
+  wrapper.classList.remove('sim-tuile-wrapper--erreur');
+  wrapper.querySelector('.sim-tuile__msg-erreur')?.remove();
+  return null;
+}
+
+function validerRevenus() {
+  const section = document.querySelector('section[aria-labelledby="titre-revenus"]');
+  if (!section) return null;
+
+  const hasRevenu = !!section.querySelector('.sim-tuile-wrapper .sim-tuile[hidden]');
+  const tuilesList = section.querySelector('.sim-tuiles-list');
+  const erreurId = 'erreur-revenus';
+  let erreurEl = document.getElementById(erreurId);
+
+  if (!hasRevenu) {
+    if (!erreurEl) {
+      erreurEl = document.createElement('div');
+      erreurEl.id = erreurId;
+      erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+      erreurEl.innerHTML = '<p>Veuillez ajouter au moins une source de revenus pour calculer votre imposition.</p>';
+      tuilesList?.before(erreurEl);
+    }
+    erreurEl.hidden = false;
+    return erreurEl;
+  }
+
+  if (erreurEl) erreurEl.hidden = true;
+  return null;
 }
 
 function collecterResume(formPage) {
