@@ -1,0 +1,13 @@
+/* ── ICÔNES PERSONNALISÉES ───────────────────────────────────────────────────
+ * Ne pas modifier les fichiers CSS du DSFR directement.
+ * Ce fichier étend le système d'icônes avec les icônes propres au projet.
+ *
+ * Convention : fr-icon-[nom-de-l-icone]
+ * Les fichiers SVG sont placés dans ./icons/
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+.fr-icon-percent-line::before,
+.fr-icon-percent-line::after {
+  -webkit-mask-image: url("./icons/percent-line.svg");
+  mask-image: url("./icons/percent-line.svg");
+}
