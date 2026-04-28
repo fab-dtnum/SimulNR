@@ -89,13 +89,19 @@ export function init(container) {
   function majConjoint() {
     const isMarriage = !!document.querySelector('input[name="situation-familiale"][value="mariage-pacs"]:checked');
     const conjointGroup = container.querySelector('#csg-conjoint-group');
-    if (conjointGroup) conjointGroup.hidden = !isMarriage;
+    if (conjointGroup) {
+      conjointGroup.hidden = !isMarriage;
+      conjointGroup.querySelectorAll('input[type="radio"]').forEach(inp => { inp.required = isMarriage; });
+    }
   }
 
   function majFonciers() {
     const fonciersPresent = !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]');
     const fonciersGroup = container.querySelector('#csg-fonciers-group');
-    if (fonciersGroup) fonciersGroup.hidden = !fonciersPresent;
+    if (fonciersGroup) {
+      fonciersGroup.hidden = !fonciersPresent;
+      fonciersGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = fonciersPresent; });
+    }
   }
 
   majConjoint();

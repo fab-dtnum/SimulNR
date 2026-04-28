@@ -7,6 +7,14 @@ export const messages = {
   'fonciers-regime': {
     valueMissing: 'Veuillez indiquer si vous avez opté pour le régime réel.',
   },
+  'fonciers-charges': {
+    valueMissing:   'Le montant des charges déductibles est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
+  'fonciers-interets': {
+    valueMissing:   'Le montant des intérêts d\'emprunt est obligatoire.',
+    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+  },
   'fonciers-travaux': {
     valueMissing: 'Veuillez indiquer si vous avez réalisé des travaux de rénovation énergétique.',
   },
@@ -53,7 +61,7 @@ export function template() {
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-charges" name="fonciers-charges"
                min="0"
-               data-resume-label="Charges déductibles">
+               data-resume-label="Charges déductibles" data-required-when-reel>
       </div>
     </div>
 
@@ -65,7 +73,7 @@ export function template() {
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-interets" name="fonciers-interets"
                min="0"
-               data-resume-label="Intérêts d'emprunt">
+               data-resume-label="Intérêts d'emprunt" data-required-when-reel>
       </div>
     </div>
 

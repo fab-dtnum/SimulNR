@@ -23,7 +23,7 @@ export function template() {
       <select class="fr-select" id="pac-situation" name="pac-situation" required
               data-resume-label="Situation">
         <option value="" selected disabled hidden>Sélectionner une situation</option>
-        <option value="enfant-mineur">Enfant de moins de 18 ans et non marié, ou enfant handicapé quel que soit l'âge</option>
+        <option value="enfant-mineur">Enfant mineur et non marié, ou enfant handicapé quel que soit l'âge</option>
         <option value="enfant-majeur-sans-enfant">Enfant majeur, sans enfant</option>
         <option value="enfant-majeur-marie">Enfant majeur marié ou pacsé</option>
         <option value="conjoint-enfant-marie">Conjoint ou conjointe de votre enfant majeur marié ou pacsé</option>
@@ -31,6 +31,9 @@ export function template() {
         <option value="petit-enfant">Enfant de votre enfant majeur non marié ou pacsé</option>
         <option value="personne-invalide">Personne invalide vivant sous votre toit</option>
       </select>
+      <div class="fr-messages-group">
+        <p class="fr-message fr-message--info">En France, une personne est majeure à partir de 18 ans.</p>
+      </div>
     </div>
 
     <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
