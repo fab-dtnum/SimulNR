@@ -38,7 +38,7 @@ export function template() {
           <label class="fr-label" for="fonciers-regime-oui">Oui</label>
         </div>
         <div class="fr-radio-group">
-          <input type="radio" id="fonciers-regime-non" name="fonciers-regime" value="non" data-resume-value="Micro">
+          <input type="radio" id="fonciers-regime-non" name="fonciers-regime" value="non" data-resume-value="Micro-foncier">
           <label class="fr-label" for="fonciers-regime-non">Non</label>
         </div>
       </div>

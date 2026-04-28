@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const tileEl = wrapper ?? btnModifier.closest('[data-tile]');
       if (tileEl) {
         _dernierBoutonActif = btnModifier;
+        // Clone hors wrapper = modification d'une fiche existante (tuile répétable)
+        if (!wrapper) _cloneEnCoursDEdition = tileEl;
         naviguerVersFormulaire(tileEl.dataset.tile);
       }
       return;
@@ -174,12 +176,16 @@ function supprimerTuile(wrapper) {
 
 let _scrollAvantFormulaire = null;
 let _dernierBoutonActif = null;
+let _cloneEnCoursDEdition = null;
 
 function naviguerVersFormulaire(tileName) {
   const vueEnsemble = document.getElementById('vue-ensemble');
   const formPage = document.querySelector(`.sim-sous-formulaire[data-tile="${tileName}"]`);
   if (!formPage) return;
   injecterChamps(formPage, tileName);
+  if (_cloneEnCoursDEdition?.dataset.formValues) {
+    preremplirFormulaire(formPage, JSON.parse(_cloneEnCoursDEdition.dataset.formValues));
+  }
   _scrollAvantFormulaire = window.scrollY;
   if (vueEnsemble) vueEnsemble.hidden = true;
   formPage.hidden = false;
@@ -204,6 +210,7 @@ function naviguerVersVueEnsemble({ scroll = true, focusEl = null } = {}) {
   const cible = focusEl ?? _dernierBoutonActif;
   if (cible) cible.focus();
   _dernierBoutonActif = null;
+  _cloneEnCoursDEdition = null;
 }
 
 function scrollVersSommet() {
@@ -226,6 +233,18 @@ function enregistrerFormulaire(formPage) {
     if ('tileRepeatable' in wrapper.dataset) {
       let lignes = collecterResume(formPage);
       const panelTemplate = wrapper.querySelector('.sim-tuile-ouvert--b');
+      let focusCible = wrapper.querySelector('.sim-tuile__btn--ajouter') ?? null;
+
+      // Sérialiser les valeurs du formulaire pour permettre la ré-édition
+      const formValues = {};
+      formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+        if (!field.name) return;
+        if (field.type === 'radio' || field.type === 'checkbox') {
+          if (field.checked) formValues[field.name] = field.value;
+        } else {
+          formValues[field.name] = field.value;
+        }
+      });
 
       if (panelTemplate) {
         const clone = panelTemplate.cloneNode(true);
@@ -260,9 +279,19 @@ function enregistrerFormulaire(formPage) {
 
         const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
         if (btnModifier) btnModifier.setAttribute('aria-label', 'Modifier Personne à charge');
+        focusCible = btnModifier ?? focusCible;
 
-        wrapper.before(clone);
-        mettreAJourNombreParts();
+        clone.dataset.formValues = JSON.stringify(formValues);
+
+        if (_cloneEnCoursDEdition) {
+          // Modification d'une fiche existante : remplacer le clone en place
+          _cloneEnCoursDEdition.replaceWith(clone);
+          _cloneEnCoursDEdition = null;
+        } else {
+          // Nouvelle fiche : insérer avant le wrapper
+          wrapper.before(clone);
+          mettreAJourNombreParts();
+        }
       }
 
       // Réinitialiser le sous-formulaire pour la prochaine saisie
@@ -271,9 +300,8 @@ function enregistrerFormulaire(formPage) {
         delete el.dataset.injected;
       });
 
-      const btnAjouter = wrapper.querySelector('.sim-tuile__btn--ajouter');
       majExonerationCsgDisabled();
-      naviguerVersVueEnsemble({ focusEl: btnAjouter ?? null });
+      naviguerVersVueEnsemble({ focusEl: focusCible });
       return;
     }
 
@@ -337,6 +365,29 @@ function mettreAJourNombreParts() {
   if (strong) {
     strong.textContent = Number.isInteger(parts) ? String(parts) : parts.toLocaleString('fr-FR');
   }
+}
+
+// ── Pré-remplissage du formulaire (mode édition) ─────────────────────────────
+
+function preremplirFormulaire(formPage, values) {
+  const fieldsEl = formPage.querySelector('[data-fields]');
+  if (!fieldsEl) return;
+
+  // Les selects en premier : leur changement peut déclencher la visibilité conditionnelle d'autres champs
+  fieldsEl.querySelectorAll('select').forEach(field => {
+    if (!(field.name in values)) return;
+    field.value = values[field.name];
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  fieldsEl.querySelectorAll('input, textarea').forEach(field => {
+    if (!field.name || !(field.name in values)) return;
+    if (field.type === 'radio' || field.type === 'checkbox') {
+      field.checked = field.value === values[field.name];
+    } else {
+      field.value = values[field.name];
+    }
+  });
 }
 
 // ── Exonération CSG-CRDS : activation conditionnelle ────────────────────────
