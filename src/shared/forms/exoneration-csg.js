@@ -93,14 +93,20 @@ export function init(container) {
       conjointGroup.hidden = !isMarriage;
       conjointGroup.querySelectorAll('input[type="radio"]').forEach(inp => { inp.required = isMarriage; });
     }
+    majFonciers();
   }
 
   function majFonciers() {
     const fonciersPresent = !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]');
+    const isMarriage = !!document.querySelector('input[name="situation-familiale"][value="mariage-pacs"]:checked');
+    const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
+    const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
+    const tousDeux = affVous === 'oui' && (!isMarriage || affConjoint === 'oui');
+    const show = fonciersPresent && isMarriage && !tousDeux;
     const fonciersGroup = container.querySelector('#csg-fonciers-group');
     if (fonciersGroup) {
-      fonciersGroup.hidden = !fonciersPresent;
-      fonciersGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = fonciersPresent; });
+      fonciersGroup.hidden = !show;
+      fonciersGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = show; });
     }
   }
 
@@ -120,6 +126,10 @@ export function init(container) {
   }
   bindComplement('csg-fonciers-vous', 'csg-fonciers-conjoint');
   bindComplement('csg-fonciers-conjoint', 'csg-fonciers-vous');
+
+  container.addEventListener('change', (e) => {
+    if (e.target.name === 'csg-affiliation-vous' || e.target.name === 'csg-affiliation-conjoint') majFonciers();
+  });
 
   document.addEventListener('change', (e) => {
     if (e.target.name === 'situation-familiale') majConjoint();
