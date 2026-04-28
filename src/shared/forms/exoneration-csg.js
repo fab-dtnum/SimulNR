@@ -3,6 +3,17 @@ export const messages = {
   'csg-affiliation-vous': {
     valueMissing: 'Veuillez répondre à cette question.',
   },
+  'csg-affiliation-conjoint': {
+    valueMissing: 'Veuillez répondre à cette question.',
+  },
+  'csg-fonciers-vous': {
+    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
+    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
+  },
+  'csg-fonciers-conjoint': {
+    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
+    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
+  },
 };
 
 export function template() {
