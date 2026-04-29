@@ -212,6 +212,58 @@
   margin-top: 0.25rem;
 }
 
+/* ── CHECKBOX TILES ─────────────────────────────────────────────────────────── */
+
+.sim-checkbox-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.sim-checkbox-tile-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Conteneur de la tuile : fond, bordure, états hover/coché */
+.sim-checkbox-tile {
+  background-color: var(--background-default-grey);
+  border: 1px solid var(--border-default-grey);
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 3rem;
+}
+
+.sim-checkbox-tile:hover {
+  background-color: var(--background-default-grey-hover);
+}
+
+.sim-checkbox-tile:has(input:checked) {
+  border-color: var(--border-action-high-blue-france);
+  background-color: var(--background-alt-blue-france);
+}
+
+/* Composant DSFR fr-checkbox-group à l'intérieur de la tuile */
+.sim-checkbox-tile .fr-checkbox-group {
+  margin-bottom: 0;
+  padding: 0.75rem 1rem;
+}
+
+.sim-checkbox-tile .fr-label {
+  cursor: pointer;
+}
+
+/* Conteneur des sous-choix */
+.sim-checkbox-tile__subchoices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1.5rem;
+}
+
 /* ── BOUTON CALCULER ────────────────────────────────────────────────────────── */
 
 
