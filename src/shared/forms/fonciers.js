@@ -15,9 +15,6 @@ export const messages = {
     valueMissing:   'Le montant des intérêts d\'emprunt est obligatoire.',
     rangeUnderflow: 'Le montant ne peut pas être négatif.',
   },
-  'fonciers-travaux': {
-    valueMissing: 'Veuillez indiquer si vous avez réalisé des travaux de rénovation énergétique.',
-  },
 };
 
 export function template() {
@@ -54,9 +51,20 @@ export function template() {
 
     <!-- Champs affichés uniquement en régime réel -->
     <div class="fr-input-group" data-fonciers-regime-field hidden>
+      <label class="fr-label" for="fonciers-travaux">
+        Montant des dépenses des travaux de rénovation énergétique, permettant à un logement de passer d'une classe énergétique E, F ou G, à une classe A, B, C ou D, payés en 2025 (optionnel)
+      </label>
+      <div class="fr-input-wrap fr-icon-money-euro-circle-line">
+        <input class="fr-input" type="number" id="fonciers-travaux" name="fonciers-travaux"
+               min="0"
+               data-resume-label="Travaux de rénovation énergétique">
+      </div>
+    </div>
+
+    <div class="fr-input-group" data-fonciers-regime-field hidden>
       <label class="fr-label" for="fonciers-charges">
         Montant de vos charges déductibles, hors intérêts d'emprunt
-        <span class="fr-hint-text">Indiquez le montant total sur l'année. Exemple : 4000</span>
+        <span class="fr-hint-text">Indiquez le montant total sur l'année, en incluant les éventuelles dépenses des travaux de rénovation énergétique. Exemple : 4000</span>
       </label>
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-charges" name="fonciers-charges"
@@ -76,25 +84,6 @@ export function template() {
                data-resume-label="Intérêts d'emprunt" data-required-when-reel>
       </div>
     </div>
-
-    <fieldset class="fr-fieldset" id="fonciers-travaux" aria-labelledby="fonciers-travaux-legend"
-              data-resume-label="Travaux de rénovation énergétique"
-              data-fonciers-regime-field hidden>
-      <legend class="fr-fieldset__legend fr-text--regular" id="fonciers-travaux-legend">
-        Avez-vous réalisé des travaux de rénovation énergétique, permettant à un logement de passer d'une classe énergétique E, F ou G, à une classe A, B, C ou D, payés entre 2023 et 2025 ?
-      </legend>
-      <div class="fr-fieldset__content">
-        <div class="fr-radio-group">
-          <input type="radio" id="fonciers-travaux-oui" name="fonciers-travaux" value="oui"
-                 data-required-when-reel>
-          <label class="fr-label" for="fonciers-travaux-oui">Oui</label>
-        </div>
-        <div class="fr-radio-group">
-          <input type="radio" id="fonciers-travaux-non" name="fonciers-travaux" value="non">
-          <label class="fr-label" for="fonciers-travaux-non">Non</label>
-        </div>
-      </div>
-    </fieldset>
 
     <div class="fr-input-group">
       <label class="fr-label" for="fonciers-deficits">
