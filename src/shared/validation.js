@@ -66,6 +66,19 @@ export function validateForm(container, messages = {}) {
     }
   });
 
+  // ── Groupes de cases à cocher requis (fieldset[data-required-group]) ──────────
+  container.querySelectorAll('fieldset[data-required-group]').forEach(fieldset => {
+    if (fieldset.closest('[hidden]')) return;
+    const groupName = fieldset.dataset.requiredGroup;
+    const anyChecked = [...fieldset.querySelectorAll('input[type="checkbox"]')]
+      .some(cb => !cb.closest('[hidden]') && cb.checked);
+    if (!anyChecked) {
+      const msg = messages[groupName]?.valueMissing ?? defaultMessages.valueMissingRadio;
+      setFieldsetError(fieldset, groupName, msg);
+      if (!firstError) firstError = { el: fieldset, firstInput: fieldset.querySelector('input[type="checkbox"]') };
+    }
+  });
+
   if (firstError) {
     (firstError.firstInput ?? firstError.el).focus();
   }
@@ -120,6 +133,18 @@ export function initBlurValidation(container, messages = {}) {
         const fieldset = radio.closest('fieldset');
         if (fieldset) clearFieldsetError(fieldset, name);
         setTimeout(() => touchedGroups.delete(name), 0);
+      });
+    });
+  });
+
+  // Groupes de cases à cocher requis : effacer l'erreur dès qu'une case est cochée
+  container.querySelectorAll('fieldset[data-required-group]').forEach(fieldset => {
+    const groupName = fieldset.dataset.requiredGroup;
+    fieldset.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const anyChecked = [...fieldset.querySelectorAll('input[type="checkbox"]')]
+          .some(c => !c.closest('[hidden]') && c.checked);
+        if (anyChecked) clearFieldsetError(fieldset, groupName);
       });
     });
   });

@@ -13,6 +13,9 @@ export const messages = {
     rangeUnderflow: 'L\'année doit être comprise entre 1900 et 2026.',
     rangeOverflow:  'L\'année doit être comprise entre 1900 et 2026.',
   },
+  'demi-parts': {
+    valueMissing: 'Veuillez sélectionner au moins une situation, ou « Aucune de ces situations ne me concerne ».',
+  },
 };
 
 export function template() {
@@ -60,7 +63,7 @@ export function template() {
              data-resume-type="annee" data-resume-label="Année de naissance partenaire">
     </div>
 
-    <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend">
+    <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend" data-required-group="demi-parts">
       <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
         Cochez la case ou les cases qui correspondent à votre situation :
       </legend>

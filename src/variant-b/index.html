@@ -46,6 +46,37 @@
             <p>Ce simulateur calcule uniquement l'imposition pour les revenus perçus en tant que non résident. <a href="https://www.impots.gouv.fr/non-resident-de-france" class="fr-link--sm" target="_blank" rel="noopener">En savoir plus</a></p>
           </div>
 
+          <!-- ── RÉSULTATS ── -->
+          <section id="sim-resultats" class="sim-resultats" hidden aria-labelledby="sim-resultats-titre">
+            <div class="sim-resultats__header">
+              <h2 class="fr-h3 fr-mb-0" id="sim-resultats-titre">Résultat</h2>
+              <p class="sim-resultats__hint">Ces résultats sont une estimation.</p>
+            </div>
+            <div class="sim-resultats__carte">
+              <div id="sim-res-resume">
+                <div class="sim-resultats__lignes">
+                  <div class="sim-resultats__ligne">
+                    <span>Impôt sur le revenu net</span>
+                    <span id="sim-res-ir">— €</span>
+                  </div>
+                  <div class="sim-resultats__ligne">
+                    <span>Prélèvements sociaux nets</span>
+                    <span id="sim-res-ps">— €</span>
+                  </div>
+                </div>
+                <div class="sim-resultats__sep"></div>
+              </div>
+              <div id="sim-resultats-detail" class="sim-resultats__detail" hidden></div>
+              <div class="sim-resultats__total">
+                <span>Total de l'imposition</span>
+                <strong id="sim-res-total">— €</strong>
+              </div>
+            </div>
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-down-s-line" id="sim-btn-detail">
+              Afficher le détail
+            </button>
+          </section>
+
           <!-- Introduction -->
           <div>
             <p class="fr-text--lg fr-mb-1w">Complétez les rubriques pertinentes pour votre situation, puis cliquez sur le bouton calculer pour estimer votre imposition.</p>
