@@ -8,7 +8,7 @@
 /* ── CONTENEUR PRINCIPAL ────────────────────────────────────────────────────── */
 
 .sim-wrapper {
-  max-width: 480px;
+  max-width: 588px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -370,11 +370,6 @@
   line-height: 1.5rem;
   color: var(--text-default-grey);
   padding: 0.25rem 0;
-  border-bottom: 1px solid var(--border-default-grey);
-}
-
-.sim-resume__ligne:last-child {
-  border-bottom: none;
 }
 
 .sim-resume__label {
