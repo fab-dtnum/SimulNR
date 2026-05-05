@@ -607,7 +607,12 @@ function collecterResume(formPage) {
   formPage.querySelectorAll('[data-resume-label]').forEach(el => {
     if (el.closest('[hidden]')) return;
 
-    if (el.tagName === 'FIELDSET') {
+    if (el.dataset.resumeType === 'repartition-pct') {
+      const inputs = [...el.querySelectorAll('input[type="number"]')];
+      const vals = inputs.map(i => i.value !== '' ? parseInt(i.value, 10) + ' %' : '—');
+      lignes.push({ label: el.dataset.resumeLabel, valeur: vals.join(' | ') });
+
+    } else if (el.tagName === 'FIELDSET') {
       const checked = el.querySelector('input[type="radio"]:checked');
       if (!checked) return;
       const labelEl = el.querySelector(`label[for="${checked.id}"]`);

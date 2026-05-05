@@ -19,7 +19,7 @@ export const messages = {
 export function template() {
   return /* html */`
     <fieldset class="fr-fieldset" id="csg-affiliation-vous" aria-labelledby="csg-affiliation-vous-legend"
-              data-resume-label="Affilié EEE (vous)">
+              data-resume-label="Assurance maladie Europe">
       <legend class="fr-fieldset__legend fr-text--regular" id="csg-affiliation-vous-legend">
         Êtes-vous affilié à un régime d'assurance maladie d'un État de l'Espace économique européen, du Royaume-Uni ou de la Suisse, sans être à la charge d'un régime obligatoire de sécurité sociale français ?
       </legend>
@@ -36,7 +36,7 @@ export function template() {
     </fieldset>
 
     <fieldset class="fr-fieldset" id="csg-conjoint-group" aria-labelledby="csg-affiliation-conjoint-legend"
-              data-resume-label="Affilié EEE (conjoint)" hidden>
+              data-resume-label="Assurance maladie Europe conjoint" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="csg-affiliation-conjoint-legend">
         Est-ce que votre conjoint, conjointe ou partenaire de pacs est affilié à un régime d'assurance maladie d'un État de l'Espace économique européen, du Royaume-Uni ou de la Suisse, sans être à la charge d'un régime obligatoire de sécurité sociale français ?
       </legend>
@@ -52,7 +52,8 @@ export function template() {
       </div>
     </fieldset>
 
-    <div id="csg-fonciers-group" hidden>
+    <div id="csg-fonciers-group" hidden
+         data-resume-label="Répartition revenus fonciers" data-resume-type="repartition-pct">
       <p class="fr-label">
         En pourcentages, quelle est la répartition des revenus fonciers entre vous et votre conjoint/conjointe ?
         <span class="fr-hint-text">La somme des deux pourcentages doit être égale à 100.</span>
@@ -65,8 +66,7 @@ export function template() {
           </label>
           <div class="fr-input-wrap fr-icon-percent-line">
             <input class="fr-input" type="number" id="csg-fonciers-vous" name="csg-fonciers-vous"
-                   min="0" max="100"
-                   data-resume-label="Fonciers (vous)">
+                   min="0" max="100">
           </div>
         </div>
         <div class="fr-input-group">
@@ -76,8 +76,7 @@ export function template() {
           </label>
           <div class="fr-input-wrap fr-icon-percent-line">
             <input class="fr-input" type="number" id="csg-fonciers-conjoint" name="csg-fonciers-conjoint"
-                   min="0" max="100"
-                   data-resume-label="Fonciers (conjoint)">
+                   min="0" max="100">
           </div>
         </div>
       </div>
@@ -101,8 +100,8 @@ export function init(container) {
     const isMarriage = !!document.querySelector('input[name="situation-familiale"][value="mariage-pacs"]:checked');
     const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
     const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
-    const tousDeux = affVous === 'oui' && (!isMarriage || affConjoint === 'oui');
-    const show = fonciersPresent && isMarriage && !tousDeux;
+    const statusDifferent = isMarriage && affVous != null && affConjoint != null && affVous !== affConjoint;
+    const show = fonciersPresent && statusDifferent;
     const fonciersGroup = container.querySelector('#csg-fonciers-group');
     if (fonciersGroup) {
       fonciersGroup.hidden = !show;
