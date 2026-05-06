@@ -13,8 +13,19 @@
 
 import * as FORMS from './forms.js';
 import { validateForm, initBlurValidation } from './validation.js';
+import { afficherResultats } from './results.js';
+import { collecterResume, preremplirFormulaire, suffixerIds, nextInstanceSuffix } from './form-utils.js';
+import { fragmentsLoaded } from './loader.js';
+import { hasFonciersOuverts, hasLmnpOuverts } from './state.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Désactive le bouton Calculer jusqu'à ce que les fragments soient injectés
+  const submitBtn = document.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    fragmentsLoaded.then(() => { submitBtn.disabled = false; });
+  }
 
   // ── Variante A : injection des panels pré-ouverts au chargement ─────────────
   if (document.body.dataset.variant === 'a') {
@@ -152,20 +163,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
 });
 
 // ── Injection des champs (source unique : forms.js) ──────────────────────────
 
-function injecterChamps(container, tileName) {
+function injecterChamps(container, tileName, suffix = null) {
   const fieldsEl = container.querySelector('[data-fields]');
   if (!fieldsEl || fieldsEl.dataset.injected) return;
   if (!FORMS[tileName]) return;
   fieldsEl.innerHTML = FORMS[tileName].template();
-  fieldsEl.dataset.injected = 'true';
   if (typeof FORMS[tileName].init === 'function') {
     FORMS[tileName].init(fieldsEl);
   }
+  // Suffire les IDs après init() (les listeners sont attachés aux éléments,
+  // pas aux IDs) et avant initBlurValidation() (qui génère des IDs d'erreur).
+  if (suffix !== null) suffixerIds(fieldsEl, suffix);
+  fieldsEl.dataset.injected = 'true';
   initBlurValidation(fieldsEl, FORMS[tileName]?.messages ?? {});
 }
 
@@ -186,7 +199,8 @@ function ouvrirTuileA(wrapper) {
     });
     clone.hidden = false;
     wrapper.before(clone);
-    injecterChamps(clone, tileName);
+    // Suffixer les IDs pour éviter les doublons entre instances
+    injecterChamps(clone, tileName, nextInstanceSuffix());
     mettreAJourNombreParts();
     return;
   }
@@ -203,7 +217,7 @@ function supprimerTuile(wrapper) {
   // Vider le résumé (variante B)
   const resume = wrapper.querySelector('.sim-resume');
   if (resume) { resume.innerHTML = ''; resume.hidden = true; }
-  // Réinitialiser les champs injectés pour forcer une ré-injection propre à la prochaine ouverture
+  // Réinitialiser les champs injectés pour forcer une ré-injection propre
   wrapper.querySelectorAll('[data-fields]').forEach(el => {
     el.innerHTML = '';
     delete el.dataset.injected;
@@ -417,35 +431,10 @@ function mettreAJourNombreParts() {
   }
 }
 
-// ── Pré-remplissage du formulaire (mode édition) ─────────────────────────────
-
-function preremplirFormulaire(formPage, values) {
-  const fieldsEl = formPage.querySelector('[data-fields]');
-  if (!fieldsEl) return;
-
-  // Les selects en premier : leur changement peut déclencher la visibilité conditionnelle d'autres champs
-  fieldsEl.querySelectorAll('select').forEach(field => {
-    if (!(field.name in values)) return;
-    field.value = values[field.name];
-    field.dispatchEvent(new Event('change', { bubbles: true }));
-  });
-
-  fieldsEl.querySelectorAll('input, textarea').forEach(field => {
-    if (!field.name || !(field.name in values)) return;
-    if (field.type === 'radio' || field.type === 'checkbox') {
-      field.checked = field.value === values[field.name];
-    } else {
-      field.value = values[field.name];
-    }
-  });
-}
-
 // ── Exonération CSG-CRDS : activation conditionnelle ────────────────────────
 
 function majExonerationCsgDisabled() {
-  const actif =
-    !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]') ||
-    !!document.querySelector('.sim-tuile-wrapper[data-tile="lmnp"] .sim-tuile[hidden]');
+  const actif = hasFonciersOuverts() || hasLmnpOuverts();
   document.querySelectorAll('.sim-tuile-wrapper[data-tile="exonerationCsg"] .sim-tuile').forEach(btn => {
     btn.disabled = !actif;
   });
@@ -501,143 +490,4 @@ function validerRevenus() {
 
   if (erreurEl) erreurEl.hidden = true;
   return null;
-}
-
-// ── Affichage des résultats ──────────────────────────────────────────────────
-
-function afficherResultats() {
-  const section = document.getElementById('sim-resultats');
-  if (!section) return;
-
-  // Valeurs de démo (POC)
-  const ir    = 2000;
-  const ps    = 1720;
-  const total = ir + ps;
-  const fmt   = n => n.toLocaleString('fr-FR') + ' €';
-
-  const elIr    = document.getElementById('sim-res-ir');
-  const elPs    = document.getElementById('sim-res-ps');
-  const elTotal = document.getElementById('sim-res-total');
-  if (elIr)    elIr.textContent    = fmt(ir);
-  if (elPs)    elPs.textContent    = fmt(ps);
-  if (elTotal) elTotal.textContent = fmt(total);
-
-  // Réinitialiser : résumé visible, détail masqué
-  const resume = document.getElementById('sim-res-resume');
-  const detail = document.getElementById('sim-resultats-detail');
-  if (resume) resume.hidden = false;
-  if (detail) {
-    detail.hidden = true;
-    detail.innerHTML = `
-      <div class="sim-resultats__section">
-        <p class="sim-resultats__section-titre">Situation et charges de famille</p>
-        <div class="sim-resultats__ligne sim-resultats__ligne--bold">
-          <span>Nombre de parts</span><span>1,00</span>
-        </div>
-      </div>
-      <div class="sim-resultats__sep"></div>
-      <div class="sim-resultats__section">
-        <p class="sim-resultats__section-titre">Impôts sur le revenu</p>
-        <div class="sim-resultats__bloc">
-          <div class="sim-resultats__ligne"><span>Revenus fonciers nets</span><span>${fmt(10000)}</span></div>
-          <div class="sim-resultats__ligne"><span>Revenu brut global</span><span>${fmt(10000)}</span></div>
-          <div class="sim-resultats__ligne"><span>Revenu imposable</span><span>${fmt(10000)}</span></div>
-          <p class="sim-resultats__mention">Application du taux minimum</p>
-        </div>
-        <div class="sim-resultats__ligne sim-resultats__ligne--bold">
-          <span>Total de l'impôt sur le revenu net</span><span>${fmt(ir)}</span>
-        </div>
-      </div>
-      <div class="sim-resultats__sep"></div>
-      <div class="sim-resultats__section">
-        <p class="sim-resultats__section-titre">Prélèvements sociaux</p>
-        <div class="sim-resultats__ligne"><span>Base imposable</span><span>${fmt(10000)}</span></div>
-        <div class="sim-resultats__sous-bloc">
-          <p class="sim-resultats__sous-bloc-titre">CSG-CRDS</p>
-          <div class="sim-resultats__ligne"><span>Taux d'imposition</span><span>9,70 %</span></div>
-          <div class="sim-resultats__ligne"><span>Montant d'imposition</span><span>${fmt(970)}</span></div>
-        </div>
-        <div class="sim-resultats__sous-bloc">
-          <p class="sim-resultats__sous-bloc-titre">Prélèvement solidarité</p>
-          <div class="sim-resultats__ligne"><span>Taux d'imposition</span><span>7,50 %</span></div>
-          <div class="sim-resultats__ligne"><span>Montant d'imposition</span><span>${fmt(750)}</span></div>
-        </div>
-        <div class="sim-resultats__ligne sim-resultats__ligne--bold">
-          <span>Total des prélèvements sociaux</span><span>${fmt(ps)}</span>
-        </div>
-      </div>
-      <div class="sim-resultats__sep"></div>`;
-  }
-
-  // Réinitialiser et câbler le bouton
-  const btnDetail = document.getElementById('sim-btn-detail');
-  if (btnDetail) {
-    btnDetail.classList.remove('fr-icon-arrow-up-s-line');
-    btnDetail.classList.add('fr-icon-arrow-down-s-line');
-    btnDetail.textContent = 'Afficher le détail';
-
-    if (!btnDetail.dataset.wired) {
-      btnDetail.dataset.wired = 'true';
-      btnDetail.addEventListener('click', () => {
-        const det = document.getElementById('sim-resultats-detail');
-        const res = document.getElementById('sim-res-resume');
-        const willExpand = det.hidden;
-        det.hidden = !willExpand;
-        if (res) res.hidden = willExpand;
-        if (willExpand) {
-          btnDetail.classList.remove('fr-icon-arrow-down-s-line');
-          btnDetail.classList.add('fr-icon-arrow-up-s-line');
-          btnDetail.textContent = 'Masquer le détail';
-        } else {
-          btnDetail.classList.remove('fr-icon-arrow-up-s-line');
-          btnDetail.classList.add('fr-icon-arrow-down-s-line');
-          btnDetail.textContent = 'Afficher le détail';
-        }
-      });
-    }
-  }
-
-  section.hidden = false;
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function collecterResume(formPage) {
-  const lignes = [];
-
-  formPage.querySelectorAll('[data-resume-label]').forEach(el => {
-    if (el.closest('[hidden]')) return;
-
-    if (el.dataset.resumeType === 'repartition-pct') {
-      const inputs = [...el.querySelectorAll('input[type="number"]')];
-      const vals = inputs.map(i => i.value !== '' ? parseInt(i.value, 10) + ' %' : '—');
-      lignes.push({ label: el.dataset.resumeLabel, valeur: vals.join(' | ') });
-
-    } else if (el.tagName === 'FIELDSET') {
-      const checked = el.querySelector('input[type="radio"]:checked');
-      if (!checked) return;
-      const labelEl = el.querySelector(`label[for="${checked.id}"]`);
-      const valeur = checked.dataset.resumeValue
-        ?? (labelEl ? labelEl.textContent.trim() : checked.value);
-      lignes.push({ label: el.dataset.resumeLabel, valeur });
-
-    } else if (el.tagName === 'SELECT') {
-      if (!el.value) return;
-      lignes.push({ label: el.dataset.resumeLabel, valeur: el.options[el.selectedIndex].text });
-
-    } else if (el.type === 'text') {
-      if (!el.value) return;
-      lignes.push({ label: el.dataset.resumeLabel, valeur: el.value });
-
-    } else if (el.type === 'number') {
-      if (!el.value) return;
-      if (el.dataset.resumeType === 'annee') {
-        lignes.push({ label: el.dataset.resumeLabel, valeur: el.value });
-      } else {
-        const val = parseInt(el.value, 10).toLocaleString('fr-FR') + ' €';
-        lignes.push({ label: el.dataset.resumeLabel, valeur: val });
-      }
-    }
-  });
-
-  return lignes;
 }

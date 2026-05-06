@@ -1,3 +1,5 @@
+import { estMariagePacs, hasFonciersOuverts } from '../state.js';
+
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'csg-affiliation-vous': {
@@ -86,7 +88,7 @@ export function template() {
 
 export function init(container) {
   function majConjoint() {
-    const isMarriage = !!document.querySelector('input[name="situation-familiale"][value="mariage-pacs"]:checked');
+    const isMarriage = estMariagePacs();
     const conjointGroup = container.querySelector('#csg-conjoint-group');
     if (conjointGroup) {
       conjointGroup.hidden = !isMarriage;
@@ -96,11 +98,11 @@ export function init(container) {
   }
 
   function majFonciers() {
-    const fonciersPresent = !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]');
-    const isMarriage = !!document.querySelector('input[name="situation-familiale"][value="mariage-pacs"]:checked');
+    const fonciersPresent = hasFonciersOuverts();
+    const isMarriage = estMariagePacs();
     const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
     const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
-    const statusDifferent = isMarriage && affVous != null && affConjoint != null && affVous !== affConjoint;
+    const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
     const show = fonciersPresent && statusDifferent;
     const fonciersGroup = container.querySelector('#csg-fonciers-group');
     if (fonciersGroup) {
