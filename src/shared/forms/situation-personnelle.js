@@ -66,6 +66,7 @@ export function template() {
     <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend" data-required-group="demi-parts">
       <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
         Cochez la case ou les cases qui correspondent à votre situation :
+        <span class="fr-hint-text">Sélectionner « Aucune de ces situations ne me concerne » décoche automatiquement les autres cases, et inversement.</span>
       </legend>
       <div class="fr-fieldset__content">
         <div class="sim-checkbox-tiles">

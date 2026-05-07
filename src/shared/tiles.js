@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ajouter / Compléter → ouvre le formulaire
     const btnAjouter = e.target.closest('.sim-tuile__btn--ajouter');
     if (btnAjouter) {
+      if (btnAjouter.getAttribute('aria-disabled') === 'true') return;
       const wrapper = btnAjouter.closest('.sim-tuile-wrapper');
       if (!wrapper) return;
       if (variant === 'a') {
@@ -125,9 +126,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (wrapper) {
         supprimerTuile(wrapper);
       } else {
-        // Fiche clonée hors wrapper : supprimer directement
-        btnSupprimer.closest('.sim-tuile-ouvert')?.remove();
+        // Fiche clonée hors wrapper (tuile répétable variante A) : supprimer et rendre le focus
+        const clone = btnSupprimer.closest('.sim-tuile-ouvert');
+        const tileName = clone?.dataset.tile;
+        const btnAjouter = tileName
+          ? document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"] .sim-tuile`)
+          : null;
+        clone?.remove();
         mettreAJourNombreParts();
+        if (btnAjouter) btnAjouter.focus();
       }
       majExonerationCsgDisabled();
       return;
@@ -184,6 +191,15 @@ function injecterChamps(container, tileName, suffix = null) {
 
 // ── Variante A ──────────────────────────────────────────────────────────────
 
+function focusPremierChamp(container) {
+  const candidates = container.querySelectorAll(
+    'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
+  );
+  for (const el of candidates) {
+    if (!el.closest('[hidden]')) { el.focus(); return; }
+  }
+}
+
 function ouvrirTuileA(wrapper) {
   const tileName = wrapper.dataset.tile;
   const panel = wrapper.querySelector('.sim-tuile-ouvert--a');
@@ -202,17 +218,24 @@ function ouvrirTuileA(wrapper) {
     // Suffixer les IDs pour éviter les doublons entre instances
     injecterChamps(clone, tileName, nextInstanceSuffix());
     mettreAJourNombreParts();
+    focusPremierChamp(clone);
     return;
   }
 
+  const btn = wrapper.querySelector('.sim-tuile');
   injecterChamps(panel, tileName);
-  wrapper.querySelector('.sim-tuile').hidden = true;
+  if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.hidden = true; }
   panel.hidden = false;
+  focusPremierChamp(panel);
 }
 
 function supprimerTuile(wrapper) {
   if (!wrapper) return;
-  wrapper.querySelector('.sim-tuile').hidden = false;
+  const btn = wrapper.querySelector('.sim-tuile');
+  if (btn) {
+    btn.setAttribute('aria-expanded', 'false');
+    btn.hidden = false;
+  }
   wrapper.querySelectorAll('.sim-tuile-ouvert').forEach(p => { p.hidden = true; });
   // Vider le résumé (variante B)
   const resume = wrapper.querySelector('.sim-resume');
@@ -222,6 +245,8 @@ function supprimerTuile(wrapper) {
     el.innerHTML = '';
     delete el.dataset.injected;
   });
+  // Rendre le focus au bouton déclencheur (variante A)
+  if (document.body.dataset.variant === 'a' && btn) btn.focus();
 }
 
 // ── Variante B : navigation ─────────────────────────────────────────────────
@@ -342,7 +367,7 @@ function enregistrerFormulaire(formPage) {
         }
 
         const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
-        if (btnModifier) btnModifier.setAttribute('aria-label', 'Modifier Personne à charge');
+        if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${prenom || 'Personne à charge'}`);
         focusCible = btnModifier ?? focusCible;
 
         clone.dataset.formValues = JSON.stringify(formValues);
@@ -436,7 +461,11 @@ function mettreAJourNombreParts() {
 function majExonerationCsgDisabled() {
   const actif = hasFonciersOuverts() || hasLmnpOuverts();
   document.querySelectorAll('.sim-tuile-wrapper[data-tile="exonerationCsg"] .sim-tuile').forEach(btn => {
-    btn.disabled = !actif;
+    if (actif) {
+      btn.removeAttribute('aria-disabled');
+    } else {
+      btn.setAttribute('aria-disabled', 'true');
+    }
   });
 }
 

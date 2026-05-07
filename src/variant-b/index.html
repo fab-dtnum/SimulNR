@@ -43,7 +43,7 @@
 
           <!-- Alerte -->
           <div class="fr-alert fr-alert--info fr-alert--sm">
-            <p>Ce simulateur calcule uniquement l'imposition pour les revenus perçus en tant que non résident. <a href="https://www.impots.gouv.fr/non-resident-de-france" class="fr-link--sm" target="_blank" rel="noopener">En savoir plus</a></p>
+            <p>Ce simulateur calcule uniquement l'imposition pour les revenus perçus en tant que non résident. <a href="https://www.impots.gouv.fr/non-resident-de-france" class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">En savoir plus<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
           </div>
 
           <!-- ── RÉSULTATS ── -->
@@ -54,16 +54,16 @@
             </div>
             <div class="sim-resultats__carte">
               <div id="sim-res-resume">
-                <div class="sim-resultats__lignes">
+                <dl class="sim-resultats__lignes">
                   <div class="sim-resultats__ligne">
-                    <span>Impôt sur le revenu net</span>
-                    <span id="sim-res-ir">— €</span>
+                    <dt>Impôt sur le revenu net</dt>
+                    <dd id="sim-res-ir">— €</dd>
                   </div>
                   <div class="sim-resultats__ligne">
-                    <span>Prélèvements sociaux nets</span>
-                    <span id="sim-res-ps">— €</span>
+                    <dt>Prélèvements sociaux nets</dt>
+                    <dd id="sim-res-ps">— €</dd>
                   </div>
-                </div>
+                </dl>
                 <div class="sim-resultats__sep"></div>
               </div>
               <div id="sim-resultats-detail" class="sim-resultats__detail" hidden></div>
@@ -90,7 +90,7 @@
               <div class="sim-section__head">
                 <h2 class="fr-h4 fr-mb-1v" id="titre-foyer-fiscal">Foyer fiscal</h2>
                 <p class="fr-text--sm fr-mb-1w">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer.</p>
-                <p class="fr-mb-0"><a href="https://www.impots.gouv.fr" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener">Comprendre les règles du foyer fiscal</a></p>
+                <p class="fr-mb-0"><a href="https://www.impots.gouv.fr" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Comprendre les règles du foyer fiscal<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
               </div>
 
               <p class="sim-badge-parts fr-mb-0" id="nombre-parts-badge"><span>Nombre de parts :</span> <strong>1</strong></p>
@@ -123,7 +123,7 @@
                       </div>
                     </div>
                     <div class="sim-resume" hidden></div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Situation personnelle">
                       Modifier
                     </button>
                   </div>
@@ -159,7 +159,7 @@
                     </div>
                     <p class="sim-resume__situation" data-pac-situation hidden></p>
                     <div class="sim-resume" hidden></div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Personne à charge">
                       Modifier
                     </button>
                   </div>
@@ -175,7 +175,7 @@
                 <h2 class="fr-h4 fr-mb-1v" id="titre-revenus">Revenus</h2>
                 <p class="fr-text--sm fr-mb-1w">
                   Vos revenus de source française et imposables en France, selon la convention fiscale conclue avec votre État de résidence.</p>
-                  <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener">Connaitre les revenus à déclarer</a>
+                  <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Connaître les revenus à déclarer<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
                 </p>
               </div>
               <div class="sim-tuiles-list" data-fragment="../shared/revenus-tiles.html">
@@ -218,7 +218,7 @@
                       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Déficits globaux et CSG déductible"></button>
                     </div>
                     <div class="sim-resume" hidden></div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Déficits globaux et CSG déductible">
                       Modifier
                     </button>
                   </div>
@@ -229,7 +229,7 @@
                 <div class="sim-tuile-wrapper" data-tile="exonerationCsg">
 
                   <!-- Fermé -->
-                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w" disabled>
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w" aria-disabled="true">
                     <div class="sim-tuile__info fr-pr-2w">
                       <div class="sim-tuile__title-row">
                         <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
@@ -253,7 +253,7 @@
                       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Exonération CSG-CRDS"></button>
                     </div>
                     <div class="sim-resume" hidden></div>
-                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier">
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Exonération CSG-CRDS">
                       Modifier
                     </button>
                   </div>

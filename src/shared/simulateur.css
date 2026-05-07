@@ -123,7 +123,8 @@
   background-color: var(--background-alt-grey-hover) !important;
 }
 
-.sim-tuile:disabled {
+.sim-tuile:disabled,
+.sim-tuile[aria-disabled="true"] {
   cursor: default;
   border-color: var(--border-disabled-grey);
 }
@@ -131,7 +132,11 @@
 .sim-tuile:disabled .fr-h6,
 .sim-tuile:disabled .sim-tuile__icone,
 .sim-tuile:disabled p,
-.sim-tuile:disabled .sim-tuile__action {
+.sim-tuile:disabled .sim-tuile__action,
+.sim-tuile[aria-disabled="true"] .fr-h6,
+.sim-tuile[aria-disabled="true"] .sim-tuile__icone,
+.sim-tuile[aria-disabled="true"] p,
+.sim-tuile[aria-disabled="true"] .sim-tuile__action {
   color: var(--text-disabled-grey);
 }
 
@@ -418,6 +423,13 @@
 .sim-double-champs > * {
   flex: 1;
   min-width: 0;
+}
+
+/* ── LISTES DE DÉFINITIONS (résultats) ─────────────────────────────────────── */
+
+.sim-resultats__lignes dd,
+.sim-resultats__dl dd {
+  margin-left: 0;
 }
 
 /* ── RÉSULTATS ──────────────────────────────────────────────────────────────── */
