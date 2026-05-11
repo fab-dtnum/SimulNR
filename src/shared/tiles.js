@@ -180,7 +180,7 @@ function injecterChamps(container, tileName, suffix = null) {
   if (!FORMS[tileName]) return;
   fieldsEl.innerHTML = FORMS[tileName].template();
   if (typeof FORMS[tileName].init === 'function') {
-    FORMS[tileName].init(fieldsEl);
+    FORMS[tileName].init(fieldsEl, suffix);
   }
   // Suffire les IDs après init() (les listeners sont attachés aux éléments,
   // pas aux IDs) et avant initBlurValidation() (qui génère des IDs d'erreur).

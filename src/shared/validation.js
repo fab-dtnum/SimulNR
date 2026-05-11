@@ -50,7 +50,8 @@ export function validateForm(container, messages = {}) {
         if (!anyChecked) {
           const fieldset = field.closest('fieldset');
           if (fieldset) {
-            const msg = messages[field.name]?.valueMissing ?? defaultMessages.valueMissingRadio;
+            const msgKey = field.dataset.originalName ?? field.name;
+            const msg = messages[msgKey]?.valueMissing ?? defaultMessages.valueMissingRadio;
             setFieldsetError(fieldset, field.name, msg);
             if (!firstError) firstError = { el: fieldset, firstInput: field };
           }

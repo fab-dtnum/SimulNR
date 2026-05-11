@@ -97,7 +97,15 @@ export function template() {
   `;
 }
 
-export function init(container) {
+export function init(container, suffix = null) {
+  if (suffix !== null) {
+    container.querySelectorAll('input[type="radio"]').forEach(input => {
+      if (!input.name) return;
+      input.dataset.originalName = input.name;
+      input.name = `${input.name}-${suffix}`;
+    });
+  }
+
   const chargeFieldset    = container.querySelector('#pac-charge');
   const invaliditeFieldset = container.querySelector('#pac-invalidite');
   const seulFieldset      = container.querySelector('#pac-seul');
