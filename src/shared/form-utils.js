@@ -9,9 +9,14 @@ export function nextInstanceSuffix() {
 }
 
 /**
- * Renomme tous les id/for/aria-* d'un conteneur avec un suffixe numérique.
+ * Renomme tous les id/for/aria-*/name d'un conteneur avec un suffixe numérique.
  * Appelé APRÈS init() (les écouteurs sont attachés aux éléments, pas aux IDs)
  * et AVANT initBlurValidation() (qui génère des IDs d'erreur à partir de field.id).
+ *
+ * Les attributs name des radios/checkboxes sont aussi suffixés pour isoler les
+ * groupes entre instances clonées (les navigateurs fusionnent les radios de même
+ * name dans un même form, ce qui causerait des décoches mutuelles entre clones).
+ * L'attribut data-original-name conserve la clé d'origine pour les messages d'erreur.
  */
 export function suffixerIds(container, suffix) {
   container.querySelectorAll('[id]').forEach(el => {
@@ -25,6 +30,12 @@ export function suffixerIds(container, suffix) {
       const ids = el.getAttribute(attr).split(/\s+/).filter(Boolean);
       el.setAttribute(attr, ids.map(id => `${id}-${suffix}`).join(' '));
     });
+  });
+  // Isoler les groupes radio/checkbox entre clones : chaque instance a ses propres names
+  container.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+    if (!input.name) return;
+    input.dataset.originalName = input.name;
+    input.name = `${input.name}-${suffix}`;
   });
 }
 
