@@ -50,10 +50,7 @@ export function validateForm(container, messages = {}) {
         if (!anyChecked) {
           const fieldset = field.closest('fieldset');
           if (fieldset) {
-            // data-original-name est défini par suffixerIds pour les clones répétables ;
-            // on l'utilise comme clé de lookup dans messages (qui utilise les noms d'origine).
-            const msgKey = field.dataset.originalName ?? field.name;
-            const msg = messages[msgKey]?.valueMissing ?? defaultMessages.valueMissingRadio;
+            const msg = messages[field.name]?.valueMissing ?? defaultMessages.valueMissingRadio;
             setFieldsetError(fieldset, field.name, msg);
             if (!firstError) firstError = { el: fieldset, firstInput: field };
           }
