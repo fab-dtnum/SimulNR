@@ -32,7 +32,7 @@ export function template() {
     </div>
 
     <fieldset class="fr-fieldset" id="fonciers-regime" aria-labelledby="fonciers-regime-legend"
-              data-resume-label="Régime">
+              data-resume-label="Régime" hidden>
       <legend class="fr-fieldset__legend fr-text--regular" id="fonciers-regime-legend">
         Avez-vous opté, ou optez-vous pour le régime réel ?
         <span class="fr-hint-text">C'est-à-dire que vous déduisez vos charges des revenus locatifs.</span>
@@ -100,16 +100,31 @@ export function template() {
 }
 
 export function init(container) {
-  const regimeFieldset = container.querySelector('[name="fonciers-regime"]')?.closest('fieldset');
-  if (!regimeFieldset) return;
+  const loyersInput    = container.querySelector('#fonciers-loyers');
+  const regimeFieldset = container.querySelector('fieldset#fonciers-regime');
+  const regimeInputs   = regimeFieldset ? [...regimeFieldset.querySelectorAll('input')] : [];
+  const reelFields     = [...container.querySelectorAll('[data-fonciers-regime-field]')];
 
-  regimeFieldset.addEventListener('change', (e) => {
-    const isReel = e.target.value === 'oui';
-    container.querySelectorAll('[data-fonciers-regime-field]').forEach((field) => {
-      field.hidden = !isReel;
-      field.querySelectorAll('[data-required-when-reel]').forEach((inp) => {
-        inp.required = isReel;
+  function updateVisibility() {
+    const montant  = parseFloat(loyersInput?.value);
+    const hasValue = !isNaN(montant) && loyersInput?.value !== '';
+    const autoReel = hasValue && montant >= 15000;
+    const reelChoisi = regimeFieldset?.querySelector('input:checked')?.value === 'oui';
+
+    if (regimeFieldset) {
+      regimeFieldset.hidden = !hasValue || autoReel;
+      regimeInputs.forEach(inp => { inp.required = hasValue && !autoReel; });
+    }
+
+    const showReel = hasValue && (autoReel || reelChoisi);
+    reelFields.forEach(field => {
+      field.hidden = !showReel;
+      field.querySelectorAll('[data-required-when-reel]').forEach(inp => {
+        inp.required = showReel;
       });
     });
-  });
+  }
+
+  loyersInput?.addEventListener('change', updateVisibility);
+  regimeFieldset?.addEventListener('change', updateVisibility);
 }
