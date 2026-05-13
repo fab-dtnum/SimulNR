@@ -206,7 +206,7 @@ function ouvrirTuileA(wrapper) {
   if (!panel) return;
 
   if ('tileRepeatable' in wrapper.dataset) {
-    // Cloner le template et l'insérer avant le wrapper
+    const numExistants = document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`).length;
     const clone = panel.cloneNode(true);
     clone.dataset.tile = tileName;
     clone.querySelectorAll('[data-fields]').forEach(el => {
@@ -215,7 +215,12 @@ function ouvrirTuileA(wrapper) {
     });
     clone.hidden = false;
     wrapper.before(clone);
-    // Suffixer les IDs pour éviter les doublons entre instances
+    const prenomEl = clone.querySelector('[data-pac-prenom]');
+    if (prenomEl) {
+      const titre = `${prenomEl.textContent.trim()} ${numExistants + 1}`;
+      prenomEl.textContent = titre;
+      clone.querySelector('.sim-tuile__btn--supprimer')?.setAttribute('aria-label', `Supprimer ${titre}`);
+    }
     injecterChamps(clone, tileName, nextInstanceSuffix());
     mettreAJourNombreParts();
     focusPremierChamp(clone);
@@ -342,8 +347,13 @@ function enregistrerFormulaire(formPage) {
 
         // Remplissage spécifique personne à charge
         const prenom = formPage.querySelector('input[name="pac-intitule"]')?.value.trim();
+        const existingPacs = [...document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`)];
+        const index = _cloneEnCoursDEdition
+          ? existingPacs.indexOf(_cloneEnCoursDEdition) + 1
+          : existingPacs.length + 1;
+        const titre = prenom || `Personne à charge ${index}`;
         const prenomEl = clone.querySelector('[data-pac-prenom]');
-        if (prenomEl) prenomEl.textContent = prenom || 'Personne à charge';
+        if (prenomEl) prenomEl.textContent = titre;
 
         const situationSelect = formPage.querySelector('select[name="pac-situation"]');
         const situationTexte = situationSelect?.selectedIndex > 0
@@ -367,7 +377,7 @@ function enregistrerFormulaire(formPage) {
         }
 
         const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
-        if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${prenom || 'Personne à charge'}`);
+        if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${titre}`);
         focusCible = btnModifier ?? focusCible;
 
         clone.dataset.formValues = JSON.stringify(formValues);
