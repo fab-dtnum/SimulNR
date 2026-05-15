@@ -1,4 +1,4 @@
-import { estMariagePacs, hasFonciersOuverts } from '../state.js';
+import { estMariagePacs, hasFonciersOuverts, hasLmnpOuverts } from '../state.js';
 
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
@@ -13,6 +13,14 @@ export const messages = {
     rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
   },
   'csg-fonciers-conjoint': {
+    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
+    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
+  },
+  'csg-lmnp-vous': {
+    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
+    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
+  },
+  'csg-lmnp-conjoint': {
     rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
     rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
   },
@@ -83,6 +91,36 @@ export function template() {
         </div>
       </div>
     </div>
+
+    <div id="csg-lmnp-group" hidden
+         data-resume-label="Répartition revenus LMNP" data-resume-type="repartition-pct">
+      <p class="fr-label">
+        En pourcentages, quelle est la répartition des revenus LMNP entre vous et votre conjoint/conjointe ?
+        <span class="fr-hint-text">La somme des deux pourcentages doit être égale à 100.</span>
+      </p>
+      <div class="sim-double-champs">
+        <div class="fr-input-group">
+          <label class="fr-label" for="csg-lmnp-vous">
+            Vous
+            <span class="fr-hint-text">Exemple : 55</span>
+          </label>
+          <div class="fr-input-wrap fr-icon-percent-line">
+            <input class="fr-input" type="number" id="csg-lmnp-vous" name="csg-lmnp-vous"
+                   min="0" max="100">
+          </div>
+        </div>
+        <div class="fr-input-group">
+          <label class="fr-label" for="csg-lmnp-conjoint">
+            Conjoint / conjointe
+            <span class="fr-hint-text">Exemple : 45</span>
+          </label>
+          <div class="fr-input-wrap fr-icon-percent-line">
+            <input class="fr-input" type="number" id="csg-lmnp-conjoint" name="csg-lmnp-conjoint"
+                   min="0" max="100">
+          </div>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -95,6 +133,7 @@ export function init(container) {
       conjointGroup.querySelectorAll('input[type="radio"]').forEach(inp => { inp.required = isMarriage; });
     }
     majFonciers();
+    majLmnp();
   }
 
   function majFonciers() {
@@ -111,8 +150,23 @@ export function init(container) {
     }
   }
 
+  function majLmnp() {
+    const lmnpPresent = hasLmnpOuverts();
+    const isMarriage = estMariagePacs();
+    const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
+    const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
+    const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
+    const show = lmnpPresent && statusDifferent;
+    const lmnpGroup = container.querySelector('#csg-lmnp-group');
+    if (lmnpGroup) {
+      lmnpGroup.hidden = !show;
+      lmnpGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = show; });
+    }
+  }
+
   majConjoint();
   majFonciers();
+  majLmnp();
 
   // Complément automatique à 100% entre les deux champs de répartition fonciers
   function bindComplement(sourceId, targetId) {
@@ -127,9 +181,14 @@ export function init(container) {
   }
   bindComplement('csg-fonciers-vous', 'csg-fonciers-conjoint');
   bindComplement('csg-fonciers-conjoint', 'csg-fonciers-vous');
+  bindComplement('csg-lmnp-vous', 'csg-lmnp-conjoint');
+  bindComplement('csg-lmnp-conjoint', 'csg-lmnp-vous');
 
   container.addEventListener('change', (e) => {
-    if (e.target.name === 'csg-affiliation-vous' || e.target.name === 'csg-affiliation-conjoint') majFonciers();
+    if (e.target.name === 'csg-affiliation-vous' || e.target.name === 'csg-affiliation-conjoint') {
+      majFonciers();
+      majLmnp();
+    }
   });
 
   document.addEventListener('change', (e) => {
@@ -143,6 +202,7 @@ export function init(container) {
       if (!panel.hidden) {
         majConjoint();
         majFonciers();
+        majLmnp();
       }
     }).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
   }
