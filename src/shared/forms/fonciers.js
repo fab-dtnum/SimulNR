@@ -12,7 +12,6 @@ export const messages = {
     rangeUnderflow: 'Le montant ne peut pas être négatif.',
   },
   'fonciers-interets': {
-    valueMissing:   'Le montant des intérêts d\'emprunt est obligatoire.',
     rangeUnderflow: 'Le montant ne peut pas être négatif.',
   },
 };
@@ -75,13 +74,13 @@ export function template() {
 
     <div class="fr-input-group" data-fonciers-regime-field hidden>
       <label class="fr-label" for="fonciers-interets">
-        Montant de vos intérêts d'emprunt
+        Montant de vos intérêts d'emprunt (optionnel)
         <span class="fr-hint-text">Indiquez le montant total sur l'année. Exemple : 2500</span>
       </label>
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="fonciers-interets" name="fonciers-interets"
                min="0"
-               data-resume-label="Intérêts d'emprunt" data-required-when-reel>
+               data-resume-label="Intérêts d'emprunt">
       </div>
     </div>
 
