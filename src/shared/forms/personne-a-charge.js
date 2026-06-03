@@ -9,9 +9,6 @@ export const messages = {
   'pac-invalidite': {
     valueMissing: "Veuillez indiquer si votre enfant a une carte d'invalidité.",
   },
-  'pac-seul': {
-    valueMissing: 'Veuillez indiquer si vous vivez seul avec vos enfants.',
-  },
 };
 
 export function template() {
@@ -36,22 +33,31 @@ export function template() {
       </div>
     </div>
 
-    <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
-              data-resume-label="Prise en charge" hidden>
-      <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
-        Comment cet enfant est-il pris en charge ?
-      </legend>
-      <div class="fr-fieldset__content">
-        <div class="fr-radio-group">
-          <input type="radio" id="pac-charge-entiere" name="pac-charge" value="entiere">
-          <label class="fr-label" for="pac-charge-entiere">Entièrement à votre charge</label>
+    <div class="sim-fieldset-avec-infobulle" hidden>
+      <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
+                data-resume-label="Prise en charge">
+        <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
+          Comment cet enfant est-il pris en charge ?
+        </legend>
+        <div class="fr-fieldset__content">
+          <div class="fr-radio-group">
+            <input type="radio" id="pac-charge-entiere" name="pac-charge" value="entiere">
+            <label class="fr-label" for="pac-charge-entiere">À votre charge</label>
+          </div>
+          <div class="fr-radio-group">
+            <input type="radio" id="pac-charge-alternee" name="pac-charge" value="alternee">
+            <label class="fr-label" for="pac-charge-alternee">En résidence alternée</label>
+          </div>
         </div>
-        <div class="fr-radio-group">
-          <input type="radio" id="pac-charge-alternee" name="pac-charge" value="alternee">
-          <label class="fr-label" for="pac-charge-alternee">En résidence alternée</label>
-        </div>
-      </div>
-    </fieldset>
+      </fieldset>
+      <button class="fr-btn fr-btn--tooltip fr-btn--sm" id="pac-charge-tooltip-btn"
+              aria-describedby="pac-charge-tooltip" type="button">
+        Information contextuelle
+      </button>
+      <span class="fr-tooltip fr-placement" id="pac-charge-tooltip" role="tooltip" aria-hidden="true">
+        Un enfant mineur est considéré à votre charge si vous assumez complètement ou principalement ses dépenses d'entretien et d'éducation (sans prendre en compte les pensions alimentaires perçues) et que sa résidence principale est chez vous.
+      </span>
+    </div>
 
     <fieldset class="fr-fieldset" id="pac-invalidite" aria-labelledby="pac-invalidite-legend"
               data-resume-label="Carte invalidité ou CMI-invalidité" hidden>
@@ -77,23 +83,6 @@ export function template() {
       <input class="fr-input" type="text" id="pac-intitule" name="pac-intitule"
              data-resume-label="Prénom">
     </div>
-
-    <fieldset class="fr-fieldset" id="pac-seul" aria-labelledby="pac-seul-legend"
-              data-resume-label="Parent seul" hidden>
-      <legend class="fr-fieldset__legend fr-text--regular" id="pac-seul-legend">
-        Vivez-vous seul avec vos enfants ou des personnes invalides recueillies sous votre toit ?
-      </legend>
-      <div class="fr-fieldset__content">
-        <div class="fr-radio-group">
-          <input type="radio" id="pac-seul-oui" name="pac-seul" value="oui">
-          <label class="fr-label" for="pac-seul-oui">Oui</label>
-        </div>
-        <div class="fr-radio-group">
-          <input type="radio" id="pac-seul-non" name="pac-seul" value="non">
-          <label class="fr-label" for="pac-seul-non">Non</label>
-        </div>
-      </div>
-    </fieldset>
   `;
 }
 
@@ -108,14 +97,6 @@ export function init(container, suffix = null) {
 
   const chargeFieldset    = container.querySelector('#pac-charge');
   const invaliditeFieldset = container.querySelector('#pac-invalidite');
-  const seulFieldset      = container.querySelector('#pac-seul');
-
-  // Affiche "vivez-vous seul" uniquement si situation familiale = célibat/divorce
-  const situationFamiliale = document.querySelector('input[name="situation-familiale"]:checked')?.value;
-  if (seulFieldset && situationFamiliale === 'celibat-divorce') {
-    seulFieldset.hidden = false;
-    seulFieldset.querySelector('input').required = true;
-  }
 
   const select = container.querySelector('select[name="pac-situation"]');
   if (select) {
@@ -123,7 +104,8 @@ export function init(container, suffix = null) {
       const isEnfantMineur = select.value === 'enfant-mineur';
 
       if (chargeFieldset) {
-        chargeFieldset.hidden = !isEnfantMineur;
+        const chargeContainer = chargeFieldset.closest('.sim-fieldset-avec-infobulle') ?? chargeFieldset;
+        chargeContainer.hidden = !isEnfantMineur;
         chargeFieldset.querySelectorAll('input').forEach(inp => {
           inp.required = isEnfantMineur;
           if (!isEnfantMineur) inp.checked = false;

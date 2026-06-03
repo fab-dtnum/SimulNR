@@ -66,10 +66,22 @@ export function template() {
     <fieldset class="fr-fieldset" id="demi-parts" aria-labelledby="demi-parts-legend" data-required-group="demi-parts">
       <legend class="fr-fieldset__legend fr-text--regular" id="demi-parts-legend">
         Cochez la case ou les cases qui correspondent à votre situation :
-        <span class="fr-hint-text">Sélectionner « Aucune de ces situations ne me concerne » décoche automatiquement les autres cases, et inversement.</span>
+        <span class="fr-hint-text">Ces situations peuvent donner droit à une demi-part supplémentaire.</span>
       </legend>
       <div class="fr-fieldset__content">
         <div class="sim-checkbox-tiles">
+
+          <!-- Parent seul (conditionnel : célibat/divorce uniquement) -->
+          <div class="sim-checkbox-tile-wrapper" id="dp-parent-seul-wrapper" hidden>
+            <div class="sim-checkbox-tile">
+              <div class="fr-checkbox-group">
+                <input type="checkbox" id="dp-parent-seul" name="dp-parent-seul">
+                <label class="fr-label" for="dp-parent-seul">
+                  Vous vivez seul(e) avec vos enfants, ou avec des personnes invalides recueillies sous votre toit.
+                </label>
+              </div>
+            </div>
+          </div>
 
           <!-- Solo + enfant (conditionnel : célibat/divorce ou veuvage) -->
           <div class="sim-checkbox-tile-wrapper" id="dp-solo-enfant-wrapper" hidden>
@@ -77,11 +89,10 @@ export function template() {
               <div class="fr-checkbox-group">
                 <input type="checkbox" id="dp-solo-enfant" name="dp-solo-enfant">
                 <label class="fr-label" for="dp-solo-enfant">
-                  Vous viviez seul(e) au 1er janvier 2025 et vous avez un enfant :
+                  Vous viviez seul(e) le 1er janvier 2025 et vous avez un enfant que vous avez élevé seul pendant au moins cinq ans. Cet enfant est :
                   <span class="fr-hint-text">
-                    — majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
-                    — décédé après l'âge de 16 ans ou par suite de faits de guerre ;<br>
-                    — que vous avez élevé pendant au moins cinq années au cours desquelles vous viviez seul(e).
+                    — soit majeur ou marié/pacsé (ou mineur imposé en son nom propre) non rattaché à votre foyer ;<br>
+                    — soit décédé après l'âge de 16 ans ou par suite de faits de guerre.
                   </span>
                 </label>
               </div>
@@ -94,15 +105,20 @@ export function template() {
               <div class="fr-checkbox-group">
                 <input type="checkbox" id="dp-invalidite" name="dp-invalidite">
                 <label class="fr-label" for="dp-invalidite">
-                  Pension (militaire, accident du travail) pour une invalidité d'au moins 40 %, carte invalidité ou carte mobilité inclusion mention invalidité (CMI)
+                  Vous ou votre conjoint(e) disposez d'au moins un de ces éléments :
+                  <span class="fr-hint-text">
+                    — pension (militaire, accident du travail) pour une invalidité d'au moins 40 % ;<br>
+                    — carte invalidité ;<br>
+                    — carte mobilité inclusion mention invalidité (CMI).
+                  </span>
                 </label>
               </div>
             </div>
             <div class="sim-checkbox-tile__subchoices" id="dp-invalidite-subchoices" hidden>
-              <div class="sim-checkbox-tile">
+              <div class="sim-checkbox-tile" id="dp-invalidite-vous-wrapper">
                 <div class="fr-checkbox-group">
                   <input type="checkbox" id="dp-invalidite-vous" name="dp-invalidite-vous">
-                  <label class="fr-label" for="dp-invalidite-vous">Vous remplissez ces conditions.</label>
+                  <label class="fr-label" for="dp-invalidite-vous">Vous remplissez au moins une de ces conditions.</label>
                 </div>
               </div>
               <div id="dp-invalidite-conjoint-wrapper" hidden>
@@ -110,7 +126,7 @@ export function template() {
                   <div class="fr-checkbox-group">
                     <input type="checkbox" id="dp-invalidite-conjoint" name="dp-invalidite-conjoint">
                     <label class="fr-label" for="dp-invalidite-conjoint">
-                      Votre conjoint(e) remplit ces conditions, ou votre conjoint(e), décédé(e) en 2025, remplissait ces conditions.
+                      Votre conjoint(e) remplit au moins une de ces conditions, ou votre conjoint(e), décédé en 2025, remplissait au moins une de ces conditions.
                     </label>
                   </div>
                 </div>
@@ -124,7 +140,11 @@ export function template() {
               <div class="fr-checkbox-group">
                 <input type="checkbox" id="dp-guerre" name="dp-guerre">
                 <label class="fr-label" for="dp-guerre">
-                  Carte du combattant, pension militaire d'invalidité ou de victime de guerre.
+                  Vous ou votre conjoint(e) disposez d'au moins un de ces éléments :
+                  <span class="fr-hint-text">
+                    — une carte du combattant ;<br>
+                    — une pension militaire d'invalidité ou de victime de guerre.
+                  </span>
                 </label>
               </div>
             </div>
@@ -180,15 +200,18 @@ export function template() {
 }
 
 export function init(container) {
-  const invaliditeSubchoices = container.querySelector('#dp-invalidite-subchoices');
-  const guerreSubchoices     = container.querySelector('#dp-guerre-subchoices');
+  const invaliditeSubchoices  = container.querySelector('#dp-invalidite-subchoices');
+  const invaliditeVousWrapper = container.querySelector('#dp-invalidite-vous-wrapper');
+  const invaliditeVousInput   = container.querySelector('#dp-invalidite-vous');
+  const guerreSubchoices      = container.querySelector('#dp-guerre-subchoices');
 
   // ── Situation familiale ──────────────────────────────────────────────────────
   function majSituationFamiliale() {
     const sitVal   = container.querySelector('input[name="situation-familiale"]:checked')?.value;
-    const isMarriage = sitVal === 'mariage-pacs';
-    const isSolo     = sitVal === 'celibat-divorce' || sitVal === 'veuvage';
-    const isVeuvage  = sitVal === 'veuvage';
+    const isMarriage       = sitVal === 'mariage-pacs';
+    const isCelibatDivorce = sitVal === 'celibat-divorce';
+    const isSolo           = sitVal === 'celibat-divorce' || sitVal === 'veuvage';
+    const isVeuvage        = sitVal === 'veuvage';
 
     const conjointGroup = container.querySelector('#conjoint-group');
     if (conjointGroup) {
@@ -197,8 +220,21 @@ export function init(container) {
       if (input) input.required = isMarriage;
     }
 
+    // Parent seul : visible si célibat/divorce uniquement
+    majVisibility('#dp-parent-seul-wrapper', !isCelibatDivorce);
+
     // Solo+enfant : visible si célibat/divorce ou veuvage
     majVisibility('#dp-solo-enfant-wrapper', !isSolo);
+
+    // Invalidité – vous : masqué si célibat/divorce (auto-coché car seule option applicable)
+    if (invaliditeVousWrapper) invaliditeVousWrapper.hidden = isCelibatDivorce;
+    if (invaliditeVousInput) {
+      invaliditeVousInput.checked = isCelibatDivorce && !!invaliditeCheckbox?.checked;
+    }
+    // Sous-choix invalidité : visible seulement si dp-invalidite coché et pas célibat/divorce
+    if (invaliditeSubchoices && invaliditeCheckbox?.checked) {
+      invaliditeSubchoices.hidden = isCelibatDivorce;
+    }
 
     // Invalidité – conjoint : visible si mariage/pacs ou veuvage (conjoint décédé)
     majVisibility('#dp-invalidite-conjoint-wrapper', !(isMarriage || isVeuvage));
@@ -227,9 +263,15 @@ export function init(container) {
   const invaliditeCheckbox = container.querySelector('#dp-invalidite');
   if (invaliditeCheckbox && invaliditeSubchoices) {
     invaliditeCheckbox.addEventListener('change', () => {
-      invaliditeSubchoices.hidden = !invaliditeCheckbox.checked;
+      const isCelibat = container.querySelector('input[name="situation-familiale"]:checked')?.value === 'celibat-divorce';
       if (!invaliditeCheckbox.checked) {
+        invaliditeSubchoices.hidden = true;
         invaliditeSubchoices.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+      } else if (isCelibat) {
+        // Célibat/divorce : auto-cocher "vous", ne pas afficher les sous-choix
+        if (invaliditeVousInput) invaliditeVousInput.checked = true;
+      } else {
+        invaliditeSubchoices.hidden = false;
       }
     });
   }
@@ -247,7 +289,7 @@ export function init(container) {
 
   // ── Aucune : exclusion mutuelle ──────────────────────────────────────────────
   const aucuneCheckbox = container.querySelector('#dp-aucune');
-  const autresIds = ['dp-solo-enfant', 'dp-invalidite', 'dp-guerre'];
+  const autresIds = ['dp-parent-seul', 'dp-solo-enfant', 'dp-invalidite', 'dp-guerre'];
 
   if (aucuneCheckbox) {
     aucuneCheckbox.addEventListener('change', () => {
