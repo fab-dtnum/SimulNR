@@ -195,7 +195,7 @@ export function init(container) {
     if (e.target.name === 'situation-familiale') majConjoint();
   });
 
-  // Re-vérifie à chaque réouverture du panel (variant B : sim-sous-formulaire, variant A : sim-tuile-ouvert)
+  // Re-vérifie à chaque réouverture du sous-formulaire
   const panel = container.closest('.sim-sous-formulaire, .sim-tuile-ouvert');
   if (panel) {
     new MutationObserver(() => {

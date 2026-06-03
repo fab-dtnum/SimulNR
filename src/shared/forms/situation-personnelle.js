@@ -227,13 +227,21 @@ export function init(container) {
     majVisibility('#dp-solo-enfant-wrapper', !isSolo);
 
     // Invalidité – vous : masqué si célibat/divorce (auto-coché car seule option applicable)
-    if (invaliditeVousWrapper) invaliditeVousWrapper.hidden = isCelibatDivorce;
-    if (invaliditeVousInput) {
-      invaliditeVousInput.checked = isCelibatDivorce && !!invaliditeCheckbox?.checked;
-    }
-    // Sous-choix invalidité : visible seulement si dp-invalidite coché et pas célibat/divorce
-    if (invaliditeSubchoices && invaliditeCheckbox?.checked) {
-      invaliditeSubchoices.hidden = isCelibatDivorce;
+    if (isCelibatDivorce) {
+      if (invaliditeVousWrapper) invaliditeVousWrapper.hidden = true;
+      if (invaliditeVousInput) {
+        // Mémoriser la valeur avant de basculer en auto-cochage
+        invaliditeVousInput.dataset.savedBeforeCelibat = invaliditeVousInput.checked ? '1' : '0';
+        invaliditeVousInput.checked = !!invaliditeCheckbox?.checked;
+      }
+      if (invaliditeSubchoices && invaliditeCheckbox?.checked) invaliditeSubchoices.hidden = true;
+    } else {
+      if (invaliditeVousWrapper) invaliditeVousWrapper.hidden = false;
+      if (invaliditeVousInput && 'savedBeforeCelibat' in invaliditeVousInput.dataset) {
+        invaliditeVousInput.checked = invaliditeVousInput.dataset.savedBeforeCelibat === '1';
+        delete invaliditeVousInput.dataset.savedBeforeCelibat;
+      }
+      if (invaliditeSubchoices && invaliditeCheckbox?.checked) invaliditeSubchoices.hidden = false;
     }
 
     // Invalidité – conjoint : visible si mariage/pacs ou veuvage (conjoint décédé)

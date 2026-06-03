@@ -33,31 +33,23 @@ export function template() {
       </div>
     </div>
 
-    <div class="sim-fieldset-avec-infobulle" hidden>
-      <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
-                data-resume-label="Prise en charge">
-        <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
-          Comment cet enfant est-il pris en charge ?
-        </legend>
-        <div class="fr-fieldset__content">
-          <div class="fr-radio-group">
-            <input type="radio" id="pac-charge-entiere" name="pac-charge" value="entiere">
-            <label class="fr-label" for="pac-charge-entiere">À votre charge</label>
-          </div>
-          <div class="fr-radio-group">
-            <input type="radio" id="pac-charge-alternee" name="pac-charge" value="alternee">
-            <label class="fr-label" for="pac-charge-alternee">En résidence alternée</label>
-          </div>
+    <fieldset class="fr-fieldset" id="pac-charge" aria-labelledby="pac-charge-legend"
+              data-resume-label="Prise en charge" hidden>
+      <legend class="fr-fieldset__legend fr-text--regular" id="pac-charge-legend">
+        Comment cet enfant est-il pris en charge ?
+        <span class="fr-hint-text">Un enfant mineur est considéré à votre charge si vous assumez complètement ou principalement ses dépenses d'entretien et d'éducation (sans prendre en compte les pensions alimentaires perçues) et que sa résidence principale est chez vous.</span>
+      </legend>
+      <div class="fr-fieldset__content">
+        <div class="fr-radio-group">
+          <input type="radio" id="pac-charge-entiere" name="pac-charge" value="entiere">
+          <label class="fr-label" for="pac-charge-entiere">À votre charge</label>
         </div>
-      </fieldset>
-      <button class="fr-btn fr-btn--tooltip fr-btn--sm" id="pac-charge-tooltip-btn"
-              aria-describedby="pac-charge-tooltip" type="button">
-        Information contextuelle
-      </button>
-      <span class="fr-tooltip fr-placement" id="pac-charge-tooltip" role="tooltip" aria-hidden="true">
-        Un enfant mineur est considéré à votre charge si vous assumez complètement ou principalement ses dépenses d'entretien et d'éducation (sans prendre en compte les pensions alimentaires perçues) et que sa résidence principale est chez vous.
-      </span>
-    </div>
+        <div class="fr-radio-group">
+          <input type="radio" id="pac-charge-alternee" name="pac-charge" value="alternee">
+          <label class="fr-label" for="pac-charge-alternee">En résidence alternée</label>
+        </div>
+      </div>
+    </fieldset>
 
     <fieldset class="fr-fieldset" id="pac-invalidite" aria-labelledby="pac-invalidite-legend"
               data-resume-label="Carte invalidité ou CMI-invalidité" hidden>
@@ -86,15 +78,7 @@ export function template() {
   `;
 }
 
-export function init(container, suffix = null) {
-  if (suffix !== null) {
-    container.querySelectorAll('input[type="radio"]').forEach(input => {
-      if (!input.name) return;
-      input.dataset.originalName = input.name;
-      input.name = `${input.name}-${suffix}`;
-    });
-  }
-
+export function init(container) {
   const chargeFieldset    = container.querySelector('#pac-charge');
   const invaliditeFieldset = container.querySelector('#pac-invalidite');
 
@@ -104,8 +88,7 @@ export function init(container, suffix = null) {
       const isEnfantMineur = select.value === 'enfant-mineur';
 
       if (chargeFieldset) {
-        const chargeContainer = chargeFieldset.closest('.sim-fieldset-avec-infobulle') ?? chargeFieldset;
-        chargeContainer.hidden = !isEnfantMineur;
+        chargeFieldset.hidden = !isEnfantMineur;
         chargeFieldset.querySelectorAll('input').forEach(inp => {
           inp.required = isEnfantMineur;
           if (!isEnfantMineur) inp.checked = false;

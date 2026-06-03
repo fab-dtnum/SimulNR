@@ -4,24 +4,492 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Simulateur impôt non-résidents — Choix de variante</title>
+  <title>Simulateur impôt non-résidents</title>
   <link rel="stylesheet" href="https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/dsfr.min.css">
   <link rel="stylesheet" href="https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/utility/icons/icons.min.css">
+  <link rel="stylesheet" href="./shared/simulateur.css">
+  <link rel="stylesheet" href="./shared/custom-icons.css">
 </head>
 <body>
-  <div class="fr-container fr-my-6w">
-    <h1 class="fr-h2">Simulateur impôt non-résidents</h1>
-    <p class="fr-text--lead">Choisissez la variante à tester :</p>
-    <ul class="fr-btns-group fr-btns-group--inline">
-      <li>
-        <a href="variant-a/index.html" class="fr-btn fr-btn--secondary">Variante A (page unique)</a>
-      </li>
-      <li>
-        <a href="variant-b/index.html" class="fr-btn fr-btn--secondary">Variante B (pages imbriquées)</a>
-      </li>
-    </ul>
-  </div>
+
+  <div data-fragment="./shared/header.html"></div>
+
+  <main role="main" id="content">
+    <div class="fr-container fr-mt-4w">
+      <div data-fragment="./shared/breadcrumb.html"></div>
+    </div>
+
+    <!-- Titre -->
+    <div class="sim-titre-bloc">
+      <div class="fr-artwork sim-titre-picto" aria-hidden="true">
+        <img src="https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/artwork/pictograms/institutions/money.svg" alt="">
+      </div>
+      <div class="sim-titre-content">
+        <div class="sim-titre-row">
+          <h1 class="sim-titre">Simulateur de l'impôt des non-résidents</h1>
+          <p class="fr-badge fr-badge--purple-glycine fr-badge--no-icon">Beta</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fr-container fr-my-6w">
+
+      <div class="sim-wrapper">
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- VUE D'ENSEMBLE                                     -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div id="vue-ensemble">
+
+          <!-- Alerte -->
+          <div class="fr-alert fr-alert--info fr-alert--sm">
+            <p>Ce simulateur calcule uniquement l'imposition pour les revenus perçus en tant que non résident. <a href="https://www.impots.gouv.fr/non-resident-de-france" class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">En savoir plus<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
+          </div>
+
+          <!-- ── RÉSULTATS ── -->
+          <section id="sim-resultats" class="sim-resultats" hidden aria-labelledby="sim-resultats-titre">
+            <div class="sim-resultats__header">
+              <h2 class="fr-h3 fr-mb-0" id="sim-resultats-titre">Résultat</h2>
+              <p class="sim-resultats__hint">Ces résultats sont une estimation.</p>
+            </div>
+            <div class="sim-resultats__carte">
+              <div id="sim-res-resume">
+                <dl class="sim-resultats__lignes">
+                  <div class="sim-resultats__ligne">
+                    <dt>Impôt sur le revenu net</dt>
+                    <dd id="sim-res-ir">— €</dd>
+                  </div>
+                  <div class="sim-resultats__ligne">
+                    <dt>Prélèvements sociaux nets</dt>
+                    <dd id="sim-res-ps">— €</dd>
+                  </div>
+                </dl>
+                <div class="sim-resultats__sep"></div>
+              </div>
+              <div id="sim-resultats-detail" class="sim-resultats__detail" hidden></div>
+              <div class="sim-resultats__total">
+                <span>Total de l'imposition</span>
+                <strong id="sim-res-total">— €</strong>
+              </div>
+            </div>
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-down-s-line" id="sim-btn-detail">
+              <span>Afficher le détail</span>
+            </button>
+          </section>
+
+          <!-- Introduction -->
+          <div>
+            <p class="fr-text--lg fr-mb-1w">Complétez les rubriques pertinentes pour votre situation, puis cliquez sur le bouton calculer pour estimer votre imposition.</p>
+          </div>
+
+          <!-- Formulaire -->
+          <form novalidate>
+
+            <!-- ── FOYER FISCAL ── -->
+            <section class="sim-section" aria-labelledby="titre-foyer-fiscal">
+              <div class="sim-section__head">
+                <h2 class="fr-h4 fr-mb-1v" id="titre-foyer-fiscal">Foyer fiscal</h2>
+                <p class="fr-text--sm fr-mb-1w">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer.</p>
+                <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/particulier/je-declare-ma-situation-de-famille" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Comprendre les règles du foyer fiscal<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
+              </div>
+
+              <p class="sim-badge-parts fr-mb-0" id="nombre-parts-badge"><span>Nombre de parts :</span> <strong>1</strong></p>
+
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile Situation personnelle -->
+                <div class="sim-tuile-wrapper" data-tile="situationPersonnelle">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Situation personnelle</span>
+                      </div>
+                    </div>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Compléter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Situation personnelle</span>
+                      </div>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Situation personnelle">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Tuile Personne à charge -->
+                <div class="sim-tuile-wrapper" data-tile="personneACharge" data-tile-repeatable>
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Personne à charge</span>
+                      </div>
+                      <p class="fr-text--sm fr-mb-0">Vos enfants et les personnes associées, ou les personnes invalides vivants sous votre toit.</p>
+                    </div>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Ajouter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-user-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-pac-prenom>Personne à charge</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Personne à charge"></button>
+                    </div>
+                    <p class="sim-resume__situation" data-pac-situation hidden></p>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Personne à charge">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </section>
+
+            <!-- ── REVENUS ── -->
+            <section class="sim-section fr-mt-4w" aria-labelledby="titre-revenus">
+              <div class="sim-section__head">
+                <h2 class="fr-h4 fr-mb-1v" id="titre-revenus">Revenus</h2>
+                <p class="fr-text--sm fr-mb-1w">
+                  Vos revenus de source française et imposables en France, selon la convention fiscale conclue avec votre État de résidence.</p>
+                  <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Connaître les revenus à déclarer<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+                </p>
+              </div>
+              <div class="sim-tuiles-list" data-fragment="./shared/revenus-tiles.html">
+                <!-- Les tuiles revenus sont chargées par loader.js -->
+              </div>
+            </section>
+
+            <!-- ── DÉFICITS ET EXONÉRATION ── -->
+            <section class="sim-section fr-mt-4w" aria-labelledby="titre-deficits">
+              <div class="sim-section__head">
+                <h2 class="fr-h4 fr-mb-1v" id="titre-deficits">Déficits et exonération</h2>
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile Déficits globaux et CSG déductible -->
+                <div class="sim-tuile-wrapper" data-tile="deficitsGlobaux">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Déficits globaux et CSG déductible</span>
+                      </div>
+                      <p class="fr-text--sm fr-mb-0">Les déficits globaux des années précédentes et le montant éventuel de CSG déductible sont indiqués à la fin de votre dernier avis d'imposition.</p>
+                    </div>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Compléter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Déficits globaux et CSG déductible</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Déficits globaux et CSG déductible"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Déficits globaux et CSG déductible">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Tuile Exonération CSG-CRDS -->
+                <div class="sim-tuile-wrapper" data-tile="exonerationCsg">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w" aria-disabled="true">
+                    <div class="sim-tuile__info fr-pr-2w">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Exonération CSG-CRDS</span>
+                      </div>
+                      <p class="fr-text--sm fr-mb-0">Cette rubrique est disponible si des revenus locatifs sont ajoutés.</p>
+                    </div>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-edit-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Compléter
+                    </span>
+                  </button>
+
+                  <!-- Résumé après enregistrement -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Exonération CSG-CRDS</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Exonération CSG-CRDS"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Exonération CSG-CRDS">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </section>
+
+            <!-- ── BOUTON CALCULER ── -->
+            <button type="submit" class="fr-btn fr-btn--lg fr-btn--icon-left fr-icon-calculator-line fr-mt-4w">
+              Calculer
+            </button>
+
+          </form>
+        </div><!-- /vue-ensemble -->
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — SITUATION PERSONNELLE            -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="situationPersonnelle" hidden>
+
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">
+              Annuler
+            </button>
+          </div>
+
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4 fr-mb-0">
+              <span class="fr-icon-user-line" aria-hidden="true"></span>
+              Situation personnelle
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
+          </div>
+
+          <div data-fields></div>
+
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">
+            Enregistrer
+          </button>
+
+        </div><!-- /situation-personnelle -->
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — PERSONNE À CHARGE                -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="personneACharge" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-user-line" aria-hidden="true"></span>
+              Personne à charge
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /personneACharge -->
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — FONCIERS                         -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="fonciers" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-home-4-line" aria-hidden="true"></span>
+              Revenus fonciers
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /fonciers -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — PENSIONS                         -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="pensions" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-user-line" aria-hidden="true"></span>
+              Pensions
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /pensions -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — SALAIRES                         -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="salaires" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
+              Salaires
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /salaires -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — LMNP                             -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="lmnp" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-home-4-line" aria-hidden="true"></span>
+              Locations meublées non professionnelles
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /lmnp -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — BNC                              -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="bnc" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-building-line" aria-hidden="true"></span>
+              Bénéfices non commerciaux
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /bnc -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — BIC                              -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="bic" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-building-line" aria-hidden="true"></span>
+              Bénéfices industriels et commerciaux
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /bic -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — AGRICOLES                        -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="agricoles" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-leaf-line" aria-hidden="true"></span>
+              Revenus agricoles
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /agricoles -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — DÉFICITS GLOBAUX                 -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="deficitsGlobaux" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+              Déficits globaux et CSG déductible
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /deficitsGlobaux -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — EXONÉRATION CSG-CRDS             -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="exonerationCsg" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="sim-sous-formulaire__titre">
+              <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+              Exonération CSG-CRDS
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /exonerationCsg -->
+
+      </div><!-- /sim-wrapper -->
+    </div>
+  </main>
+
+  <div data-fragment="./shared/footer.html"></div>
+
   <script type="module" src="https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/dsfr.module.min.js"></script>
   <script type="text/javascript" nomodule src="https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/dsfr.nomodule.min.js"></script>
+  <script type="module" src="./shared/loader.js"></script>
+  <script type="module" src="./shared/tiles.js"></script>
 </body>
 </html>

@@ -1,10 +1,6 @@
 /**
  * Gestion de l'ouverture/fermeture des tuiles revenus.
- * - Variante A : expansion inline avec formulaire
- * - Variante B : navigation vers sous-formulaire, résumé après enregistrement
- *
- * Détecte la variante via data-variant="a"|"b" sur le body.
- * Les champs de formulaire sont injectés dynamiquement depuis forms.js.
+ * Navigation par sous-formulaire, résumé après enregistrement.
  *
  * Tuiles répétables (data-tile-repeatable) : chaque entrée sauvegardée crée
  * une fiche indépendante insérée avant le wrapper ; le bouton "Ajouter" reste
@@ -14,7 +10,7 @@
 import * as FORMS from './forms.js';
 import { validateForm, initBlurValidation } from './validation.js';
 import { afficherResultats } from './results.js';
-import { collecterResume, preremplirFormulaire, suffixerIds, nextInstanceSuffix } from './form-utils.js';
+import { collecterResume, preremplirFormulaire } from './form-utils.js';
 import { fragmentsLoaded } from './loader.js';
 import { hasFonciersOuverts, hasLmnpOuverts } from './state.js';
 
@@ -27,58 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fragmentsLoaded.then(() => { submitBtn.disabled = false; });
   }
 
-  // ── Variante A : injection des panels pré-ouverts au chargement ─────────────
-  if (document.body.dataset.variant === 'a') {
-    document.querySelectorAll('.sim-tuile-wrapper').forEach(wrapper => {
-      const panel = wrapper.querySelector('.sim-tuile-ouvert--a:not([hidden])');
-      if (panel) injecterChamps(panel, wrapper.dataset.tile);
-    });
-  }
-
-  // ── Variante A : validation au submit du formulaire ─────────────────────────
+  // ── Validation au submit ─────────────────────────────────────────────────────
   const form = document.querySelector('form');
-  if (form && document.body.dataset.variant === 'a') {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      let isValid = true;
-      let premierErreur = null;
-
-      // Valider tous les panels ouverts, y compris les fiches répétables clonées
-      document.querySelectorAll('.sim-tuile-ouvert--a:not([hidden])').forEach(panel => {
-        const wrapper = panel.closest('.sim-tuile-wrapper');
-        const tileName = wrapper?.dataset.tile ?? panel.dataset.tile;
-        if (!tileName) return;
-        const messages = FORMS[tileName]?.messages ?? {};
-        if (!validateForm(panel, messages)) {
-          isValid = false;
-          premierErreur ??= panel.querySelector('.fr-input-group--error, .fr-fieldset--error');
-        }
-      });
-
-      // Vérifier qu'au moins un revenu est présent
-      const errRev = validerRevenus();
-      if (errRev) {
-        isValid = false;
-        premierErreur ??= errRev;
-      }
-
-      if (!isValid && premierErreur) {
-        premierErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-
-      if (isValid) {
-        afficherResultats();
-      }
-    });
-  }
-
-  // ── Variante B : validation au submit du formulaire ─────────────────────────
-  if (form && document.body.dataset.variant === 'b') {
+  if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
       // 1. Situation personnelle obligatoire
-      const errSP = validerSituationPersonnelleB();
+      const errSP = validerSituationPersonnelle();
       if (errSP) {
         errSP.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
@@ -95,13 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Demi-parts : mise à jour en direct (variant A) ou via le sous-formulaire (variant B)
+  // Demi-parts : mise à jour via le sous-formulaire
   document.addEventListener('change', (e) => {
     if (e.target.name === 'demi-parts') mettreAJourNombreParts();
   });
 
   document.addEventListener('click', (e) => {
-    const variant = document.body.dataset.variant || 'a';
 
     // Ajouter / Compléter → ouvre le formulaire
     const btnAjouter = e.target.closest('.sim-tuile__btn--ajouter');
@@ -109,13 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnAjouter.getAttribute('aria-disabled') === 'true') return;
       const wrapper = btnAjouter.closest('.sim-tuile-wrapper');
       if (!wrapper) return;
-      if (variant === 'a') {
-        ouvrirTuileA(wrapper);
-        majExonerationCsgDisabled();
-      } else {
-        _dernierBoutonActif = btnAjouter;
-        naviguerVersFormulaire(wrapper.dataset.tile);
-      }
+      _dernierBoutonActif = btnAjouter;
+      naviguerVersFormulaire(wrapper.dataset.tile);
       return;
     }
 
@@ -126,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (wrapper) {
         supprimerTuile(wrapper);
       } else {
-        // Fiche clonée hors wrapper (tuile répétable variante A) : supprimer et rendre le focus
+        // Fiche clonée hors wrapper (tuile répétable) : supprimer et rendre le focus
         const clone = btnSupprimer.closest('.sim-tuile-ouvert');
         const tileName = clone?.dataset.tile;
         const btnAjouter = tileName
@@ -140,9 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Modifier → ré-ouvre le formulaire (variante B)
+    // Modifier → ré-ouvre le formulaire
     const btnModifier = e.target.closest('.sim-tuile__btn--modifier');
-    if (btnModifier && variant === 'b') {
+    if (btnModifier) {
       const wrapper = btnModifier.closest('.sim-tuile-wrapper');
       const tileEl = wrapper ?? btnModifier.closest('[data-tile]');
       if (tileEl) {
@@ -154,14 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Annuler → retour vue d'ensemble (variante B)
+    // Annuler → retour vue d'ensemble
     const btnAnnuler = e.target.closest('.sim-btn--annuler');
     if (btnAnnuler) {
       naviguerVersVueEnsemble();
       return;
     }
 
-    // Enregistrer → sauvegarde résumé, retour vue d'ensemble (variante B)
+    // Enregistrer → sauvegarde résumé, retour vue d'ensemble
     const btnEnregistrer = e.target.closest('.sim-btn--enregistrer');
     if (btnEnregistrer) {
       const formPage = btnEnregistrer.closest('.sim-sous-formulaire');
@@ -174,87 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── Injection des champs (source unique : forms.js) ──────────────────────────
 
-function injecterChamps(container, tileName, suffix = null) {
+function injecterChamps(container, tileName) {
   const fieldsEl = container.querySelector('[data-fields]');
   if (!fieldsEl || fieldsEl.dataset.injected) return;
   if (!FORMS[tileName]) return;
   fieldsEl.innerHTML = FORMS[tileName].template();
   if (typeof FORMS[tileName].init === 'function') {
-    FORMS[tileName].init(fieldsEl, suffix);
+    FORMS[tileName].init(fieldsEl);
   }
-  // Suffire les IDs après init() (les listeners sont attachés aux éléments,
-  // pas aux IDs) et avant initBlurValidation() (qui génère des IDs d'erreur).
-  if (suffix !== null) suffixerIds(fieldsEl, suffix);
   fieldsEl.dataset.injected = 'true';
   initBlurValidation(fieldsEl, FORMS[tileName]?.messages ?? {});
 }
 
-// ── Variante A ──────────────────────────────────────────────────────────────
-
-function focusPremierChamp(container) {
-  const candidates = container.querySelectorAll(
-    'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
-  );
-  for (const el of candidates) {
-    if (!el.closest('[hidden]')) { el.focus(); return; }
-  }
-}
-
-function ouvrirTuileA(wrapper) {
-  const tileName = wrapper.dataset.tile;
-  const panel = wrapper.querySelector('.sim-tuile-ouvert--a');
-  if (!panel) return;
-
-  if ('tileRepeatable' in wrapper.dataset) {
-    const numExistants = document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`).length;
-    const clone = panel.cloneNode(true);
-    clone.dataset.tile = tileName;
-    clone.querySelectorAll('[data-fields]').forEach(el => {
-      el.innerHTML = '';
-      delete el.dataset.injected;
-    });
-    clone.hidden = false;
-    wrapper.before(clone);
-    const prenomEl = clone.querySelector('[data-pac-prenom]');
-    if (prenomEl) {
-      const titre = `${prenomEl.textContent.trim()} ${numExistants + 1}`;
-      prenomEl.textContent = titre;
-      clone.querySelector('.sim-tuile__btn--supprimer')?.setAttribute('aria-label', `Supprimer ${titre}`);
-    }
-    injecterChamps(clone, tileName, nextInstanceSuffix());
-    mettreAJourNombreParts();
-    focusPremierChamp(clone);
-    return;
-  }
-
-  const btn = wrapper.querySelector('.sim-tuile');
-  injecterChamps(panel, tileName);
-  if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.hidden = true; }
-  panel.hidden = false;
-  focusPremierChamp(panel);
-}
-
-function supprimerTuile(wrapper) {
-  if (!wrapper) return;
-  const btn = wrapper.querySelector('.sim-tuile');
-  if (btn) {
-    btn.setAttribute('aria-expanded', 'false');
-    btn.hidden = false;
-  }
-  wrapper.querySelectorAll('.sim-tuile-ouvert').forEach(p => { p.hidden = true; });
-  // Vider le résumé (variante B)
-  const resume = wrapper.querySelector('.sim-resume');
-  if (resume) { resume.innerHTML = ''; resume.hidden = true; }
-  // Réinitialiser les champs injectés pour forcer une ré-injection propre
-  wrapper.querySelectorAll('[data-fields]').forEach(el => {
-    el.innerHTML = '';
-    delete el.dataset.injected;
-  });
-  // Rendre le focus au bouton déclencheur (variante A)
-  if (document.body.dataset.variant === 'a' && btn) btn.focus();
-}
-
-// ── Variante B : navigation ─────────────────────────────────────────────────
+// ── Navigation ───────────────────────────────────────────────────────────────
 
 let _scrollAvantFormulaire = null;
 let _dernierBoutonActif = null;
@@ -267,6 +145,13 @@ function naviguerVersFormulaire(tileName) {
   injecterChamps(formPage, tileName);
   if (_cloneEnCoursDEdition?.dataset.formValues) {
     preremplirFormulaire(formPage, JSON.parse(_cloneEnCoursDEdition.dataset.formValues));
+  } else {
+    // Tuile standard : restaurer les valeurs précédemment saisies si disponibles
+    const wrapperStd = document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"]`);
+    const panelBStd = wrapperStd?.querySelector('.sim-tuile-ouvert--b');
+    if (panelBStd?.dataset.formValues) {
+      preremplirFormulaire(formPage, JSON.parse(panelBStd.dataset.formValues));
+    }
   }
   _scrollAvantFormulaire = window.scrollY;
   if (vueEnsemble) vueEnsemble.hidden = true;
@@ -312,7 +197,7 @@ function scrollVersSommet() {
   if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── Variante B : enregistrement ─────────────────────────────────────────────
+// ── Enregistrement ───────────────────────────────────────────────────────────
 
 function enregistrerFormulaire(formPage) {
   const tileName = formPage.dataset.tile;
@@ -426,9 +311,23 @@ function enregistrerFormulaire(formPage) {
       resumeEl.hidden = false;
     }
 
+    // Sérialiser les valeurs pour la ré-édition
+    const formValues = {};
+    formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+      if (!field.name) return;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        if (field.checked) formValues[field.name] = field.value;
+      } else {
+        formValues[field.name] = field.value;
+      }
+    });
+
     wrapper.querySelector('.sim-tuile').hidden = true;
     const panelB = wrapper.querySelector('.sim-tuile-ouvert--b');
-    if (panelB) panelB.hidden = false;
+    if (panelB) {
+      panelB.hidden = false;
+      panelB.dataset.formValues = JSON.stringify(formValues);
+    }
 
     const btnModifier = panelB?.querySelector('.sim-tuile__btn--modifier');
     if (btnModifier) {
@@ -443,6 +342,26 @@ function enregistrerFormulaire(formPage) {
 
   naviguerVersVueEnsemble();
 }
+
+function supprimerTuile(wrapper) {
+  if (!wrapper) return;
+  const btn = wrapper.querySelector('.sim-tuile');
+  if (btn) btn.hidden = false;
+  wrapper.querySelectorAll('.sim-tuile-ouvert').forEach(p => { p.hidden = true; });
+  // Vider le résumé et les valeurs sauvegardées
+  const panelB = wrapper.querySelector('.sim-tuile-ouvert--b');
+  if (panelB) delete panelB.dataset.formValues;
+  const resume = wrapper.querySelector('.sim-resume');
+  if (resume) { resume.innerHTML = ''; resume.hidden = true; }
+  // Réinitialiser les champs injectés pour forcer une ré-injection propre
+  wrapper.querySelectorAll('[data-fields]').forEach(el => {
+    el.innerHTML = '';
+    delete el.dataset.injected;
+  });
+  if (btn) btn.focus();
+}
+
+// ── Nombre de parts ──────────────────────────────────────────────────────────
 
 function mettreAJourNombreParts() {
   const badge = document.getElementById('nombre-parts-badge');
@@ -481,7 +400,7 @@ function majExonerationCsgDisabled() {
 
 // ── Validation du bouton Calculer ────────────────────────────────────────────
 
-function validerSituationPersonnelleB() {
+function validerSituationPersonnelle() {
   const wrapper = document.querySelector('.sim-tuile-wrapper[data-tile="situationPersonnelle"]');
   if (!wrapper) return null;
 

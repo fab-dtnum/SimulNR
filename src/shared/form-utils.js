@@ -97,6 +97,7 @@ export function preremplirFormulaire(formPage, values) {
       }
     } else {
       field.value = values[field.name];
+      field.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });
 }

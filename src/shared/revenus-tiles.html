@@ -1,12 +1,11 @@
-<!-- Fragment partagé : liste des tuiles Revenus -->
-<!-- Utilisé par variant-a et variant-b via loader.js -->
+<!-- Fragment partagé : liste des tuiles Revenus, chargé par loader.js -->
 <!-- Les champs de formulaire sont injectés dynamiquement depuis forms.js -->
 
 <!-- ── FONCIERS ── -->
 <div class="sim-tuile-wrapper" data-tile="fonciers">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-community-line sim-tuile__icone" aria-hidden="true"></span>
@@ -20,19 +19,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A (champs injectés par forms.js) -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-community-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">Fonciers</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Fonciers"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B (résumé après enregistrement) -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -54,7 +41,7 @@
 <div class="sim-tuile-wrapper" data-tile="pensions">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
@@ -67,19 +54,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">Pensions</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Pensions"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -89,7 +64,7 @@
       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Pensions"></button>
     </div>
     <div class="sim-resume" hidden></div>
-    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Pensions">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Pensions">
       Modifier
     </button>
   </div>
@@ -100,7 +75,7 @@
 <div class="sim-tuile-wrapper" data-tile="salaires">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
@@ -113,19 +88,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">Salaires</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Salaires"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -135,7 +98,7 @@
       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Salaires"></button>
     </div>
     <div class="sim-resume" hidden></div>
-    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Salaires">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Salaires">
       Modifier
     </button>
   </div>
@@ -146,7 +109,7 @@
 <div class="sim-tuile-wrapper" data-tile="lmnp">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-community-line sim-tuile__icone" aria-hidden="true"></span>
@@ -160,19 +123,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-community-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">LMNP</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer LMNP"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -194,7 +145,7 @@
 <div class="sim-tuile-wrapper" data-tile="bnc">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
@@ -208,19 +159,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">BNC</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer BNC"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -230,7 +169,7 @@
       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer BNC"></button>
     </div>
     <div class="sim-resume" hidden></div>
-    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier BNC">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier BNC">
       Modifier
     </button>
   </div>
@@ -241,7 +180,7 @@
 <div class="sim-tuile-wrapper" data-tile="bic">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
@@ -255,19 +194,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">BIC</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer BIC"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -277,7 +204,7 @@
       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer BIC"></button>
     </div>
     <div class="sim-resume" hidden></div>
-    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier BIC">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier BIC">
       Modifier
     </button>
   </div>
@@ -288,7 +215,7 @@
 <div class="sim-tuile-wrapper" data-tile="agricoles">
 
   <!-- Fermé -->
-  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w" aria-expanded="false">
+  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-p-3w">
     <div class="sim-tuile__info fr-pr-2w">
       <div class="sim-tuile__title-row">
         <span class="fr-icon-seedling-line sim-tuile__icone" aria-hidden="true"></span>
@@ -301,19 +228,7 @@
     </span>
   </button>
 
-  <!-- Ouvert – Variante A -->
-  <div class="sim-tuile-ouvert sim-tuile-ouvert--a fr-p-3w" hidden>
-    <div class="sim-tuile-ouvert__header">
-      <div class="sim-tuile__title-row">
-        <span class="fr-icon-seedling-line sim-tuile__icone" aria-hidden="true"></span>
-        <span class="fr-h6 fr-mb-0">Agricoles</span>
-      </div>
-      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Agricoles"></button>
-    </div>
-    <div data-fields></div>
-  </div>
-
-  <!-- Ouvert – Variante B -->
+  <!-- Résumé après enregistrement -->
   <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
     <div class="sim-tuile-ouvert__header">
       <div class="sim-tuile__title-row">
@@ -323,7 +238,7 @@
       <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Agricoles"></button>
     </div>
     <div class="sim-resume" hidden></div>
-    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Agricoles">
+    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Agricoles">
       Modifier
     </button>
   </div>

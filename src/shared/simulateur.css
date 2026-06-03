@@ -181,26 +181,12 @@
   --icon-size: 1rem;
 }
 
-/* ── CARTE FORMULAIRE INLINE (VARIANTE A) ───────────────────────────────────── */
-
-.sim-form-card,
 .sim-tuile-ouvert {
   background-color: var(--background-default);
   border: 1px solid var(--border-default-grey);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.sim-form-card__section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  font-weight: 700;
-  color: var(--text-title-grey);
-  margin: 0;
 }
 
 /* ── TUILE EN ÉTAT D'ERREUR ─────────────────────────────────────────────────── */
@@ -286,19 +272,6 @@
   flex-direction: column;
   gap: 0.5rem;
   padding-left: 1.5rem;
-}
-
-/* ── FIELDSET AVEC INFOBULLE ─────────────────────────────────────────────────── */
-
-.sim-fieldset-avec-infobulle {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.25rem;
-}
-
-.sim-fieldset-avec-infobulle > .fr-fieldset {
-  flex: 1;
-  min-width: 0;
 }
 
 /* ── BOUTON CALCULER ────────────────────────────────────────────────────────── */
