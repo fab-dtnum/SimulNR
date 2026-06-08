@@ -9,6 +9,10 @@ export const messages = {
   'pac-invalidite': {
     valueMissing: "Veuillez indiquer si votre enfant a une carte d'invalidité.",
   },
+  'pac-intitule': {
+    valueMissing: 'Veuillez indiquer le prénom de cette personne.',
+    prenomDuplique: 'Ce prénom est déjà utilisé pour une personne à charge ajoutée précédemment. Veuillez en choisir un autre ou le différencier (par exemple en ajoutant une lettre).',
+  },
 };
 
 export function template() {
@@ -70,10 +74,10 @@ export function template() {
 
     <div class="fr-input-group">
       <label class="fr-label" for="pac-intitule">
-        Prénom (optionnel) <span class="fr-hint-text">Le prénom est uniquement utilisé pour vous aider à identifier cette personne dans la suite du formulaire.</span>
+        Prénom<span class="fr-hint-text">Le prénom est uniquement utilisé pour vous aider à identifier cette personne dans la suite du formulaire.</span>
       </label>
       <input class="fr-input" type="text" id="pac-intitule" name="pac-intitule"
-             data-resume-label="Prénom">
+             data-resume-label="Prénom" required>
     </div>
   `;
 }

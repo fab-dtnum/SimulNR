@@ -8,7 +8,7 @@
  */
 
 import * as FORMS from './forms.js';
-import { validateForm, initBlurValidation } from './validation.js';
+import { validateForm, initBlurValidation, setError } from './validation.js';
 import { afficherResultats } from './results.js';
 import { collecterResume, preremplirFormulaire } from './form-utils.js';
 import { fragmentsLoaded } from './loader.js';
@@ -210,6 +210,23 @@ function enregistrerFormulaire(formPage) {
 
     // ── Tuile répétable ───────────────────────────────────────────────────────
     if ('tileRepeatable' in wrapper.dataset) {
+
+      // Vérifier l'unicité du prénom entre fiches PAC
+      const prenomInput = formPage.querySelector('input[name="pac-intitule"]');
+      if (prenomInput) {
+        const prenomVal = prenomInput.value.trim().toLowerCase();
+        const existingPacs = [...document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`)];
+        const isDuplicate = existingPacs.some(fiche => {
+          if (fiche === _cloneEnCoursDEdition) return false;
+          return fiche.querySelector('[data-pac-prenom]')?.textContent.trim().toLowerCase() === prenomVal;
+        });
+        if (isDuplicate) {
+          setError(prenomInput, messages['pac-intitule']?.prenomDuplique ?? 'Ce prénom est déjà utilisé.');
+          prenomInput.focus();
+          return;
+        }
+      }
+
       let lignes = collecterResume(formPage);
       const panelTemplate = wrapper.querySelector('.sim-tuile-ouvert--b');
       let focusCible = wrapper.querySelector('.sim-tuile__btn--ajouter') ?? null;
