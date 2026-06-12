@@ -7,12 +7,10 @@ export const messages = {
     valueMissing: 'Veuillez indiquer si vos locations sont des meublés de tourisme non classés.',
   },
   'lmnp-loyers': {
-    valueMissing:   'Le montant des loyers est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des loyers est obligatoire.',
   },
   'lmnp-revenus-nets': {
-    valueMissing:   'Le montant des revenus nets locatifs est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des revenus nets locatifs est obligatoire.',
   },
 };
 

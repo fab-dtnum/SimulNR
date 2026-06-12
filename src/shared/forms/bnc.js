@@ -1,8 +1,7 @@
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'bnc-montant': {
-    valueMissing:   'Le montant des bénéfices non commerciaux nets est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des bénéfices non commerciaux nets est obligatoire.',
   },
 };
 

@@ -1,8 +1,7 @@
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'pensions-montant': {
-    valueMissing:   'Le montant annuel brut des pensions est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant annuel brut des pensions est obligatoire.',
   },
 };
 

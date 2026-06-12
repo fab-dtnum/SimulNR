@@ -14,7 +14,7 @@ const defaultMessages = {
   valueMissing:      'Ce champ est obligatoire.',
   valueMissingRadio: 'Veuillez sélectionner une option.',
   typeMismatch:      'Format invalide.',
-  rangeUnderflow:  field => `La valeur doit être supérieure ou égale à ${field.min}.`,
+  rangeUnderflow:  field => field.min === '0' ? 'Le montant ne peut pas être négatif.' : `La valeur doit être supérieure ou égale à ${field.min}.`,
   rangeOverflow:   field => `La valeur doit être inférieure ou égale à ${field.max}.`,
   badInput:        'Le format saisi est invalide.',
   patternMismatch: 'Le format saisi est invalide.',

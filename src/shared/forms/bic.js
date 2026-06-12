@@ -1,8 +1,7 @@
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'bic-montant': {
-    valueMissing:   'Le montant des bénéfices industriels et commerciaux nets est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des bénéfices industriels et commerciaux nets est obligatoire.',
   },
 };
 

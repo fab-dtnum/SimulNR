@@ -1,18 +1,13 @@
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'fonciers-loyers': {
-    valueMissing:   'Le montant des loyers est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des loyers est obligatoire.',
   },
   'fonciers-regime': {
     valueMissing: 'Veuillez indiquer si vous avez opté pour le régime réel.',
   },
   'fonciers-charges': {
-    valueMissing:   'Le montant des charges déductibles est obligatoire.',
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
-  },
-  'fonciers-interets': {
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
+    valueMissing: 'Le montant des charges déductibles est obligatoire.',
   },
 };
 

@@ -1,12 +1,5 @@
 // ── Messages d'erreur ────────────────────────────────────────────────────────
-export const messages = {
-  'deficits-montant': {
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
-  },
-  'deficits-csg': {
-    rangeUnderflow: 'Le montant ne peut pas être négatif.',
-  },
-};
+export const messages = {};
 
 export function template() {
   return /* html */`
