@@ -36,7 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // 2. Au moins un revenu ajouté
+      // 2. PAC obligatoire si parent seul coché
+      const errPac = validerPersonnesACharge();
+      if (errPac) {
+        errPac.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 3. Au moins un revenu ajouté
       const errRev = validerRevenus();
       if (errRev) {
         errRev.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -189,6 +196,16 @@ function naviguerVersVueEnsemble({ scroll = true, focusEl = null } = {}) {
   const section = document.querySelector('section[aria-labelledby="titre-revenus"]');
   if (errRevenu && section?.querySelector('.sim-tuile-wrapper .sim-tuile[hidden]')) {
     errRevenu.hidden = true;
+  }
+
+  const pacWrapper = document.querySelector('.sim-tuile-wrapper[data-tile="personneACharge"]');
+  if (pacWrapper?.classList.contains('sim-tuile-wrapper--erreur')) {
+    const parentSeulCoche = !!document.querySelector('input[name="dp-parent-seul"]:checked');
+    const hasAnyPac = document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]').length > 0;
+    if (!parentSeulCoche || hasAnyPac) {
+      pacWrapper.classList.remove('sim-tuile-wrapper--erreur');
+      pacWrapper.querySelector('.sim-tuile__msg-erreur')?.remove();
+    }
   }
 }
 
@@ -440,6 +457,28 @@ function validerSituationPersonnelle() {
   wrapper.classList.remove('sim-tuile-wrapper--erreur');
   wrapper.querySelector('.sim-tuile__msg-erreur')?.remove();
   return null;
+}
+
+function validerPersonnesACharge() {
+  const parentSeulCoche = !!document.querySelector('input[name="dp-parent-seul"]:checked');
+  if (!parentSeulCoche) return null;
+
+  const hasAnyPac = document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]').length > 0;
+  if (hasAnyPac) return null;
+
+  const wrapper = document.querySelector('.sim-tuile-wrapper[data-tile="personneACharge"]');
+  if (!wrapper) return null;
+
+  wrapper.classList.add('sim-tuile-wrapper--erreur');
+  let errEl = wrapper.querySelector('.sim-tuile__msg-erreur');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.className = 'fr-messages-group sim-tuile__msg-erreur';
+    errEl.innerHTML = '<p class="fr-message fr-message--error">Veuillez ajouter au moins une personne à charge, car vous avez déclaré dans votre situation personnelle que vous vivez seul(e) avec vos enfants, ou avec des personnes invalides recueillies sous votre toit.</p>';
+    wrapper.querySelector('.sim-tuile')?.after(errEl);
+  }
+  errEl.hidden = false;
+  return wrapper;
 }
 
 function validerRevenus() {
