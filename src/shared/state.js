@@ -14,5 +14,22 @@ export const estCelibatOuDivorce = () => getSituationFamiliale() === 'celibat-di
 export const hasFonciersOuverts = () =>
   !!document.querySelector('.sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile[hidden]');
 
-export const hasLmnpOuverts = () =>
-  !!document.querySelector('.sim-tuile-wrapper[data-tile="lmnp"] .sim-tuile[hidden]');
+// Au moins un logement en location meublée a été ajouté (indépendamment de la
+// validation finale du hub) : c'est ce qui détermine s'il y a des revenus
+// de locations meublées à ventiler pour la CSG-CRDS.
+export const hasLocationsMeubleesOuverts = () =>
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="locationsMeubleesLogement"]').length > 0;
+
+// Scopé à #vue-ensemble : le résumé partiel du hub réutilise le même
+// data-tile="locationsMeublees" pour son propre bouton Modifier.
+function valeursGeneralLocationsMeublees() {
+  const panelB = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="locationsMeublees"] .sim-tuile-ouvert--b');
+  if (!panelB?.dataset.formValues) return {};
+  return JSON.parse(panelB.dataset.formValues);
+}
+
+export const estLocationsMeubleesRegimeReel = () =>
+  valeursGeneralLocationsMeublees()['lm-regime'] === 'oui';
+
+export const estLocationsMeubleesCategorieLmnp = () =>
+  valeursGeneralLocationsMeublees()['lm-categorie'] === 'lmnp';

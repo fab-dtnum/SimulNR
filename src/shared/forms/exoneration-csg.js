@@ -1,4 +1,4 @@
-import { estMariagePacs, hasFonciersOuverts, hasLmnpOuverts } from '../state.js';
+import { estMariagePacs, hasFonciersOuverts, hasLocationsMeubleesOuverts } from '../state.js';
 
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
@@ -16,14 +16,9 @@ export const messages = {
     rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
     rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
   },
-  'csg-lmnp-vous': {
-    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
-    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
-  },
-  'csg-lmnp-conjoint': {
-    rangeUnderflow: 'Le pourcentage ne peut pas être négatif.',
-    rangeOverflow:  'Le pourcentage ne peut pas dépasser 100.',
-  },
+  // Les champs de répartition LMNP sont générés dynamiquement (un par logement,
+  // noms suffixés) : ils utilisent les messages par défaut de validation.js
+  // (rangeUnderflow/rangeOverflow) plutôt que des clés fixes ici.
 };
 
 export function template() {
@@ -92,32 +87,51 @@ export function template() {
       </div>
     </div>
 
-    <div id="csg-lmnp-group" hidden
-         data-resume-label="Répartition revenus LMNP" data-resume-type="repartition-pct">
+    <div id="csg-lmnp-group" hidden>
       <p class="fr-label">
-        En pourcentages, quelle est la répartition des revenus LMNP entre vous et votre conjoint/conjointe ?
-        <span class="fr-hint-text">La somme des deux pourcentages doit être égale à 100.</span>
+        En pourcentages, quelle est la répartition des locations meublées non professionnelles (LMNP) entre vous et votre conjoint ou conjointe ?
+        <span class="fr-hint-text">Pour chaque logement, la somme des deux pourcentages doit être égale à 100.</span>
       </p>
-      <div class="sim-double-champs">
-        <div class="fr-input-group">
-          <label class="fr-label" for="csg-lmnp-vous">
-            Vous
-            <span class="fr-hint-text">Exemple : 55</span>
-          </label>
-          <div class="fr-input-wrap fr-icon-percent-line">
-            <input class="fr-input" type="number" id="csg-lmnp-vous" name="csg-lmnp-vous"
-                   min="0" max="100">
-          </div>
+      <div data-csg-lmnp-liste></div>
+    </div>
+  `;
+}
+
+// ── Répartition LMNP : un bloc par logement ajouté ───────────────────────────
+
+function slugifyNomLogement(nom) {
+  const slug = nom.trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return slug || 'logement';
+}
+
+function echapperHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function blocRepartitionLogement(nom, slug) {
+  return /* html */`
+    <p class="sim-repartition-logement__nom">${echapperHtml(nom)}</p>
+    <div class="sim-double-champs">
+      <div class="fr-input-group">
+        <label class="fr-label" for="csg-lmnp-vous-${slug}">
+          Vous
+          <span class="fr-hint-text">Exemple : 55</span>
+        </label>
+        <div class="fr-input-wrap fr-icon-percent-line">
+          <input class="fr-input" type="number" id="csg-lmnp-vous-${slug}" name="csg-lmnp-vous-${slug}"
+                 min="0" max="100">
         </div>
-        <div class="fr-input-group">
-          <label class="fr-label" for="csg-lmnp-conjoint">
-            Conjoint / conjointe
-            <span class="fr-hint-text">Exemple : 45</span>
-          </label>
-          <div class="fr-input-wrap fr-icon-percent-line">
-            <input class="fr-input" type="number" id="csg-lmnp-conjoint" name="csg-lmnp-conjoint"
-                   min="0" max="100">
-          </div>
+      </div>
+      <div class="fr-input-group">
+        <label class="fr-label" for="csg-lmnp-conjoint-${slug}">
+          Conjoint / conjointe
+          <span class="fr-hint-text">Exemple : 45</span>
+        </label>
+        <div class="fr-input-wrap fr-icon-percent-line">
+          <input class="fr-input" type="number" id="csg-lmnp-conjoint-${slug}" name="csg-lmnp-conjoint-${slug}"
+                 min="0" max="100">
         </div>
       </div>
     </div>
@@ -150,25 +164,7 @@ export function init(container) {
     }
   }
 
-  function majLmnp() {
-    const lmnpPresent = hasLmnpOuverts();
-    const isMarriage = estMariagePacs();
-    const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
-    const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
-    const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
-    const show = lmnpPresent && statusDifferent;
-    const lmnpGroup = container.querySelector('#csg-lmnp-group');
-    if (lmnpGroup) {
-      lmnpGroup.hidden = !show;
-      lmnpGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = show; });
-    }
-  }
-
-  majConjoint();
-  majFonciers();
-  majLmnp();
-
-  // Complément automatique à 100% entre les deux champs de répartition fonciers
+  // Complément automatique à 100% entre deux champs de répartition
   function bindComplement(sourceId, targetId) {
     const source = container.querySelector(`#${sourceId}`);
     const target = container.querySelector(`#${targetId}`);
@@ -179,10 +175,64 @@ export function init(container) {
       target.value = (!isNaN(val) && source.value !== '') ? Math.max(0, 100 - val) : '';
     });
   }
+
+  // Synchronise un bloc Vous/Conjoint par logement en location meublée existant,
+  // en conservant les valeurs déjà saisies pour les logements déjà présents.
+  function renderLmnpRepartition() {
+    const liste = container.querySelector('[data-csg-lmnp-liste]');
+    if (!liste) return;
+
+    const noms = [...document.querySelectorAll('.sim-tuile-ouvert[data-tile="locationsMeubleesLogement"]')]
+      .map(logement => logement.querySelector('[data-lm-logement-nom]')?.textContent.trim())
+      .filter(Boolean);
+
+    const slugsVus = new Set();
+    noms.forEach(nom => {
+      let slug = slugifyNomLogement(nom);
+      while (slugsVus.has(slug)) slug += '-bis';
+      slugsVus.add(slug);
+
+      if (liste.querySelector(`[data-logement-key="${slug}"]`)) return;
+
+      const bloc = document.createElement('div');
+      bloc.className = 'sim-repartition-logement';
+      bloc.dataset.logementKey = slug;
+      bloc.dataset.resumeLabel = `Répartition LMNP – ${nom}`;
+      bloc.dataset.resumeType = 'repartition-pct';
+      bloc.innerHTML = blocRepartitionLogement(nom, slug);
+      liste.appendChild(bloc);
+
+      bindComplement(`csg-lmnp-vous-${slug}`, `csg-lmnp-conjoint-${slug}`);
+      bindComplement(`csg-lmnp-conjoint-${slug}`, `csg-lmnp-vous-${slug}`);
+    });
+
+    // Retirer les blocs des logements qui n'existent plus
+    [...liste.children].forEach(bloc => {
+      if (!slugsVus.has(bloc.dataset.logementKey)) bloc.remove();
+    });
+  }
+
+  function majLmnp() {
+    const lmnpPresent = hasLocationsMeubleesOuverts();
+    const isMarriage = estMariagePacs();
+    const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
+    const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
+    const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
+    const show = lmnpPresent && statusDifferent;
+    const lmnpGroup = container.querySelector('#csg-lmnp-group');
+    if (lmnpGroup) {
+      if (show) renderLmnpRepartition();
+      lmnpGroup.hidden = !show;
+      lmnpGroup.querySelectorAll('input[type="number"]').forEach(inp => { inp.required = show; });
+    }
+  }
+
+  majConjoint();
+  majFonciers();
+  majLmnp();
+
   bindComplement('csg-fonciers-vous', 'csg-fonciers-conjoint');
   bindComplement('csg-fonciers-conjoint', 'csg-fonciers-vous');
-  bindComplement('csg-lmnp-vous', 'csg-lmnp-conjoint');
-  bindComplement('csg-lmnp-conjoint', 'csg-lmnp-vous');
 
   container.addEventListener('change', (e) => {
     if (e.target.name === 'csg-affiliation-vous' || e.target.name === 'csg-affiliation-conjoint') {

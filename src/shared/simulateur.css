@@ -82,14 +82,6 @@
   gap: 0.25rem;
 }
 
-.sim-sous-formulaire__titre {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 700;
-  color: var(--text-title-grey);
-  margin: 0;
-}
-
 @media (max-width: 767px) {
   .sim-sous-formulaire__titre {
     font-size: 1.375rem;
@@ -103,6 +95,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* Section "Liste de vos logements" du hub : 1.5rem entre le titre, la liste
+   des tuiles et l'alerte "Veuillez ajouter un logement..." si elle apparaît. */
+.sim-logements-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* ── TUILE (ÉTAT FERMÉ) ─────────────────────────────────────────────────────── */
@@ -326,6 +326,12 @@
   justify-content: flex-end;
 }
 
+/* Le bouton "Annuler" doit être à 0.5rem du contenu qui suit, alors que
+   .sim-sous-formulaire applique un gap de 2rem entre toutes ses sections. */
+.sim-sous-formulaire__top + * {
+  margin-top: -1.5rem;
+}
+
 .sim-sous-formulaire__header {
   display: flex;
   flex-direction: column;
@@ -339,11 +345,51 @@
   margin: 0;
 }
 
+/* Bloc description + liens (En-tête avec "Détail" côté Figma) : 0.5rem entre
+   la description et chaque lien, 1rem sous le titre, 2rem avant le hint qui
+   suit (le header applique déjà 0.25rem via son propre gap, d'où les valeurs
+   complémentaires ci-dessous : 0.75rem + 0.25rem = 1rem, 1.75rem + 0.25rem = 2rem). */
+.sim-sous-formulaire__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.sim-sous-formulaire__detail + .sim-sous-formulaire__hint {
+  margin-top: 1.75rem;
+}
+
 /* ── VARIANTE B : RÉSUMÉ ────────────────────────────────────────────────────── */
 
 .sim-tuile-ouvert--b {
   background-color: var(--background-default);
   border: 1px solid var(--border-default-blue-france);
+}
+
+/* Logement devenu incomplet suite à une modification des infos générales
+   des locations meublées (régime/catégorie) : bordure et titre en rouge. */
+.sim-tuile-ouvert--b.sim-tuile-ouvert--erreur {
+  border: 2px solid var(--border-plain-error);
+}
+
+.sim-tuile-ouvert--erreur [data-lm-logement-nom] {
+  color: var(--text-default-error);
+}
+
+/* DSFR fournit une icône de secours (background-image, pré-colorée rouge/blanc,
+   non teintable) en plus de l'icône masquée (mask-image + currentColor) — la
+   première l'emporte ici. On neutralise l'image et on reconstruit le masque
+   nous-mêmes pour que l'icône soit teintée exactement comme le titre. */
+.sim-tuile-ouvert--erreur [data-lm-logement-erreur] .fr-message--error::before {
+  background-image: none;
+  background-color: var(--text-default-error);
+  -webkit-mask-image: url("https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/icons/system/fr--error-fill.svg");
+  mask-image: url("https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/icons/system/fr--error-fill.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
 .sim-resume {
@@ -373,6 +419,23 @@
   white-space: nowrap;
 }
 
+/* Séparateur + titre de bloc entre le résumé général des locations meublées et
+   le résumé de chaque logement, dans la tuile de la vue d'ensemble. */
+.sim-resume__separateur {
+  height: 1px;
+  background-color: var(--border-default-grey);
+  margin: 1rem 0;
+}
+
+.sim-resume__logement-nom {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-title-grey);
+  margin: 0 0 0.25rem;
+}
+
 /* ── BADGE NOMBRE DE PARTS ──────────────────────────────────────────────────── */
 
 .sim-badge-parts {
@@ -394,6 +457,27 @@
   font-size: 0.875rem;
   line-height: 1.5rem;
   font-weight: 700;
+  color: var(--text-default-grey);
+  margin: 0;
+}
+
+/* ── RÉPARTITION LMNP PAR LOGEMENT (exonération CSG-CRDS) ───────────────────── */
+
+.sim-repartition-logement {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sim-repartition-logement + .sim-repartition-logement {
+  margin-top: 1rem;
+}
+
+.sim-repartition-logement__nom {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
   color: var(--text-default-grey);
   margin: 0;
 }

@@ -75,7 +75,7 @@
               <div class="sim-section__head">
                 <h2 class="fr-h4 fr-mb-1v" id="titre-foyer-fiscal">Foyer fiscal</h2>
                 <p class="fr-text--sm fr-mb-1w">L'ensemble des personnes concernées par votre déclaration de revenus : conjoint, conjointe ou partenaire de pacs, personnes à charge ou rattachées à votre foyer.</p>
-                <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/particulier/je-declare-ma-situation-de-famille" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Comprendre les règles du foyer fiscal<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
+                <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/particulier/je-declare-ma-situation-de-famille" class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Comprendre les règles du foyer fiscal<span class="fr-sr-only"> (nouvelle fenêtre)</span></a></p>
               </div>
 
               <p class="sim-badge-parts fr-mb-0" id="nombre-parts-badge"><span>Nombre de parts :</span> <strong>1</strong></p>
@@ -160,7 +160,7 @@
                 <h2 class="fr-h4 fr-mb-1v" id="titre-revenus">Revenus</h2>
                 <p class="fr-text--sm fr-mb-1w">
                   Vos revenus de source française et imposables en France, selon la convention fiscale conclue avec votre État de résidence.</p>
-                  <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Connaître les revenus à déclarer<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+                  <p class="fr-mb-0"><a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer" class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Connaître les revenus à déclarer<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
                 </p>
               </div>
               <div class="sim-tuiles-list" data-fragment="./shared/revenus-tiles.html">
@@ -293,7 +293,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-user-line" aria-hidden="true"></span>
               Personne à charge
             </h2>
@@ -312,7 +312,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-home-4-line" aria-hidden="true"></span>
               Revenus fonciers
             </h2>
@@ -330,7 +330,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-user-line" aria-hidden="true"></span>
               Pensions
             </h2>
@@ -348,7 +348,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
               Salaires
             </h2>
@@ -359,22 +359,142 @@
         </div><!-- /salaires -->
 
         <!-- ══════════════════════════════════════════════════ -->
-        <!-- SOUS-FORMULAIRE — LMNP                             -->
+        <!-- SOUS-FORMULAIRE — LOCATIONS MEUBLÉES (GÉNÉRAL)     -->
         <!-- ══════════════════════════════════════════════════ -->
-        <div class="sim-sous-formulaire" data-tile="lmnp" hidden>
+        <div class="sim-sous-formulaire" data-tile="locationsMeublees" hidden>
           <div class="sim-sous-formulaire__top">
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-home-4-line" aria-hidden="true"></span>
-              Locations meublées non professionnelles
+              Locations meublées
             </h2>
-            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+            <div class="sim-sous-formulaire__detail">
+              <p class="fr-text--sm fr-mb-0">
+                Locations meublées non professionnelles (LMNP) ou professionnelles (LMP). Pour plus de détails sur les locations meublées, les régimes réels ou micro-BIC et les seuils associés, consultez les pages dédiées :
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/particulier/les-locations-meublees"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Locations meublées non professionnelles<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/international-particulier/questions/je-loue-un-bien-meuble-quelles-sont-mes-obligations-fiscales"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Locations meublées professionnelles<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+            </div>
+            <p class="sim-sous-formulaire__hint">Tous les champs affichés sont obligatoires. Tous les montants sont à indiquer en euros et arrondis à l'entier le plus proche.</p>
           </div>
           <div data-fields></div>
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
-        </div><!-- /lmnp -->
+        </div><!-- /locationsMeublees -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — LOCATIONS MEUBLÉES (HUB)         -->
+        <!-- Écran de synthèse : résumé du Général + liste des  -->
+        <!-- logements ajoutés (tuile répétable, pattern PAC).      -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="locationsMeubleesHub" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4">
+              <span class="fr-icon-home-4-line" aria-hidden="true"></span>
+              Locations meublées
+            </h2>
+            <div class="sim-sous-formulaire__detail">
+              <p class="fr-text--sm fr-mb-0">
+                Pour plus de détails sur les locations meublées, les régimes réels ou micro-BIC et les seuils associés, consultez les pages dédiées :
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/particulier/les-locations-meublees"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Locations meublées non professionnelles<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/international-particulier/questions/je-loue-un-bien-meuble-quelles-sont-mes-obligations-fiscales"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Locations meublées professionnelles<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Résumé partiel du Général (catégorie, régime, déficits) -->
+          <div class="sim-tuile-wrapper" data-tile="locationsMeublees">
+            <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w">
+              <div class="sim-resume" hidden></div>
+              <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier les informations générales">
+                Modifier
+              </button>
+            </div>
+          </div>
+
+          <div class="sim-logements-section">
+            <p class="fr-h5 fr-mb-0">Liste de vos logements</p>
+            <div class="sim-tuiles-list" data-lm-logements-liste>
+
+              <!-- Tuile répétable Logement -->
+              <div class="sim-tuile-wrapper" data-tile="locationsMeubleesLogement" data-tile-repeatable>
+
+                <!-- Fermé -->
+                <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                  <div class="sim-tuile__info fr-pr-2w">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-home-4-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="fr-h6 fr-mb-0">Logement meublé</span>
+                    </div>
+                  </div>
+                  <span class="sim-tuile__action">
+                    <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                    Ajouter
+                  </span>
+                </button>
+
+                <!-- Résumé après enregistrement (gabarit de clonage) -->
+                <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                  <div class="sim-tuile-ouvert__header">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-home-4-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="fr-h6 fr-mb-0" data-lm-logement-nom>Nom du logement meublé</span>
+                    </div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer ce logement"></button>
+                  </div>
+                  <div class="sim-resume" hidden></div>
+                  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier ce logement">
+                    Modifier
+                  </button>
+                  <div class="fr-messages-group" data-lm-logement-erreur hidden>
+                    <p class="fr-message fr-message--error">
+                      Suite aux changements des informations relatives à l'ensemble de vos revenus de locations meublées, veuillez mettre à jour les informations de ce logement.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+
+        </div><!-- /locationsMeubleesHub -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — LOCATIONS MEUBLÉES (LOGEMENT)        -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="locationsMeubleesLogement" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4">
+              <span class="fr-icon-home-4-line" aria-hidden="true"></span>
+              Ajout d'un logement en location meublée
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs affichés sont obligatoires. Tous les montants sont à indiquer en euros et arrondis à l'entier le plus proche.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer ce logement</button>
+        </div><!-- /locationsMeubleesLogement -->
 
         <!-- ══════════════════════════════════════════════════ -->
         <!-- SOUS-FORMULAIRE — BNC                              -->
@@ -384,7 +504,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-building-line" aria-hidden="true"></span>
               Bénéfices non commerciaux
             </h2>
@@ -402,7 +522,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-building-line" aria-hidden="true"></span>
               Bénéfices industriels et commerciaux
             </h2>
@@ -420,7 +540,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-leaf-line" aria-hidden="true"></span>
               Revenus agricoles
             </h2>
@@ -438,7 +558,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
               Déficits globaux et CSG déductible
             </h2>
@@ -456,11 +576,20 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="fr-h4">
               <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
               Exonération CSG-CRDS
             </h2>
-            <p class="sim-sous-formulaire__hint">Tous les champs sont obligatoires sauf mention contraire.</p>
+            <div class="sim-sous-formulaire__detail">
+              <p class="fr-text--sm fr-mb-0">
+                Pour plus de détails sur l'exonération CSG-CRDS, consultez la page dédiée :
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/international-particulier/questions/je-suis-non-resident-suis-je-redevable-des-contributions"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Non-résidents et prélèvements sociaux<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+            </div>
+            <p class="sim-sous-formulaire__hint">Tous les champs affichés sont obligatoires. Tous les montants sont à indiquer en euros et arrondis à l'entier le plus proche.</p>
           </div>
           <div data-fields></div>
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
