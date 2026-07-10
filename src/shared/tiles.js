@@ -185,14 +185,15 @@ function naviguerVersFormulaire(tileName) {
   if (!formPage) return;
   injecterChamps(formPage, tileName);
   if (tileName === 'locationsMeubleesHub') verifierLogementsIncomplets();
+  // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
+  // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
+  // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
+  // le formulaire affiché (hidden=false) : tant qu'il est masqué, tous ses champs
+  // sont considérés comme cachés par validateForm() et ne sont donc pas vérifiés.
+  const aValiderApresAffichage = !!_cloneEnCoursDEdition?.classList.contains('sim-tuile-ouvert--erreur');
+
   if (_cloneEnCoursDEdition?.dataset.formValues) {
     preremplirFormulaire(formPage, JSON.parse(_cloneEnCoursDEdition.dataset.formValues));
-    // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
-    // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter,
-    // sans attendre une tentative d'enregistrement.
-    if (_cloneEnCoursDEdition.classList.contains('sim-tuile-ouvert--erreur')) {
-      validateForm(formPage, FORMS[tileName]?.messages ?? {});
-    }
   } else {
     // Tuile standard : restaurer les valeurs précédemment saisies si disponibles
     const wrapperStd = document.querySelector(`#vue-ensemble .sim-tuile-wrapper[data-tile="${tileName}"]`);
@@ -214,6 +215,7 @@ function naviguerVersFormulaire(tileName) {
     if (f !== formPage) f.hidden = true;
   });
   formPage.hidden = false;
+  if (aValiderApresAffichage) validateForm(formPage, FORMS[tileName]?.messages ?? {});
   const wrapper = document.querySelector('.sim-wrapper');
   if (wrapper) wrapper.classList.add('sim-wrapper--sous-formulaire');
   scrollVersSommet();
