@@ -373,7 +373,8 @@
   border: 2px solid var(--border-plain-error);
 }
 
-.sim-tuile-ouvert--erreur [data-lm-logement-nom] {
+.sim-tuile-ouvert--erreur [data-lm-logement-nom],
+.sim-tuile-ouvert--erreur .sim-tuile__icone {
   color: var(--text-default-error);
 }
 
@@ -462,6 +463,12 @@
 }
 
 /* ── RÉPARTITION LMNP PAR LOGEMENT (exonération CSG-CRDS) ───────────────────── */
+
+/* Espace entre l'intitulé de la question (avec son texte d'aide) et la liste
+   des logements : 1rem, quelle que soit la marge par défaut de .fr-label. */
+#csg-lmnp-group > .fr-label {
+  margin-bottom: 1rem;
+}
 
 .sim-repartition-logement {
   display: flex;
