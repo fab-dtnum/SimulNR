@@ -187,6 +187,12 @@ function naviguerVersFormulaire(tileName) {
   if (tileName === 'locationsMeubleesHub') verifierLogementsIncomplets();
   if (_cloneEnCoursDEdition?.dataset.formValues) {
     preremplirFormulaire(formPage, JSON.parse(_cloneEnCoursDEdition.dataset.formValues));
+    // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
+    // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter,
+    // sans attendre une tentative d'enregistrement.
+    if (_cloneEnCoursDEdition.classList.contains('sim-tuile-ouvert--erreur')) {
+      validateForm(formPage, FORMS[tileName]?.messages ?? {});
+    }
   } else {
     // Tuile standard : restaurer les valeurs précédemment saisies si disponibles
     const wrapperStd = document.querySelector(`#vue-ensemble .sim-tuile-wrapper[data-tile="${tileName}"]`);

@@ -373,7 +373,8 @@
   border: 2px solid var(--border-plain-error);
 }
 
-.sim-tuile-ouvert--erreur [data-lm-logement-nom] {
+.sim-tuile-ouvert--erreur [data-lm-logement-nom],
+.sim-tuile-ouvert--erreur .sim-tuile__icone {
   color: var(--text-default-error);
 }
 
