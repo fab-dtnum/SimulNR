@@ -269,6 +269,15 @@
   padding: 0.75rem 1rem;
 }
 
+/* fr-checkbox-group n'a pas de marge propre par défaut (contrairement à
+   fr-input-group:not(:last-child)). Le fr-hr qui précède la case Outre-mer
+   inclut déjà 1.5rem d'espace après son trait (padding-bottom), il ne faut
+   donc ajouter du margin qu'en dessous de la case, pas au-dessus (sinon
+   l'espacement au-dessus du hr suivant serait doublé). */
+.sim-checkbox-group--espacee {
+  margin-bottom: 1.5rem;
+}
+
 .sim-checkbox-tile .fr-label {
   cursor: pointer;
 }

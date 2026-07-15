@@ -93,13 +93,17 @@ export function template() {
       </div>
     </div>
 
-    <div class="fr-checkbox-group">
+    <hr class="fr-hr">
+
+    <div class="fr-checkbox-group sim-checkbox-group--espacee">
       <input type="checkbox" id="fo-bien-outremer" name="fo-bien-outremer">
       <label class="fr-label" for="fo-bien-outremer">
         Le bien est situé dans un département ou région d'Outre-mer.
         <span class="fr-hint-text">Cochez cette case si cette situation vous concerne.</span>
       </label>
     </div>
+
+    <hr class="fr-hr">
   `;
 }
 
