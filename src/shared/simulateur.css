@@ -109,8 +109,9 @@
 
 .sim-tuile {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
   background-color: var(--background-alt-grey) !important;
   border: 1px solid var(--border-default-grey);
   width: 100%;
@@ -140,18 +141,24 @@
   color: var(--text-disabled-grey);
 }
 
-.sim-tuile__info {
+/* Ligne "En-tête" de la tuile fermée : titre (icône + libellé) et bouton
+   "Ajouter" côte à côte, alignés sur la même ligne (cf. maquette Figma où le
+   bouton fait partie du même conteneur "En-tête" que le titre, pas de toute
+   la tuile description comprise). */
+.sim-tuile__entete {
   display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  flex: 1;
-  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .sim-tuile__title-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .sim-tuile__icone {
@@ -462,11 +469,12 @@
   margin: 0;
 }
 
-/* ── RÉPARTITION LMNP PAR LOGEMENT (exonération CSG-CRDS) ───────────────────── */
+/* ── RÉPARTITION PAR BIEN/LOGEMENT (exonération CSG-CRDS, Fonciers & LMNP) ──── */
 
 /* Espace entre l'intitulé de la question (avec son texte d'aide) et la liste
-   des logements : 1rem, quelle que soit la marge par défaut de .fr-label. */
-#csg-lmnp-group > .fr-label {
+   des biens/logements : 1rem, quelle que soit la marge par défaut de .fr-label. */
+#csg-lmnp-group > .fr-label,
+#csg-fonciers-group > .fr-label {
   margin-bottom: 1rem;
 }
 
@@ -487,6 +495,19 @@
   text-transform: uppercase;
   color: var(--text-default-grey);
   margin: 0;
+}
+
+/* ── CHAMP AVEC INFOBULLE (ex : régime micro-foncier) ────────────────────────── */
+
+.sim-champ-avec-infobulle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.sim-champ-avec-infobulle > fieldset {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ── DOUBLE CHAMPS CÔTE À CÔTE ──────────────────────────────────────────────── */

@@ -252,9 +252,13 @@ function resolveMessage(field, messages) {
     const msg = messages[key] ?? defaultMessages[key];
     return typeof msg === 'function' ? msg(field) : msg;
   };
+  // badInput avant valueMissing : sur un <input type="number">, une saisie
+  // non numérique (ex. "dfgf") est sanitizée par le navigateur en valeur vide,
+  // ce qui déclenche aussi valueMissing — mais l'utilisateur a bien saisi
+  // quelque chose, donc le message de format invalide est plus pertinent.
+  if (v.badInput)        return resolve('badInput');
   if (v.valueMissing)    return resolve('valueMissing');
   if (v.typeMismatch)    return resolve('typeMismatch');
-  if (v.badInput)        return resolve('badInput');
   if (v.rangeUnderflow)  return resolve('rangeUnderflow');
   if (v.rangeOverflow)   return resolve('rangeOverflow');
   if (v.patternMismatch) return resolve('patternMismatch');

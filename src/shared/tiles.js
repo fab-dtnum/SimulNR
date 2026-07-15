@@ -14,6 +14,7 @@ import { collecterResume, preremplirFormulaire } from './form-utils.js';
 import { fragmentsLoaded } from './loader.js';
 import {
   hasFonciersOuverts, hasLocationsMeubleesOuverts,
+  estFonciersRegimeReel,
   estLocationsMeubleesRegimeReel, estLocationsMeubleesCategorieLmnp,
 } from './state.js';
 
@@ -107,11 +108,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!wrapper) _cloneEnCoursDEdition = tileEl;
         let cible = tileEl.dataset.tile;
         // Depuis la vue d'ensemble, "Modifier" sur la tuile de synthèse
-        // Locations meublées rouvre le hub (pas directement le Général) —
-        // le résumé partiel du hub porte le même data-tile="locationsMeublees"
-        // pour son propre bouton Modifier, qui lui doit ouvrir le Général.
+        // Locations meublées / Fonciers rouvre le hub (pas directement le
+        // Général) — le résumé partiel du hub porte le même data-tile que la
+        // vue d'ensemble pour son propre bouton Modifier, qui lui doit ouvrir
+        // le Général.
         if (cible === 'locationsMeublees' && wrapper?.closest('#vue-ensemble')) {
           cible = 'locationsMeubleesHub';
+        }
+        if (cible === 'fonciers' && wrapper?.closest('#vue-ensemble')) {
+          cible = 'fonciersHub';
         }
         naviguerVersFormulaire(cible);
       }
@@ -139,6 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (tileName === 'locationsMeubleesHub') {
         const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="locationsMeublees"]');
+        const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
+        naviguerVersVueEnsemble({ focusEl });
+        return;
+      }
+
+      if (tileName === 'fonciersBien') {
+        naviguerVersFormulaire('fonciersHub');
+        return;
+      }
+      if (tileName === 'fonciers') {
+        const generalDejaEnregistre = !!document
+          .querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="fonciers"] .sim-tuile-ouvert--b')
+          ?.dataset.formValues;
+        if (generalDejaEnregistre) {
+          naviguerVersFormulaire('fonciersHub');
+          return;
+        }
+      }
+      if (tileName === 'fonciersHub') {
+        const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="fonciers"]');
         const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
         naviguerVersVueEnsemble({ focusEl });
         return;
@@ -185,6 +210,7 @@ function naviguerVersFormulaire(tileName) {
   if (!formPage) return;
   injecterChamps(formPage, tileName);
   if (tileName === 'locationsMeubleesHub') verifierLogementsIncomplets();
+  if (tileName === 'fonciersHub') verifierBiensFonciersIncomplets();
   // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
   // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
   // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
@@ -356,8 +382,87 @@ function enregistrerFormulaire(formPage) {
     return;
   }
 
-  // Non scopé à #vue-ensemble : contrairement à "locationsMeublees" (traité plus
-  // haut), le wrapper répétable "locationsMeubleesLogement" vit dans l'écran hub.
+  // ── Cas spécial : écran "Général" des Fonciers ──────────────────────────────
+  // Même logique que "locationsMeublees" : le résumé est stocké mais la tuile de
+  // synthèse de la vue d'ensemble n'est révélée qu'à la validation du hub.
+  if (tileName === 'fonciers') {
+    const lignes = collecterResume(formPage);
+    const resumeHtml = lignes.map(({ label, valeur }) =>
+      `<div class="sim-resume__ligne">
+        <span class="sim-resume__label">${label}</span>
+        <strong class="sim-resume__valeur">${valeur}</strong>
+      </div>`
+    ).join('');
+
+    const formValues = {};
+    formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+      if (!field.name) return;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        if (field.checked) formValues[field.name] = field.value;
+      } else {
+        formValues[field.name] = field.value;
+      }
+    });
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="fonciers"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (panelB) {
+      const resumeEl = panelB.querySelector('.sim-resume');
+      if (resumeEl) { resumeEl.innerHTML = resumeHtml; resumeEl.hidden = lignes.length === 0; }
+      panelB.dataset.formValues = JSON.stringify(formValues);
+      panelB.dataset.generalResumeHtml = resumeHtml;
+    }
+
+    const hubResumeEl = document.querySelector('.sim-sous-formulaire[data-tile="fonciersHub"] .sim-resume');
+    if (hubResumeEl) { hubResumeEl.innerHTML = resumeHtml; hubResumeEl.hidden = lignes.length === 0; }
+
+    naviguerVersFormulaire('fonciersHub');
+    return;
+  }
+
+  // ── Cas spécial : hub des Fonciers (validation finale) ──────────────────────
+  if (tileName === 'fonciersHub') {
+    const nbBiens = document.querySelectorAll('.sim-tuile-ouvert[data-tile="fonciersBien"]').length;
+    const erreurId = 'erreur-fonciers-hub';
+    let erreurEl = document.getElementById(erreurId);
+
+    if (nbBiens === 0) {
+      if (!erreurEl) {
+        erreurEl = document.createElement('div');
+        erreurEl.id = erreurId;
+        erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+        erreurEl.innerHTML = '<p>Veuillez ajouter un bien mis en location (hors locations meublées).</p>';
+        formPage.querySelector('[data-fo-biens-liste]')?.after(erreurEl);
+      }
+      erreurEl.hidden = false;
+      erreurEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (erreurEl) erreurEl.hidden = true;
+
+    // Un bien devenu incomplet (régime modifié depuis le Général) doit être
+    // mis à jour avant de pouvoir valider la page.
+    const bienEnErreur = document.querySelector('.sim-tuile-ouvert--erreur[data-tile="fonciersBien"]');
+    if (bienEnErreur) {
+      bienEnErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="fonciers"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
+    construireResumeVueEnsembleFonciers();
+    if (panelB) panelB.hidden = false;
+    const btnModifierFonciers = panelB?.querySelector('.sim-tuile__btn--modifier');
+
+    majExonerationCsgDisabled();
+    naviguerVersVueEnsemble({ focusEl: btnModifierFonciers ?? null });
+    return;
+  }
+
+  // Non scopé à #vue-ensemble : contrairement à "locationsMeublees"/"fonciers"
+  // (traités plus haut), les wrappers répétables "locationsMeubleesLogement" et
+  // "fonciersBien" vivent dans leur écran hub respectif.
   const wrapper = document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"]`);
 
   if (wrapper) {
@@ -430,6 +535,12 @@ function enregistrerFormulaire(formPage) {
           titre = nom || `Logement meublé ${index}`;
           const nomEl = clone.querySelector('[data-lm-logement-nom]');
           if (nomEl) nomEl.textContent = titre;
+        } else if (tileName === 'fonciersBien') {
+          // Remplissage spécifique bien foncier
+          const nom = formPage.querySelector('input[name="fo-bien-nom"]')?.value.trim();
+          titre = nom || `Bien ${index}`;
+          const nomEl = clone.querySelector('[data-fo-bien-nom]');
+          if (nomEl) nomEl.textContent = titre;
         }
 
         const resumeEl = clone.querySelector('.sim-resume');
@@ -471,7 +582,11 @@ function enregistrerFormulaire(formPage) {
       if (tileName === 'locationsMeubleesLogement') {
         // Retour au hub (pas à la vue d'ensemble) : le logement vient s'ajouter à
         // la liste qui vit dans l'écran hub, pas dans la vue d'ensemble.
+        document.getElementById('erreur-locations-meublees-hub')?.setAttribute('hidden', '');
         naviguerVersFormulaire('locationsMeubleesHub');
+      } else if (tileName === 'fonciersBien') {
+        document.getElementById('erreur-fonciers-hub')?.setAttribute('hidden', '');
+        naviguerVersFormulaire('fonciersHub');
       } else {
         naviguerVersVueEnsemble({ focusEl: focusCible });
       }
@@ -564,6 +679,38 @@ function construireResumeVueEnsembleLocationsMeublees() {
   resumeEl.hidden = false;
 }
 
+// Résumé de la tuile "Revenus fonciers" en vue d'ensemble : le résumé général
+// (régime/déficits), puis le détail de chaque bien ajouté, séparés par un
+// simple trait, comme sur la maquette Figma.
+function construireResumeVueEnsembleFonciers() {
+  const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="fonciers"]');
+  const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+  const resumeEl = panelB?.querySelector('.sim-resume');
+  if (!panelB || !resumeEl) return;
+
+  resumeEl.innerHTML = panelB.dataset.generalResumeHtml ?? '';
+
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="fonciersBien"]').forEach(clone => {
+    const nom = clone.querySelector('[data-fo-bien-nom]')?.textContent.trim() ?? '';
+    const resumeBienHtml = clone.querySelector('.sim-resume')?.innerHTML ?? '';
+
+    const separateur = document.createElement('div');
+    separateur.className = 'sim-resume__separateur';
+    resumeEl.appendChild(separateur);
+
+    const titre = document.createElement('p');
+    titre.className = 'sim-resume__logement-nom';
+    titre.textContent = nom;
+    resumeEl.appendChild(titre);
+
+    const detail = document.createElement('div');
+    detail.innerHTML = resumeBienHtml; // déjà échappé (valeurs numériques/select)
+    resumeEl.append(...detail.childNodes);
+  });
+
+  resumeEl.hidden = false;
+}
+
 function supprimerTuile(wrapper) {
   if (!wrapper) return;
   const btn = wrapper.querySelector('.sim-tuile');
@@ -580,13 +727,20 @@ function supprimerTuile(wrapper) {
     delete el.dataset.injected;
   });
 
-  // Locations meublées : vider aussi le hub (résumé partiel + liste des logements),
-  // qui vit dans un sous-formulaire séparé et n'est pas nettoyé par ce qui précède.
+  // Locations meublées / Fonciers : vider aussi le hub (résumé partiel + liste
+  // des logements/biens), qui vit dans un sous-formulaire séparé et n'est pas
+  // nettoyé par ce qui précède.
   if (wrapper.dataset.tile === 'locationsMeublees') {
     document.querySelectorAll('.sim-tuile-ouvert[data-tile="locationsMeubleesLogement"]').forEach(el => el.remove());
     const hubResume = document.querySelector('.sim-sous-formulaire[data-tile="locationsMeubleesHub"] .sim-resume');
     if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
     document.getElementById('erreur-locations-meublees-hub')?.setAttribute('hidden', '');
+  }
+  if (wrapper.dataset.tile === 'fonciers') {
+    document.querySelectorAll('.sim-tuile-ouvert[data-tile="fonciersBien"]').forEach(el => el.remove());
+    const hubResume = document.querySelector('.sim-sous-formulaire[data-tile="fonciersHub"] .sim-resume');
+    if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
+    document.getElementById('erreur-fonciers-hub')?.setAttribute('hidden', '');
   }
 
   if (btn) btn.focus();
@@ -654,6 +808,25 @@ function verifierLogementsIncomplets() {
 
     clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
     const msgEl = clone.querySelector('[data-lm-logement-erreur]');
+    if (msgEl) msgEl.hidden = !incomplet;
+  });
+}
+
+// ── Fonciers : biens devenus incomplets ─────────────────────────────────────
+
+// Modifier le régime dans le Général peut rendre incomplètes des fiches bien
+// déjà enregistrées (charges déductibles jamais demandées si le régime était
+// micro-foncier). On marque ces fiches en erreur tant qu'elles n'ont pas été
+// rouvertes et complétées via "Modifier".
+function verifierBiensFonciersIncomplets() {
+  const regimeReel = estFonciersRegimeReel();
+
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="fonciersBien"]').forEach(clone => {
+    const valeurs = clone.dataset.formValues ? JSON.parse(clone.dataset.formValues) : {};
+    const incomplet = regimeReel && !valeurs['fo-bien-charges'];
+
+    clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
+    const msgEl = clone.querySelector('[data-fo-bien-erreur]');
     if (msgEl) msgEl.hidden = !incomplet;
   });
 }
