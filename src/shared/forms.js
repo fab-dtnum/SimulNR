@@ -17,11 +17,12 @@ import * as bnc       from './forms/bnc.js';
 import * as bic       from './forms/bic.js';
 import * as agricoles       from './forms/agricoles.js';
 import * as deficitsGlobaux from './forms/deficits-globaux.js';
+import * as pensionsAlimentaires from './forms/pensions-alimentaires.js';
 import * as exonerationCsg  from './forms/exoneration-csg.js';
 
 export {
   situationPersonnelle, personneACharge, pensions, salaires,
   fonciersGeneral as fonciers, fonciersBien,
   locationsMeubleesGeneral as locationsMeublees, locationsMeubleesLogement,
-  bnc, bic, agricoles, deficitsGlobaux, exonerationCsg,
+  bnc, bic, agricoles, deficitsGlobaux, pensionsAlimentaires, exonerationCsg,
 };
