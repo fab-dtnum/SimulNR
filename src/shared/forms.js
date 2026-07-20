@@ -9,8 +9,8 @@ import * as situationPersonnelle from './forms/situation-personnelle.js';
 import * as personneACharge     from './forms/personne-a-charge.js';
 import * as fonciersGeneral from './forms/fonciers-general.js';
 import * as fonciersBien    from './forms/fonciers-bien.js';
-import * as pensions  from './forms/pensions.js';
-import * as salaires  from './forms/salaires.js';
+import * as pension   from './forms/pensions.js';
+import * as salaire   from './forms/salaires.js';
 import * as locationsMeubleesGeneral from './forms/locations-meublees-general.js';
 import * as locationsMeubleesLogement from './forms/locations-meublees-logement.js';
 import * as bnc       from './forms/bnc.js';
@@ -21,7 +21,7 @@ import * as pensionsAlimentaires from './forms/pensions-alimentaires.js';
 import * as exonerationCsg  from './forms/exoneration-csg.js';
 
 export {
-  situationPersonnelle, personneACharge, pensions, salaires,
+  situationPersonnelle, personneACharge, pension, salaire,
   fonciersGeneral as fonciers, fonciersBien,
   locationsMeubleesGeneral as locationsMeublees, locationsMeubleesLogement,
   bnc, bic, agricoles, deficitsGlobaux, pensionsAlimentaires, exonerationCsg,

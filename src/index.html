@@ -470,7 +470,10 @@
         </div><!-- /fonciersBien -->
 
         <!-- ══════════════════════════════════════════════════ -->
-        <!-- SOUS-FORMULAIRE — PENSIONS                         -->
+        <!-- SOUS-FORMULAIRE — PENSIONS (HUB)                   -->
+        <!-- Une section par personne du foyer (Vous, Conjoint  -->
+        <!-- si marié(e)/pacsé(e), chaque Personne à charge),   -->
+        <!-- chacune avec sa propre liste répétable de pensions.-->
         <!-- ══════════════════════════════════════════════════ -->
         <div class="sim-sous-formulaire" data-tile="pensions" hidden>
           <div class="sim-sous-formulaire__top">
@@ -481,14 +484,186 @@
               <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
               Pensions
             </h2>
-            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+            <p class="fr-text--sm fr-mb-0">Ajoutez toutes les pensions perçues par les membres de votre foyer, imposées en France et hors de France.</p>
           </div>
-          <div data-fields></div>
+
+          <div class="sim-logements-section" data-pensions-personnes>
+
+            <!-- Section "Vous" : toujours présente -->
+            <div class="sim-section-personne" data-personne-section="vous">
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom">Vous</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 pension</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Pension -->
+                <div class="sim-tuile-wrapper" data-tile="pension" data-tile-repeatable data-personne="vous">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Pension</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-pe-nom>Nom de la pension</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer cette pension"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier cette pension">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Section "Conjoint / conjointe" : visible si mariage/pacs (togglée en JS) -->
+            <div class="sim-section-personne" data-personne-section="conjoint" hidden>
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom">Conjoint / conjointe</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 pension</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Pension -->
+                <div class="sim-tuile-wrapper" data-tile="pension" data-tile-repeatable data-personne="conjoint">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Pension</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-pe-nom>Nom de la pension</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer cette pension"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier cette pension">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Gabarit caché : cloné dynamiquement une fois par Personne à charge existante -->
+            <div class="sim-section-personne" data-personne-section-template hidden>
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom" data-personne-nom>Prénom</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 pension</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Pension -->
+                <div class="sim-tuile-wrapper" data-tile="pension" data-tile-repeatable data-personne="">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Pension</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-pe-nom>Nom de la pension</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer cette pension"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier cette pension">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
         </div><!-- /pensions -->
 
         <!-- ══════════════════════════════════════════════════ -->
-        <!-- SOUS-FORMULAIRE — SALAIRES                         -->
+        <!-- SOUS-FORMULAIRE — PENSION (AJOUT)                  -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="pension" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4">
+              <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
+              Ajout d'une pension
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs affichés sont obligatoires. Tous les montants sont à indiquer en euros et arrondis à l'entier le plus proche.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer cette pension</button>
+        </div><!-- /pension -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — SALAIRES (HUB)                   -->
+        <!-- Une section par personne du foyer (Vous, Conjoint  -->
+        <!-- si marié(e)/pacsé(e), chaque Personne à charge),   -->
+        <!-- chacune avec sa propre liste répétable de salaires.-->
         <!-- ══════════════════════════════════════════════════ -->
         <div class="sim-sous-formulaire" data-tile="salaires" hidden>
           <div class="sim-sous-formulaire__top">
@@ -499,11 +674,180 @@
               <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
               Salaires
             </h2>
-            <p class="sim-sous-formulaire__hint">Tous les montants sont à indiquer en euros.</p>
+            <p class="fr-text--sm fr-mb-0">Ajoutez tous les salaires perçus par les membres de votre foyer, imposés en France et hors de France.</p>
           </div>
-          <div data-fields></div>
+
+          <div class="sim-logements-section" data-salaires-personnes>
+
+            <!-- Section "Vous" : toujours présente -->
+            <div class="sim-section-personne" data-personne-section="vous">
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom">Vous</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 salaire</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Salaire -->
+                <div class="sim-tuile-wrapper" data-tile="salaire" data-tile-repeatable data-personne="vous">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Salaire</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-sa-nom>Nom du salaire</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer ce salaire"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier ce salaire">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Section "Conjoint / conjointe" : visible si mariage/pacs (togglée en JS) -->
+            <div class="sim-section-personne" data-personne-section="conjoint" hidden>
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom">Conjoint / conjointe</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 salaire</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Salaire -->
+                <div class="sim-tuile-wrapper" data-tile="salaire" data-tile-repeatable data-personne="conjoint">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Salaire</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-sa-nom>Nom du salaire</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer ce salaire"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier ce salaire">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Gabarit caché : cloné dynamiquement une fois par Personne à charge existante -->
+            <div class="sim-section-personne" data-personne-section-template hidden>
+              <div class="sim-entete-personne">
+                <div class="sim-entete-personne__ligne">
+                  <span class="sim-entete-personne__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+                  <span class="sim-entete-personne__nom" data-personne-nom>Prénom</span>
+                  <span class="sim-entete-personne__compte" data-personne-compte>0 salaire</span>
+                </div>
+                <hr class="fr-hr">
+              </div>
+              <div class="sim-tuiles-list">
+
+                <!-- Tuile répétable Salaire -->
+                <div class="sim-tuile-wrapper" data-tile="salaire" data-tile-repeatable data-personne="">
+
+                  <!-- Fermé -->
+                  <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w">
+                    <div class="sim-tuile__entete">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0">Salaire</span>
+                      </div>
+                      <span class="sim-tuile__action">
+                        <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                        Ajouter
+                      </span>
+                    </div>
+                  </button>
+
+                  <!-- Résumé après enregistrement (gabarit de clonage) -->
+                  <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                    <div class="sim-tuile-ouvert__header">
+                      <div class="sim-tuile__title-row">
+                        <span class="fr-icon-briefcase-line sim-tuile__icone" aria-hidden="true"></span>
+                        <span class="fr-h6 fr-mb-0" data-sa-nom>Nom du salaire</span>
+                      </div>
+                      <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer ce salaire"></button>
+                    </div>
+                    <div class="sim-resume" hidden></div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier ce salaire">
+                      Modifier
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
         </div><!-- /salaires -->
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — SALAIRE (AJOUT)                  -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="salaire" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4">
+              <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
+              Ajout d'un salaire
+            </h2>
+            <p class="sim-sous-formulaire__hint">Tous les champs affichés sont obligatoires. Tous les montants sont à indiquer en euros et arrondis à l'entier le plus proche.</p>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer ce salaire</button>
+        </div><!-- /salaire -->
 
         <!-- ══════════════════════════════════════════════════ -->
         <!-- SOUS-FORMULAIRE — LOCATIONS MEUBLÉES (GÉNÉRAL)     -->

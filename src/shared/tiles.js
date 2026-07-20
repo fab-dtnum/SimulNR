@@ -16,6 +16,7 @@ import {
   hasFonciersOuverts, hasLocationsMeubleesOuverts,
   estFonciersRegimeReel,
   estLocationsMeubleesRegimeReel, estLocationsMeubleesCategorieLmnp,
+  estMariagePacs,
 } from './state.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const wrapper = btnAjouter.closest('.sim-tuile-wrapper');
       if (!wrapper) return;
       _dernierBoutonActif = btnAjouter;
+      _wrapperCibleRepetable = wrapper;
       naviguerVersFormulaire(wrapper.dataset.tile);
       return;
     }
@@ -86,11 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fiche clonée hors wrapper (tuile répétable) : supprimer et rendre le focus
         const clone = btnSupprimer.closest('.sim-tuile-ouvert');
         const tileName = clone?.dataset.tile;
-        const btnAjouter = tileName
-          ? document.querySelector(`.sim-tuile-wrapper[data-tile="${tileName}"] .sim-tuile`)
+        const personne = clone?.dataset.personne;
+        const selecteurWrapper = tileName
+          ? `.sim-tuile-wrapper[data-tile="${tileName}"]${personne ? `[data-personne="${personne}"]` : ''} .sim-tuile`
           : null;
+        const btnAjouter = selecteurWrapper ? document.querySelector(selecteurWrapper) : null;
         clone?.remove();
         mettreAJourNombreParts();
+        mettreAJourCompteursSalaires();
+        mettreAJourCompteursPensions();
         if (btnAjouter) btnAjouter.focus();
       }
       majExonerationCsgDisabled();
@@ -169,6 +175,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (tileName === 'salaire') {
+        naviguerVersFormulaire('salaires');
+        return;
+      }
+      if (tileName === 'salaires') {
+        const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="salaires"]');
+        const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
+        naviguerVersVueEnsemble({ focusEl });
+        return;
+      }
+
+      if (tileName === 'pension') {
+        naviguerVersFormulaire('pensions');
+        return;
+      }
+      if (tileName === 'pensions') {
+        const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="pensions"]');
+        const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
+        naviguerVersVueEnsemble({ focusEl });
+        return;
+      }
+
       naviguerVersVueEnsemble();
       return;
     }
@@ -203,6 +231,11 @@ function injecterChamps(container, tileName) {
 let _scrollAvantFormulaire = null;
 let _dernierBoutonActif = null;
 let _cloneEnCoursDEdition = null;
+// Salaires : wrapper précis ciblé par le dernier clic "Ajouter" sur une tuile
+// répétable, utilisé pour désambiguïser les multiples wrappers "salaire"
+// partagés entre les sections Vous/Conjoint/Personnes à charge (cf. plan).
+let _wrapperCibleRepetable = null;
+let _pacIdSeq = 0;
 
 function naviguerVersFormulaire(tileName) {
   const vueEnsemble = document.getElementById('vue-ensemble');
@@ -211,6 +244,8 @@ function naviguerVersFormulaire(tileName) {
   injecterChamps(formPage, tileName);
   if (tileName === 'locationsMeubleesHub') verifierLogementsIncomplets();
   if (tileName === 'fonciersHub') verifierBiensFonciersIncomplets();
+  if (tileName === 'salaires') construireSectionsSalairesParPersonne();
+  if (tileName === 'pensions') construireSectionsPensionsParPersonne();
   // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
   // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
   // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
@@ -264,6 +299,7 @@ function naviguerVersVueEnsemble({ scroll = true, focusEl = null } = {}) {
   if (cible) cible.focus();
   _dernierBoutonActif = null;
   _cloneEnCoursDEdition = null;
+  _wrapperCibleRepetable = null;
 
   // Effacer les erreurs de validation si la condition est maintenant résolue
   const spWrapper = document.querySelector('.sim-tuile-wrapper[data-tile="situationPersonnelle"]');
@@ -460,6 +496,255 @@ function enregistrerFormulaire(formPage) {
     return;
   }
 
+  // ── Cas spécial : formulaire d'un salaire individuel ────────────────────────
+  // Contrairement aux autres tuiles répétables, "salaire" est partagé par
+  // plusieurs wrappers physiques (un par section Vous/Conjoint/Personne à
+  // charge, cf. data-personne) : la résolution générique ci-dessous ne
+  // trouverait que le premier wrapper "salaire" du document, donc on résout
+  // ici le bon wrapper cible en priorité via la fiche en cours de modification,
+  // sinon via le wrapper précis ciblé par le dernier clic "Ajouter".
+  if (tileName === 'salaire') {
+    let wrapperCible = null;
+    if (_cloneEnCoursDEdition?.dataset.personne !== undefined) {
+      wrapperCible = document.querySelector(
+        `.sim-tuile-wrapper[data-tile="salaire"][data-personne="${_cloneEnCoursDEdition.dataset.personne}"]`
+      );
+    }
+    if (!wrapperCible && _wrapperCibleRepetable?.dataset.tile === 'salaire') {
+      wrapperCible = _wrapperCibleRepetable;
+    }
+    if (!wrapperCible) {
+      naviguerVersFormulaire('salaires');
+      return;
+    }
+
+    const lignes = collecterResume(formPage);
+    const panelTemplate = wrapperCible.querySelector('.sim-tuile-ouvert--b');
+
+    const formValues = {};
+    formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+      if (!field.name) return;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        if (field.checked) formValues[field.name] = field.value;
+      } else {
+        formValues[field.name] = field.value;
+      }
+    });
+
+    if (panelTemplate) {
+      const clone = panelTemplate.cloneNode(true);
+      clone.dataset.tile = tileName;
+      clone.dataset.personne = wrapperCible.dataset.personne;
+      clone.hidden = false;
+
+      const existingFiches = [...document.querySelectorAll(
+        `.sim-tuile-ouvert[data-tile="salaire"][data-personne="${wrapperCible.dataset.personne}"]`
+      )];
+      const index = _cloneEnCoursDEdition
+        ? existingFiches.indexOf(_cloneEnCoursDEdition) + 1
+        : existingFiches.length + 1;
+
+      const nom = formPage.querySelector('input[name="sa-nom"]')?.value.trim();
+      const titre = nom || `Salaire ${index}`;
+      const nomEl = clone.querySelector('[data-sa-nom]');
+      if (nomEl) nomEl.textContent = titre;
+
+      const resumeEl = clone.querySelector('.sim-resume');
+      if (resumeEl && lignes.length > 0) {
+        resumeEl.innerHTML = lignes.map(({ label, valeur }) =>
+          `<div class="sim-resume__ligne">
+            <span class="sim-resume__label">${label}</span>
+            <strong class="sim-resume__valeur">${valeur}</strong>
+          </div>`
+        ).join('');
+        resumeEl.hidden = false;
+      }
+
+      const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
+      if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${titre}`);
+
+      clone.dataset.formValues = JSON.stringify(formValues);
+
+      if (_cloneEnCoursDEdition) {
+        _cloneEnCoursDEdition.replaceWith(clone);
+        _cloneEnCoursDEdition = null;
+      } else {
+        wrapperCible.before(clone);
+      }
+    }
+
+    formPage.querySelectorAll('[data-fields]').forEach(el => {
+      el.innerHTML = '';
+      delete el.dataset.injected;
+    });
+
+    mettreAJourCompteursSalaires();
+    document.getElementById('erreur-salaires-hub')?.setAttribute('hidden', '');
+    naviguerVersFormulaire('salaires');
+    return;
+  }
+
+  // ── Cas spécial : hub des Salaires (validation finale) ──────────────────────
+  if (tileName === 'salaires') {
+    const nbSalaires = document.querySelectorAll('.sim-tuile-ouvert[data-tile="salaire"]').length;
+    const erreurId = 'erreur-salaires-hub';
+    let erreurEl = document.getElementById(erreurId);
+
+    if (nbSalaires === 0) {
+      if (!erreurEl) {
+        erreurEl = document.createElement('div');
+        erreurEl.id = erreurId;
+        erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+        erreurEl.innerHTML = '<p>Veuillez ajouter un salaire.</p>';
+        formPage.querySelector('[data-salaires-personnes]')?.after(erreurEl);
+      }
+      erreurEl.hidden = false;
+      erreurEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (erreurEl) erreurEl.hidden = true;
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="salaires"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
+    construireResumeVueEnsembleSalaires();
+    if (panelB) panelB.hidden = false;
+    const btnModifierSalaires = panelB?.querySelector('.sim-tuile__btn--modifier');
+
+    naviguerVersVueEnsemble({ focusEl: btnModifierSalaires ?? null });
+    return;
+  }
+
+  // ── Cas spécial : formulaire d'une pension individuelle ─────────────────────
+  // Même logique que "salaire" (cf. plus haut) : plusieurs wrappers physiques
+  // partagent data-tile="pension", un par section Vous/Conjoint/Personne à
+  // charge, distingués par data-personne.
+  if (tileName === 'pension') {
+    let wrapperCible = null;
+    if (_cloneEnCoursDEdition?.dataset.personne !== undefined) {
+      wrapperCible = document.querySelector(
+        `.sim-tuile-wrapper[data-tile="pension"][data-personne="${_cloneEnCoursDEdition.dataset.personne}"]`
+      );
+    }
+    if (!wrapperCible && _wrapperCibleRepetable?.dataset.tile === 'pension') {
+      wrapperCible = _wrapperCibleRepetable;
+    }
+    if (!wrapperCible) {
+      naviguerVersFormulaire('pensions');
+      return;
+    }
+
+    const lignes = collecterResume(formPage);
+    const panelTemplate = wrapperCible.querySelector('.sim-tuile-ouvert--b');
+
+    const formValues = {};
+    formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+      if (!field.name) return;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        if (field.checked) formValues[field.name] = field.value;
+      } else {
+        formValues[field.name] = field.value;
+      }
+    });
+
+    // "Vous résidez en Polynésie française ou à Wallis et Futuna" : si cochée
+    // sur cette pension, elle doit l'être automatiquement sur toutes les
+    // autres pensions déjà enregistrées (cf. maquette Figma).
+    if (formValues['pe-polynesie'] === 'on') {
+      document.querySelectorAll('.sim-tuile-ouvert[data-tile="pension"]').forEach(autre => {
+        if (autre === _cloneEnCoursDEdition || !autre.dataset.formValues) return;
+        const valeurs = JSON.parse(autre.dataset.formValues);
+        if (valeurs['pe-polynesie'] !== 'on') {
+          valeurs['pe-polynesie'] = 'on';
+          autre.dataset.formValues = JSON.stringify(valeurs);
+        }
+      });
+    }
+
+    if (panelTemplate) {
+      const clone = panelTemplate.cloneNode(true);
+      clone.dataset.tile = tileName;
+      clone.dataset.personne = wrapperCible.dataset.personne;
+      clone.hidden = false;
+
+      const existingFiches = [...document.querySelectorAll(
+        `.sim-tuile-ouvert[data-tile="pension"][data-personne="${wrapperCible.dataset.personne}"]`
+      )];
+      const index = _cloneEnCoursDEdition
+        ? existingFiches.indexOf(_cloneEnCoursDEdition) + 1
+        : existingFiches.length + 1;
+
+      const nom = formPage.querySelector('input[name="pe-nom"]')?.value.trim();
+      const titre = nom || `Pension ${index}`;
+      const nomEl = clone.querySelector('[data-pe-nom]');
+      if (nomEl) nomEl.textContent = titre;
+
+      const resumeEl = clone.querySelector('.sim-resume');
+      if (resumeEl && lignes.length > 0) {
+        resumeEl.innerHTML = lignes.map(({ label, valeur }) =>
+          `<div class="sim-resume__ligne">
+            <span class="sim-resume__label">${label}</span>
+            <strong class="sim-resume__valeur">${valeur}</strong>
+          </div>`
+        ).join('');
+        resumeEl.hidden = false;
+      }
+
+      const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
+      if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${titre}`);
+
+      clone.dataset.formValues = JSON.stringify(formValues);
+
+      if (_cloneEnCoursDEdition) {
+        _cloneEnCoursDEdition.replaceWith(clone);
+        _cloneEnCoursDEdition = null;
+      } else {
+        wrapperCible.before(clone);
+      }
+    }
+
+    formPage.querySelectorAll('[data-fields]').forEach(el => {
+      el.innerHTML = '';
+      delete el.dataset.injected;
+    });
+
+    mettreAJourCompteursPensions();
+    document.getElementById('erreur-pensions-hub')?.setAttribute('hidden', '');
+    naviguerVersFormulaire('pensions');
+    return;
+  }
+
+  // ── Cas spécial : hub des Pensions (validation finale) ──────────────────────
+  if (tileName === 'pensions') {
+    const nbPensions = document.querySelectorAll('.sim-tuile-ouvert[data-tile="pension"]').length;
+    const erreurId = 'erreur-pensions-hub';
+    let erreurEl = document.getElementById(erreurId);
+
+    if (nbPensions === 0) {
+      if (!erreurEl) {
+        erreurEl = document.createElement('div');
+        erreurEl.id = erreurId;
+        erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+        erreurEl.innerHTML = '<p>Veuillez ajouter une pension.</p>';
+        formPage.querySelector('[data-pensions-personnes]')?.after(erreurEl);
+      }
+      erreurEl.hidden = false;
+      erreurEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (erreurEl) erreurEl.hidden = true;
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="pensions"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
+    construireResumeVueEnsemblePensions();
+    if (panelB) panelB.hidden = false;
+    const btnModifierPensions = panelB?.querySelector('.sim-tuile__btn--modifier');
+
+    naviguerVersVueEnsemble({ focusEl: btnModifierPensions ?? null });
+    return;
+  }
+
   // Non scopé à #vue-ensemble : contrairement à "locationsMeublees"/"fonciers"
   // (traités plus haut), les wrappers répétables "locationsMeubleesLogement" et
   // "fonciersBien" vivent dans leur écran hub respectif.
@@ -513,6 +798,12 @@ function enregistrerFormulaire(formPage) {
         let titre = '';
 
         if (tileName === 'personneACharge') {
+          // Identifiant stable, indépendant du prénom (qui peut être modifié
+          // via "Modifier") : utilisé par les Salaires pour associer une
+          // section par personne à charge sans perdre ses données si elle
+          // est renommée.
+          clone.dataset.pacId = _cloneEnCoursDEdition?.dataset.pacId || `pac-${++_pacIdSeq}`;
+
           // Remplissage spécifique personne à charge
           const prenom = formPage.querySelector('input[name="pac-intitule"]')?.value.trim();
           titre = prenom || `Personne à charge ${index}`;
@@ -711,6 +1002,204 @@ function construireResumeVueEnsembleFonciers() {
   resumeEl.hidden = false;
 }
 
+// ── Salaires : sections par personne (Vous / Conjoint / Personnes à charge) ──
+
+// Synchronise la liste des sections du hub Salaires avec l'état actuel du
+// foyer : bascule la visibilité de la section Conjoint, et crée/retire les
+// sections Personne à charge (identifiées par leur pacId stable, cf.
+// tileName === 'personneACharge' dans enregistrerFormulaire) pour refléter
+// les fiches PAC actuellement ajoutées, sans jamais perdre les salaires d'une
+// personne simplement renommée.
+function construireSectionsSalairesParPersonne() {
+  const hub = document.querySelector('.sim-sous-formulaire[data-tile="salaires"]');
+  const conteneur = hub?.querySelector('[data-salaires-personnes]');
+  const template = conteneur?.querySelector('[data-personne-section-template]');
+  if (!conteneur || !template) return;
+
+  const sectionConjoint = conteneur.querySelector('[data-personne-section="conjoint"]');
+  if (sectionConjoint) sectionConjoint.hidden = !estMariagePacs();
+
+  const pacsActuels = [...document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]')];
+  const idsPacActuels = new Set(pacsActuels.map(p => p.dataset.pacId).filter(Boolean));
+
+  // Retirer les sections des personnes à charge qui n'existent plus (et leurs
+  // salaires avec, cf. décision produit : pas de section orpheline possible).
+  conteneur.querySelectorAll('[data-personne-section^="pac-"]').forEach(section => {
+    if (!idsPacActuels.has(section.dataset.personneSection)) section.remove();
+  });
+
+  // Créer ou mettre à jour une section par personne à charge actuelle.
+  pacsActuels.forEach(pac => {
+    const id = pac.dataset.pacId;
+    if (!id) return;
+    const prenom = pac.querySelector('[data-pac-prenom]')?.textContent.trim() || 'Personne à charge';
+
+    let section = conteneur.querySelector(`[data-personne-section="${id}"]`);
+    if (!section) {
+      section = template.cloneNode(true);
+      section.hidden = false;
+      section.removeAttribute('data-personne-section-template');
+      section.dataset.personneSection = id;
+      section.querySelectorAll('.sim-tuile-wrapper[data-tile="salaire"]').forEach(w => { w.dataset.personne = id; });
+      template.before(section);
+    }
+    const nomEl = section.querySelector('[data-personne-nom]');
+    if (nomEl) nomEl.textContent = prenom;
+  });
+
+  mettreAJourCompteursSalaires();
+}
+
+// Recalcule le compteur "N salaire(s)" affiché sous chaque nom de personne.
+function mettreAJourCompteursSalaires() {
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="salaires"] [data-personne-section]').forEach(section => {
+    const compteEl = section.querySelector('[data-personne-compte]');
+    if (!compteEl) return;
+    const n = document.querySelectorAll(
+      `.sim-tuile-ouvert[data-tile="salaire"][data-personne="${section.dataset.personneSection}"]`
+    ).length;
+    compteEl.textContent = `${n} salaire${n > 1 ? 's' : ''}`;
+  });
+}
+
+// Résumé de la tuile "Salaires" en vue d'ensemble : groupé par personne (nom
+// en en-tête), puis le détail de chaque salaire de cette personne, séparés
+// par un simple trait — sur le même modèle que Fonciers/Locations meublées,
+// avec un niveau d'imbrication supplémentaire pour la personne.
+// Construit une section "En-tête personne" + ses éléments pour le résumé
+// groupé de la vue d'ensemble (Salaires/Pensions) : icône + nom réduits (cf.
+// .sim-entete-personne-resume, maquette Figma "En-tête personne - Résumé"),
+// suivis d'un bloc titre + détail par élément, séparés d'un simple trait.
+function construireSectionResumePersonne(nomPersonne, elements, { nomAttribut }) {
+  const section = document.createElement('div');
+  section.className = 'sim-resume__section-personne';
+  section.innerHTML = /* html */`
+    <div class="sim-entete-personne-resume">
+      <div class="sim-entete-personne-resume__ligne">
+        <span class="sim-entete-personne-resume__icone"><span class="fr-icon-user-line" aria-hidden="true"></span></span>
+        <span class="sim-entete-personne-resume__nom"></span>
+      </div>
+      <hr class="fr-hr">
+    </div>
+  `;
+  section.querySelector('.sim-entete-personne-resume__nom').textContent = nomPersonne;
+
+  elements.forEach((clone, i) => {
+    if (i > 0) {
+      const separateur = document.createElement('div');
+      separateur.className = 'sim-resume__separateur';
+      section.appendChild(separateur);
+    }
+
+    const bloc = document.createElement('div');
+    const titre = document.createElement('p');
+    titre.className = 'sim-resume__logement-nom';
+    titre.textContent = clone.querySelector(nomAttribut)?.textContent.trim() ?? '';
+    bloc.appendChild(titre);
+
+    const detail = document.createElement('div');
+    detail.innerHTML = clone.querySelector('.sim-resume')?.innerHTML ?? ''; // déjà échappé
+    bloc.append(...detail.childNodes);
+
+    section.appendChild(bloc);
+  });
+
+  return section;
+}
+
+function construireResumeVueEnsembleSalaires() {
+  const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="salaires"]');
+  const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+  const resumeEl = panelB?.querySelector('.sim-resume');
+  if (!panelB || !resumeEl) return;
+
+  resumeEl.innerHTML = '';
+
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="salaires"] [data-personne-section]').forEach(section => {
+    const salaires = [...section.querySelectorAll('.sim-tuile-ouvert[data-tile="salaire"]')];
+    if (salaires.length === 0) return;
+
+    const nomPersonne = section.querySelector('.sim-entete-personne__nom')?.textContent.trim() ?? '';
+    resumeEl.appendChild(
+      construireSectionResumePersonne(nomPersonne, salaires, { nomAttribut: '[data-sa-nom]' })
+    );
+  });
+
+  resumeEl.hidden = false;
+}
+
+// ── Pensions : sections par personne (Vous / Conjoint / Personnes à charge) ──
+// Même logique que les fonctions "Salaires" ci-dessus (cf. leurs commentaires).
+
+function construireSectionsPensionsParPersonne() {
+  const hub = document.querySelector('.sim-sous-formulaire[data-tile="pensions"]');
+  const conteneur = hub?.querySelector('[data-pensions-personnes]');
+  const template = conteneur?.querySelector('[data-personne-section-template]');
+  if (!conteneur || !template) return;
+
+  const sectionConjoint = conteneur.querySelector('[data-personne-section="conjoint"]');
+  if (sectionConjoint) sectionConjoint.hidden = !estMariagePacs();
+
+  const pacsActuels = [...document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]')];
+  const idsPacActuels = new Set(pacsActuels.map(p => p.dataset.pacId).filter(Boolean));
+
+  conteneur.querySelectorAll('[data-personne-section^="pac-"]').forEach(section => {
+    if (!idsPacActuels.has(section.dataset.personneSection)) section.remove();
+  });
+
+  pacsActuels.forEach(pac => {
+    const id = pac.dataset.pacId;
+    if (!id) return;
+    const prenom = pac.querySelector('[data-pac-prenom]')?.textContent.trim() || 'Personne à charge';
+
+    let section = conteneur.querySelector(`[data-personne-section="${id}"]`);
+    if (!section) {
+      section = template.cloneNode(true);
+      section.hidden = false;
+      section.removeAttribute('data-personne-section-template');
+      section.dataset.personneSection = id;
+      section.querySelectorAll('.sim-tuile-wrapper[data-tile="pension"]').forEach(w => { w.dataset.personne = id; });
+      template.before(section);
+    }
+    const nomEl = section.querySelector('[data-personne-nom]');
+    if (nomEl) nomEl.textContent = prenom;
+  });
+
+  mettreAJourCompteursPensions();
+}
+
+function mettreAJourCompteursPensions() {
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="pensions"] [data-personne-section]').forEach(section => {
+    const compteEl = section.querySelector('[data-personne-compte]');
+    if (!compteEl) return;
+    const n = document.querySelectorAll(
+      `.sim-tuile-ouvert[data-tile="pension"][data-personne="${section.dataset.personneSection}"]`
+    ).length;
+    compteEl.textContent = `${n} pension${n > 1 ? 's' : ''}`;
+  });
+}
+
+function construireResumeVueEnsemblePensions() {
+  const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="pensions"]');
+  const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+  const resumeEl = panelB?.querySelector('.sim-resume');
+  if (!panelB || !resumeEl) return;
+
+  resumeEl.innerHTML = '';
+
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="pensions"] [data-personne-section]').forEach(section => {
+    const pensions = [...section.querySelectorAll('.sim-tuile-ouvert[data-tile="pension"]')];
+    if (pensions.length === 0) return;
+
+    const nomPersonne = section.querySelector('.sim-entete-personne__nom')?.textContent.trim() ?? '';
+    resumeEl.appendChild(
+      construireSectionResumePersonne(nomPersonne, pensions, { nomAttribut: '[data-pe-nom]' })
+    );
+  });
+
+  resumeEl.hidden = false;
+}
+
 function supprimerTuile(wrapper) {
   if (!wrapper) return;
   const btn = wrapper.querySelector('.sim-tuile');
@@ -741,6 +1230,20 @@ function supprimerTuile(wrapper) {
     const hubResume = document.querySelector('.sim-sous-formulaire[data-tile="fonciersHub"] .sim-resume');
     if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
     document.getElementById('erreur-fonciers-hub')?.setAttribute('hidden', '');
+  }
+  // Salaires : le hub vit directement sous data-tile="salaires" (pas d'écran
+  // séparé), mais ses fiches "salaire" clonées, réparties dans plusieurs
+  // wrappers par personne, ne sont pas nettoyées par ce qui précède.
+  if (wrapper.dataset.tile === 'salaires') {
+    document.querySelectorAll('.sim-tuile-ouvert[data-tile="salaire"]').forEach(el => el.remove());
+    document.getElementById('erreur-salaires-hub')?.setAttribute('hidden', '');
+    mettreAJourCompteursSalaires();
+  }
+  // Pensions : même remarque que Salaires ci-dessus.
+  if (wrapper.dataset.tile === 'pensions') {
+    document.querySelectorAll('.sim-tuile-ouvert[data-tile="pension"]').forEach(el => el.remove());
+    document.getElementById('erreur-pensions-hub')?.setAttribute('hidden', '');
+    mettreAJourCompteursPensions();
   }
 
   if (btn) btn.focus();
