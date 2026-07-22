@@ -52,14 +52,12 @@
               <h2 class="fr-h3 fr-mb-0" id="sim-resultats-titre">Résultat</h2>
               <p class="sim-resultats__hint">Ces résultats sont une estimation.</p>
             </div>
-            <div class="sim-resultats__carte">
-              <div id="sim-resultats-detail" class="sim-resultats__detail" hidden></div>
-              <div class="sim-resultats__total">
-                <span>Total de l'imposition</span>
-                <strong id="sim-res-total">— €</strong>
-              </div>
-            </div>
-
+            <div id="sim-resultats-tuiles" class="sim-resultats__tuiles"></div>
+            <button type="button" id="sim-resultats-toggle"
+                    class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-arrow-down-s-line sim-resultats__btn-detail"
+                    aria-expanded="false">
+              Afficher le détail
+            </button>
           </section>
 
           <!-- Introduction -->
