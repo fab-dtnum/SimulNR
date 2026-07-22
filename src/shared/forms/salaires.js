@@ -59,7 +59,7 @@ export function template() {
         <span class="fr-hint-text">
           Les revenus imposés en France dépendent de la convention fiscale conclue avec votre État de résidence.
           <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer"
-             class="fr-link fr-link--sm" target="_blank" rel="noopener noreferrer">Connaitre les revenus imposés en France<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+             target="_blank" rel="noopener noreferrer">Connaitre les revenus imposés en France<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
         </span>
       </legend>
       <div class="fr-fieldset__content">
@@ -88,18 +88,16 @@ export function template() {
       </div>
     </div>
 
-    <div class="fr-input-group">
+    <!-- Champ affiché uniquement si le salaire est exercé et imposé en France -->
+    <div class="fr-input-group" data-sa-france-field hidden>
       <label class="fr-label" for="sa-retenue">
         Montant de la retenue à la source
-        <span class="fr-hint-text">Lorsqu'il y a une retenue à la source, elle est indiquée sur votre bulletin de salaire. Indiquer le montant pour l'année. Exemple : 1500.</span>
+        <span class="fr-hint-text">Lorsqu’il y a une retenue à la source, elle est précisée sur votre bulletin de salaire. Dans le cas contraire, indiquez 0. Inscrivez le montant pour l'année. Exemple : 1500.</span>
       </label>
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="sa-retenue" name="sa-retenue"
-               min="0" required
+               min="0"
                data-resume-label="Retenue à la source">
-      </div>
-      <div class="fr-messages-group">
-        <p class="fr-message fr-message--info">En l'absence de prélèvement de retenue à la source sur votre salaire, indiquez 0.</p>
       </div>
     </div>
 
@@ -128,7 +126,8 @@ export function template() {
 
     <hr class="fr-hr">
 
-    <div class="fr-checkbox-group sim-checkbox-group--espacee">
+    <!-- Case affichée uniquement si le salaire est exercé et imposé en France -->
+    <div class="fr-checkbox-group sim-checkbox-group--espacee" data-sa-france-field hidden>
       <input type="checkbox" id="sa-outremer" name="sa-outremer">
       <label class="fr-label" for="sa-outremer">
         L'activité est exercée dans un département ou région d'Outre-mer.
@@ -136,7 +135,7 @@ export function template() {
       </label>
     </div>
 
-    <hr class="fr-hr">
+    <hr class="fr-hr" data-sa-france-field hidden>
   `;
 }
 
@@ -153,4 +152,21 @@ export function init(container) {
 
   checkbox?.addEventListener('change', updateDates);
   updateDates();
+
+  const activiteInputs = [...container.querySelectorAll('input[name="sa-lieu-activite"]')];
+  const impositionInputs = [...container.querySelectorAll('input[name="sa-lieu-imposition"]')];
+  const franceFields = [...container.querySelectorAll('[data-sa-france-field]')];
+  const retenueInput = container.querySelector('#sa-retenue');
+
+  function updateLieu() {
+    const estActiviteFrance = activiteInputs.find(inp => inp.checked)?.value === 'france';
+    const estImpositionFrance = impositionInputs.find(inp => inp.checked)?.value === 'france';
+    const estFrance = estActiviteFrance && estImpositionFrance;
+    franceFields.forEach(field => { field.hidden = !estFrance; });
+    if (retenueInput) retenueInput.required = estFrance;
+  }
+
+  activiteInputs.forEach(inp => inp.addEventListener('change', updateLieu));
+  impositionInputs.forEach(inp => inp.addEventListener('change', updateLieu));
+  updateLieu();
 }

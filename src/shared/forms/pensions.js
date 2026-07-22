@@ -31,7 +31,7 @@ export function template() {
         <span class="fr-hint-text">
           Les revenus imposés en France dépendent de la convention fiscale conclue avec votre État de résidence.
           <a href="https://www.impots.gouv.fr/international-particulier/je-suis-non-residents-quels-sont-les-principaux-revenus-declarer"
-             class="fr-link fr-link--sm" target="_blank" rel="noopener noreferrer">Connaitre les revenus imposés en France<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              target="_blank" rel="noopener noreferrer">Connaitre les revenus imposés en France<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
         </span>
       </legend>
       <div class="fr-fieldset__content">
@@ -64,19 +64,16 @@ export function template() {
     <div class="fr-input-group" data-pe-france-field hidden>
       <label class="fr-label" for="pe-retenue">
         Montant de la retenue à la source
-        <span class="fr-hint-text">Lorsqu'il y a un prélèvement de retenue à la source, elle est indiquée sur votre bulletin de pension. Indiquer le montant pour l'année. Exemple : 800</span>
+        <span class="fr-hint-text">Lorsqu’il y a un prélèvement de retenue à la source, elle est précisée sur votre bulletin de pension. Dans le cas contraire, indiquez 0. Inscrivez le montant pour l'année. Exemple : 800</span>
       </label>
       <div class="fr-input-wrap fr-icon-money-euro-circle-line">
         <input class="fr-input" type="number" id="pe-retenue" name="pe-retenue"
                min="0"
                data-resume-label="Retenue à la source">
       </div>
-      <div class="fr-messages-group">
-        <p class="fr-message fr-message--info">En l'absence de prélèvement de retenue à la source sur votre pension, indiquer 0.</p>
-      </div>
     </div>
 
-    <hr class="fr-hr">
+    <hr class="fr-hr" data-pe-france-field hidden>
 
     <div class="fr-checkbox-group sim-checkbox-group--espacee" data-pe-france-field hidden>
       <input type="checkbox" id="pe-polynesie" name="pe-polynesie">
@@ -86,7 +83,7 @@ export function template() {
       </label>
     </div>
 
-    <hr class="fr-hr">
+    <hr class="fr-hr" data-pe-france-field hidden>
   `;
 }
 
