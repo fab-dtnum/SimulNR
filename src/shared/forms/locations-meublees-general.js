@@ -13,18 +13,18 @@ export function template() {
     <fieldset class="fr-fieldset" id="lm-categorie" aria-labelledby="lm-categorie-legend"
               data-resume-label="Catégorie">
       <legend class="fr-fieldset__legend fr-text--regular" id="lm-categorie-legend">
-        Quelle est la catégorie de vos locations meublées ?
+        Vos locations meublées sont-elles ?
       </legend>
       <div class="fr-fieldset__content">
         <div class="fr-radio-group">
           <input type="radio" id="lm-categorie-lmnp" name="lm-categorie" value="lmnp"
                  data-resume-value="Non professionnelle (LMNP)" required>
-          <label class="fr-label" for="lm-categorie-lmnp">Non Professionnel (LMNP)</label>
+          <label class="fr-label" for="lm-categorie-lmnp">Non Professionnelles (LMNP)</label>
         </div>
         <div class="fr-radio-group">
           <input type="radio" id="lm-categorie-lmp" name="lm-categorie" value="lmp"
                  data-resume-value="Professionnelle (LMP)">
-          <label class="fr-label" for="lm-categorie-lmp">Professionnel (LMP)</label>
+          <label class="fr-label" for="lm-categorie-lmp">Professionnelles (LMP)</label>
         </div>
       </div>
     </fieldset>
