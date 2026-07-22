@@ -32,7 +32,7 @@ export function template() {
     <fieldset class="fr-fieldset" id="lm-regime" aria-labelledby="lm-regime-legend"
               data-resume-label="Régime">
       <legend class="fr-fieldset__legend fr-text--regular" id="lm-regime-legend">
-        Avez-vous opté, ou optez-vous pour le régime réel ?
+        Êtes-vous au régime réel pour vos locations meublées ?
         <span class="fr-hint-text">C'est-à-dire que vous déduisez vos charges des revenus locatifs.</span>
       </legend>
       <div class="fr-fieldset__content">
