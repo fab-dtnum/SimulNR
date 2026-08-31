@@ -101,9 +101,10 @@ export function template() {
       </div>
     </div>
 
-    <hr class="fr-hr">
+    <hr class="fr-hr" data-sa-france-field hidden>
 
-    <div class="fr-checkbox-group sim-checkbox-group--espacee">
+    <!-- Case affichée uniquement si le salaire est exercé et imposé en France -->
+    <div class="fr-checkbox-group sim-checkbox-group--espacee" data-sa-france-field hidden>
       <input type="checkbox" id="sa-annee-partielle" name="sa-annee-partielle">
       <label class="fr-label" for="sa-annee-partielle">
         L'activité n'est pas exercée toute l'année.
@@ -124,7 +125,7 @@ export function template() {
       </div>
     </div>
 
-    <hr class="fr-hr">
+    <hr class="fr-hr" data-sa-france-field hidden>
 
     <!-- Case affichée uniquement si le salaire est exercé et imposé en France -->
     <div class="fr-checkbox-group sim-checkbox-group--espacee" data-sa-france-field hidden>
@@ -144,29 +145,29 @@ export function init(container) {
   const dates = container.querySelector('[data-sa-dates]');
   const dateInputs = dates?.querySelectorAll('input') ?? [];
 
-  function updateDates() {
-    const isPartielle = checkbox?.checked ?? false;
-    if (dates) dates.hidden = !isPartielle;
-    dateInputs.forEach(inp => { inp.required = isPartielle; });
-  }
-
-  checkbox?.addEventListener('change', updateDates);
-  updateDates();
-
   const activiteInputs = [...container.querySelectorAll('input[name="sa-lieu-activite"]')];
   const impositionInputs = [...container.querySelectorAll('input[name="sa-lieu-imposition"]')];
   const franceFields = [...container.querySelectorAll('[data-sa-france-field]')];
   const retenueInput = container.querySelector('#sa-retenue');
 
-  function updateLieu() {
+  function estFrance() {
     const estActiviteFrance = activiteInputs.find(inp => inp.checked)?.value === 'france';
     const estImpositionFrance = impositionInputs.find(inp => inp.checked)?.value === 'france';
-    const estFrance = estActiviteFrance && estImpositionFrance;
-    franceFields.forEach(field => { field.hidden = !estFrance; });
-    if (retenueInput) retenueInput.required = estFrance;
+    return estActiviteFrance && estImpositionFrance;
   }
 
-  activiteInputs.forEach(inp => inp.addEventListener('change', updateLieu));
-  impositionInputs.forEach(inp => inp.addEventListener('change', updateLieu));
-  updateLieu();
+  function update() {
+    const france = estFrance();
+    franceFields.forEach(field => { field.hidden = !france; });
+    if (retenueInput) retenueInput.required = france;
+
+    const isPartielle = france && (checkbox?.checked ?? false);
+    if (dates) dates.hidden = !isPartielle;
+    dateInputs.forEach(inp => { inp.required = isPartielle; });
+  }
+
+  activiteInputs.forEach(inp => inp.addEventListener('change', update));
+  impositionInputs.forEach(inp => inp.addEventListener('change', update));
+  checkbox?.addEventListener('change', update);
+  update();
 }
