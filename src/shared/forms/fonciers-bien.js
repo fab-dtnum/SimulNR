@@ -57,8 +57,8 @@ export function template() {
       </div>
     </div>
 
-    <!-- Champs affichés uniquement si le régime réel a été choisi à l'étape Général -->
-    <div class="fr-input-group" data-fo-bien-regime-field hidden>
+    <!-- Champ affiché uniquement si le régime réel a été choisi à l'étape Général et si le bien est en France -->
+    <div class="fr-input-group" data-fo-bien-travaux-field hidden>
       <label class="fr-label" for="fo-bien-travaux">
         Montant des dépenses des travaux de rénovation énergétique, permettant à un logement de passer d'une classe énergétique E, F ou G, à une classe A, B, C ou D, payés en 2025 <em>(optionnel)</em>
       </label>
@@ -109,16 +109,23 @@ export function template() {
 
 export function init(container) {
   const regimeFields = [...container.querySelectorAll('[data-fo-bien-regime-field]')];
+  const travauxFields = [...container.querySelectorAll('[data-fo-bien-travaux-field]')];
+  const lieuInputs = [...container.querySelectorAll('input[name="fo-bien-lieu"]')];
 
   function updateRegime() {
     const isReel = estFonciersRegimeReel();
+    const estFrance = lieuInputs.find(inp => inp.checked)?.value === 'france';
+
     regimeFields.forEach(field => {
       field.hidden = !isReel;
       field.querySelectorAll('[data-required-when-reel]').forEach(inp => {
         inp.required = isReel;
       });
     });
+
+    travauxFields.forEach(field => { field.hidden = !(isReel && estFrance); });
   }
 
+  lieuInputs.forEach(inp => inp.addEventListener('change', updateRegime));
   updateRegime();
 }
