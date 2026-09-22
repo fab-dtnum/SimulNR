@@ -1,4 +1,4 @@
-import { estMariagePacs, hasFonciersOuverts, hasLocationsMeubleesOuverts } from '../state.js';
+import { estMariagePacs } from '../state.js';
 
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
@@ -132,14 +132,24 @@ export function init(container) {
     });
   }
 
+  // Fiches d'un type de tuile donné dont le bien/logement est situé en
+  // France : seuls ceux-là entrent dans la répartition CSG-CRDS Vous/Conjoint.
+  function fichesEnFrance(tileName, lieuChamp) {
+    return [...document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`)]
+      .filter(fiche => {
+        const valeurs = fiche.dataset.formValues ? JSON.parse(fiche.dataset.formValues) : {};
+        return valeurs[lieuChamp] === 'france';
+      });
+  }
+
   // Synchronise un bloc Vous/Conjoint par bien/logement existant pour une
   // rubrique donnée, en conservant les valeurs déjà saisies pour les fiches
   // déjà présentes.
-  function renderRepartitionParBien({ listeSelector, tileName, nomAttribut, prefixeId, labelResume }) {
+  function renderRepartitionParBien({ fiches, listeSelector, nomAttribut, prefixeId, labelResume }) {
     const liste = container.querySelector(listeSelector);
     if (!liste) return;
 
-    const noms = [...document.querySelectorAll(`.sim-tuile-ouvert[data-tile="${tileName}"]`)]
+    const noms = fiches
       .map(fiche => fiche.querySelector(`[${nomAttribut}]`)?.textContent.trim())
       .filter(Boolean);
 
@@ -170,18 +180,18 @@ export function init(container) {
   }
 
   function majFonciers() {
-    const fonciersPresent = hasFonciersOuverts();
+    const fiches = fichesEnFrance('fonciersBien', 'fo-bien-lieu');
     const isMarriage = estMariagePacs();
     const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
     const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
     const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
-    const show = fonciersPresent && statusDifferent;
+    const show = fiches.length > 0 && statusDifferent;
     const fonciersGroup = container.querySelector('#csg-fonciers-group');
     if (fonciersGroup) {
       if (show) {
         renderRepartitionParBien({
+          fiches,
           listeSelector: '[data-csg-fonciers-liste]',
-          tileName: 'fonciersBien',
           nomAttribut: 'data-fo-bien-nom',
           prefixeId: 'csg-fonciers',
           labelResume: 'Répartition revenus',
@@ -193,18 +203,18 @@ export function init(container) {
   }
 
   function majLmnp() {
-    const lmnpPresent = hasLocationsMeubleesOuverts();
+    const fiches = fichesEnFrance('locationsMeubleesLogement', 'lm-logement-lieu');
     const isMarriage = estMariagePacs();
     const affVous = container.querySelector('input[name="csg-affiliation-vous"]:checked')?.value;
     const affConjoint = container.querySelector('input[name="csg-affiliation-conjoint"]:checked')?.value;
     const statusDifferent = isMarriage && !!affVous && !!affConjoint && affVous !== affConjoint;
-    const show = lmnpPresent && statusDifferent;
+    const show = fiches.length > 0 && statusDifferent;
     const lmnpGroup = container.querySelector('#csg-lmnp-group');
     if (lmnpGroup) {
       if (show) {
         renderRepartitionParBien({
+          fiches,
           listeSelector: '[data-csg-lmnp-liste]',
-          tileName: 'locationsMeubleesLogement',
           nomAttribut: 'data-lm-logement-nom',
           prefixeId: 'csg-lmnp',
           labelResume: 'Répartition revenus',
