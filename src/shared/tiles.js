@@ -1171,7 +1171,35 @@ function construireResumeVueEnsembleSalaires() {
     );
   });
 
+  const sectionFraisReels = construireSectionResumeFraisReels();
+  if (sectionFraisReels) resumeEl.appendChild(sectionFraisReels);
+
   resumeEl.hidden = false;
+}
+
+// Section "Frais réels" du résumé de la tuile "Salaires" : même en-tête que
+// les sections par personne, sans icône, puis une ligne "personne / montant"
+// reprise du résumé de la tuile Frais réels du hub (déjà échappé).
+function construireSectionResumeFraisReels() {
+  const panelB = document.querySelector(
+    '.sim-sous-formulaire[data-tile="salaires"] .sim-tuile-wrapper[data-tile="fraisReels"] .sim-tuile-ouvert--b'
+  );
+  const lignes = panelB?.querySelector('.sim-resume');
+  if (!panelB || panelB.hidden || !lignes || !lignes.innerHTML.trim()) return null;
+
+  const section = document.createElement('div');
+  section.className = 'sim-resume__section-personne';
+  section.innerHTML = /* html */`
+    <div class="sim-entete-personne-resume">
+      <div class="sim-entete-personne-resume__ligne">
+        <span class="sim-entete-personne-resume__nom">Frais réels</span>
+      </div>
+      <hr class="fr-hr">
+    </div>
+    <div></div>
+  `;
+  section.lastElementChild.innerHTML = lignes.innerHTML;
+  return section;
 }
 
 // ── Pensions : sections par personne (Vous / Conjoint / Personnes à charge) ──
