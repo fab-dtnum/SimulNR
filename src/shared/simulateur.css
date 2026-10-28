@@ -830,3 +830,36 @@
   }
 
 }
+
+/* ── EN-TÊTE ────────────────────────────────────────────────────────────────── */
+
+/* Logo DGFiP : 142,385 × 66 px dans la maquette */
+.sim-header__dgfip {
+  display: block;
+  width: 142.385px;
+  height: 66px;
+}
+
+/* Marque, opérateur et titre du service sur une même ligne en desktop */
+@media (min-width: 62em) {
+  .sim-header .fr-header__brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .sim-header .fr-header__brand-top {
+    display: flex;
+    align-items: center;
+    width: auto;
+  }
+
+  .sim-header .fr-header__service {
+    padding-left: 1rem;
+  }
+
+  .sim-header .fr-header__service-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
