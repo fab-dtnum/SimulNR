@@ -1,3 +1,5 @@
+import { clearError } from '../validation.js';
+
 // ── Messages d'erreur ────────────────────────────────────────────────────────
 export const messages = {
   'sa-nom': {
@@ -17,9 +19,11 @@ export const messages = {
   },
   'sa-date-debut': {
     valueMissing: 'Veuillez indiquer la date de début d\'activité.',
+    rangeOverflow: 'La date de début d\'activité doit être antérieure à la date de fin d\'activité.',
   },
   'sa-date-fin': {
     valueMissing: 'Veuillez indiquer la date de fin d\'activité.',
+    rangeUnderflow: 'La date de fin d\'activité doit être postérieure à la date de début d\'activité.',
   },
 };
 
@@ -197,6 +201,35 @@ export function init(container) {
     if (dates) dates.hidden = !isPartielle;
     dateInputs.forEach(inp => { inp.required = isPartielle; });
   }
+
+  // La date de début doit être strictement antérieure à la date de fin : on
+  // borne chaque champ via min/max, validation.js affiche alors les messages
+  // rangeOverflow / rangeUnderflow définis ci-dessus.
+  const dateDebut = container.querySelector('#sa-date-debut');
+  const dateFin = container.querySelector('#sa-date-fin');
+
+  function decalerJour(valeur, jours) {
+    if (!valeur) return '';
+    const d = new Date(`${valeur}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + jours);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function updateBornesDates() {
+    if (!dateDebut || !dateFin) return;
+    dateFin.min = decalerJour(dateDebut.value, 1);
+    dateDebut.max = decalerJour(dateFin.value, -1);
+    [dateDebut, dateFin].forEach(inp => {
+      if (inp.getAttribute('aria-invalid') === 'true' && inp.checkValidity()) clearError(inp);
+    });
+  }
+
+  // 'change' : le pré-remplissage à l'édition d'un salaire déclenche cet événement
+  [dateDebut, dateFin].forEach(inp => {
+    inp?.addEventListener('input', updateBornesDates);
+    inp?.addEventListener('change', updateBornesDates);
+  });
+  updateBornesDates();
 
   activiteInputs.forEach(inp => inp.addEventListener('change', update));
   impositionInputs.forEach(inp => inp.addEventListener('change', update));
