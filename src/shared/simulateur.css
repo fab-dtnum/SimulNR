@@ -833,11 +833,9 @@
 
 /* ── EN-TÊTE ────────────────────────────────────────────────────────────────── */
 
-/* Logo DGFiP : 142,385 × 66 px dans la maquette */
+/* Logo DGFiP : 142,385 px de large dans la maquette */
 .sim-header__dgfip {
-  display: block;
-  width: 142.385px;
-  height: 66px;
+  max-width: 8.9rem;
 }
 
 /* Marque, opérateur et titre du service sur une même ligne en desktop */

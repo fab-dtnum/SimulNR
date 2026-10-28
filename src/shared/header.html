@@ -12,20 +12,27 @@
     <div class="fr-container">
       <div class="fr-header__body-row">
 
-        <div class="fr-header__brand">
+        <div class="fr-header__brand fr-enlarge-link">
           <div class="fr-header__brand-top">
             <div class="fr-header__logo">
               <p class="fr-logo">République<br>Française</p>
             </div>
             <div class="fr-header__operator">
-              <img class="sim-header__dgfip" src="./shared/assets/logo-dgfip.svg" alt="Direction générale des Finances publiques">
+              <img class="fr-responsive-img sim-header__dgfip" src="./shared/assets/logo-dgfip.svg" alt="Direction générale des Finances publiques">
+            </div>
+            <div class="fr-header__navbar">
+              <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-menu" aria-haspopup="menu" id="button-menu" title="Menu">
+                Menu
+              </button>
             </div>
           </div>
           <div class="fr-header__service">
-            <p class="fr-header__service-title">
-              Simulateur de l’impôt sur le revenu des non-résidents
-              <span class="fr-badge fr-badge--purple-glycine fr-badge--no-icon fr-badge--sm">Beta</span>
-            </p>
+            <a href="./index.html" title="Accueil - Simulateur de l’impôt sur le revenu des non-résidents - impots.gouv.fr">
+              <p class="fr-header__service-title">
+                Simulateur de l’impôt sur le revenu des non-résidents
+                <span class="fr-badge fr-badge--purple-glycine fr-badge--no-icon fr-badge--sm">Beta</span>
+              </p>
+            </a>
           </div>
         </div>
 
@@ -45,12 +52,14 @@
     </div>
   </div>
 
-  <div class="fr-header__menu" id="header-nav">
+  <div class="fr-header__menu fr-modal" id="modal-menu" aria-labelledby="button-menu">
     <div class="fr-container">
+      <button class="fr-btn--close fr-btn" aria-controls="modal-menu" title="Fermer">Fermer</button>
+      <div class="fr-header__menu-links"></div>
       <nav class="fr-nav" id="navigation" role="navigation" aria-label="Menu principal">
         <ul class="fr-nav__list">
           <li class="fr-nav__item">
-            <a class="fr-nav__link" href="#content" target="_self" aria-current="page">Le simulateur</a>
+            <a class="fr-nav__link" href="#" target="_self" aria-current="page">Le simulateur</a>
           </li>
           <li class="fr-nav__item">
             <a class="fr-nav__link" href="#" target="_self">Aide et contact</a>
