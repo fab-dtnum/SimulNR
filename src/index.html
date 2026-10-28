@@ -335,7 +335,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="sim-sous-formulaire__titre fr-mb-0">
               <span class="fr-icon-community-line" aria-hidden="true"></span>
               Fonciers
             </h2>
@@ -364,7 +364,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="sim-sous-formulaire__titre">
+            <h2 class="sim-sous-formulaire__titre fr-mb-0">
               <span class="fr-icon-community-line" aria-hidden="true"></span>
               Fonciers
             </h2>
@@ -468,7 +468,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-3v">
               <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
               Pensions
             </h2>
@@ -658,7 +658,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-3v">
               <span class="fr-icon-briefcase-line" aria-hidden="true"></span>
               Salaires
             </h2>
@@ -816,6 +816,51 @@
 
           </div>
 
+          <hr class="fr-hr">
+
+          <!-- Déductions : frais réels, disponibles dès qu'un salaire a été ajouté -->
+          <section aria-labelledby="titre-salaires-deductions">
+            <h3 class="fr-h4 fr-mb-2w" id="titre-salaires-deductions">Déductions</h3>
+            <div class="sim-tuiles-list">
+
+              <!-- Tuile Frais réels -->
+              <div class="sim-tuile-wrapper" data-tile="fraisReels">
+
+                <!-- Fermé -->
+                <button type="button" class="sim-tuile sim-tuile__btn--ajouter fr-py-2w fr-px-3w" aria-disabled="true">
+                  <div class="sim-tuile__entete">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="fr-h6 fr-mb-0">Frais réels</span>
+                    </div>
+                    <span class="sim-tuile__action">
+                      <span class="fr-icon-add-line sim-tuile__action-icon" aria-hidden="true"></span>
+                      Ajouter
+                    </span>
+                  </div>
+                  <p class="fr-text--sm fr-mb-0">Cette rubrique est disponible si au moins un salaire a été ajouté.</p>
+                </button>
+
+                <!-- Résumé après enregistrement -->
+                <div class="sim-tuile-ouvert sim-tuile-ouvert--b fr-p-3w" hidden>
+                  <div class="sim-tuile-ouvert__header">
+                    <div class="sim-tuile__title-row">
+                      <span class="fr-icon-money-euro-circle-line sim-tuile__icone" aria-hidden="true"></span>
+                      <span class="fr-h6 fr-mb-0">Frais réels</span>
+                    </div>
+                    <button type="button" class="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-bin-line sim-tuile__btn--supprimer" aria-label="Supprimer Frais réels"></button>
+                  </div>
+                  <div class="sim-resume" hidden></div>
+                  <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line sim-tuile__btn--modifier" aria-label="Modifier Frais réels">
+                    Modifier
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
           <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
         </div><!-- /salaires -->
 
@@ -838,6 +883,36 @@
         </div><!-- /salaire -->
 
         <!-- ══════════════════════════════════════════════════ -->
+        <!-- SOUS-FORMULAIRE — FRAIS RÉELS (SALAIRES)           -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <div class="sim-sous-formulaire" data-tile="fraisReels" hidden>
+          <div class="sim-sous-formulaire__top">
+            <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
+          </div>
+          <div class="sim-sous-formulaire__header">
+            <h2 class="fr-h4 fr-mb-0">
+              <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+              Déduction de frais réels
+            </h2>
+            <div class="sim-sous-formulaire__detail">
+              <p class="fr-text--sm fr-mb-0">
+                Par défaut, une déduction de 10% (éventuellement plafonnée) est appliquée à vos salaires. Si cette déduction ne semble pas couvrir l'ensemble de vos frais, vous pouvez choisir de déduire leur montant réel sous certaines conditions.
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://bofip.impots.gouv.fr/bofip/2453-PGP.html/identifiant=BOI-RSA-BASE-30-50-30-20120912"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Connaitre les conditions de déduction de frais<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+              <p class="fr-mb-0">
+                <a href="https://www.impots.gouv.fr/simulateur-bareme-kilometrique"
+                   class="fr-link fr-link--sm fr-link--icon-right fr-icon-external-link-line" target="_blank" rel="noopener noreferrer">Simulateur de frais kilométriques<span class="fr-sr-only"> (nouvelle fenêtre)</span></a>
+              </p>
+            </div>
+          </div>
+          <div data-fields></div>
+          <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line sim-btn--enregistrer">Enregistrer</button>
+        </div><!-- /fraisReels -->
+
+        <!-- ══════════════════════════════════════════════════ -->
         <!-- SOUS-FORMULAIRE — LOCATIONS MEUBLÉES (GÉNÉRAL)     -->
         <!-- ══════════════════════════════════════════════════ -->
         <div class="sim-sous-formulaire" data-tile="locationsMeublees" hidden>
@@ -845,7 +920,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-0">
               <span class="fr-icon-community-line" aria-hidden="true"></span>
               Locations meublées
             </h2>
@@ -878,7 +953,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-0">
               <span class="fr-icon-community-line" aria-hidden="true"></span>
               Locations meublées
             </h2>
@@ -1055,7 +1130,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-0">
               <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
               Pensions alimentaires versées
             </h2>
@@ -1082,7 +1157,7 @@
             <button type="button" class="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-close-line sim-btn--annuler">Annuler</button>
           </div>
           <div class="sim-sous-formulaire__header">
-            <h2 class="fr-h4">
+            <h2 class="fr-h4 fr-mb-0">
               <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
               Exonération CSG-CRDS
             </h2>

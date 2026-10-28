@@ -179,6 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
         naviguerVersFormulaire('salaires');
         return;
       }
+      if (tileName === 'fraisReels') {
+        naviguerVersFormulaire('salaires');
+        return;
+      }
       if (tileName === 'salaires') {
         const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="salaires"]');
         const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
@@ -257,7 +261,9 @@ function naviguerVersFormulaire(tileName) {
     preremplirFormulaire(formPage, JSON.parse(_cloneEnCoursDEdition.dataset.formValues));
   } else {
     // Tuile standard : restaurer les valeurs précédemment saisies si disponibles
-    const wrapperStd = document.querySelector(`#vue-ensemble .sim-tuile-wrapper[data-tile="${tileName}"]`);
+    // Frais réels : la tuile vit dans le hub Salaires, pas dans la vue d'ensemble.
+    const wrapperStd = document.querySelector(`#vue-ensemble .sim-tuile-wrapper[data-tile="${tileName}"]`)
+      ?? (tileName === 'fraisReels' ? document.querySelector('.sim-tuile-wrapper[data-tile="fraisReels"]') : null);
     const panelBStd = wrapperStd?.querySelector('.sim-tuile-ouvert--b');
     if (panelBStd?.dataset.formValues) {
       preremplirFormulaire(formPage, JSON.parse(panelBStd.dataset.formValues));
@@ -931,6 +937,12 @@ function enregistrerFormulaire(formPage) {
     }
 
     majExonerationCsgDisabled();
+    // Frais réels : on revient au hub Salaires (où vit la tuile), pas à la vue d'ensemble.
+    if (tileName === 'fraisReels') {
+      naviguerVersFormulaire('salaires');
+      btnModifier?.focus();
+      return;
+    }
     naviguerVersVueEnsemble({ focusEl: btnModifier ?? null });
     return;
   }
@@ -1059,6 +1071,40 @@ function mettreAJourCompteursSalaires() {
       `.sim-tuile-ouvert[data-tile="salaire"][data-personne="${section.dataset.personneSection}"]`
     ).length;
     compteEl.textContent = `${n} salaire${n > 1 ? 's' : ''}`;
+  });
+  majFraisReelsDisabled();
+}
+
+// Frais réels : la tuile n'est disponible que si au moins un salaire a été
+// ajouté. Si les salaires d'une personne dont les frais avaient été enregistrés
+// disparaissent, on réinitialise la tuile plutôt que de garder un résumé périmé.
+function majFraisReelsDisabled() {
+  const actif = document.querySelectorAll('.sim-tuile-ouvert[data-tile="salaire"]').length > 0;
+  document.querySelectorAll('.sim-tuile-wrapper[data-tile="fraisReels"]').forEach(wrapper => {
+    const btn = wrapper.querySelector('.sim-tuile');
+    const panelB = wrapper.querySelector('.sim-tuile-ouvert--b');
+    if (!btn) return;
+
+    if (actif) btn.removeAttribute('aria-disabled');
+    else btn.setAttribute('aria-disabled', 'true');
+
+    if (!panelB || panelB.hidden) return;
+    const valeurs = panelB.dataset.formValues ? JSON.parse(panelB.dataset.formValues) : {};
+    const personnePerdue = Object.keys(valeurs).some(nom => nom.startsWith('frais-') && !document.querySelector(
+      `.sim-tuile-ouvert[data-tile="salaire"][data-personne="${nom.slice('frais-'.length)}"]`
+    ));
+    if (!actif || personnePerdue) {
+      btn.hidden = false;
+      panelB.hidden = true;
+      delete panelB.dataset.formValues;
+      const resume = panelB.querySelector('.sim-resume');
+      if (resume) { resume.innerHTML = ''; resume.hidden = true; }
+      const formPage = document.querySelector('.sim-sous-formulaire[data-tile="fraisReels"]');
+      formPage?.querySelectorAll('[data-fields]').forEach(el => {
+        el.innerHTML = '';
+        delete el.dataset.injected;
+      });
+    }
   });
 }
 
