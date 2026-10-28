@@ -629,7 +629,7 @@
   margin: 0;
 }
 
-/* ── CHAMP AVEC INFOBULLE (ex : régime micro-foncier) ────────────────────────── */
+/* ── CHAMP AVEC INFOBULLE (ex : régime micro-foncier, cases à cocher du salaire) ────────────────────────── */
 
 .sim-champ-avec-infobulle {
   display: flex;
@@ -639,6 +639,13 @@
 
 .sim-champ-avec-infobulle > fieldset {
   flex: 1;
+  min-width: 0;
+}
+
+/* Case à cocher : l'infobulle se place juste après le libellé, sans être
+   repoussée au bord droit. */
+.sim-champ-avec-infobulle > .fr-checkbox-group {
+  flex: 0 1 auto;
   min-width: 0;
 }
 

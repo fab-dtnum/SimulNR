@@ -103,16 +103,61 @@ export function template() {
 
     <hr class="fr-hr" data-sa-france-field hidden>
 
-    <!-- Case affichée uniquement si le salaire est exercé et imposé en France -->
-    <div class="fr-checkbox-group sim-checkbox-group--espacee" data-sa-france-field hidden>
-      <input type="checkbox" id="sa-annee-partielle" name="sa-annee-partielle">
-      <label class="fr-label" for="sa-annee-partielle">
-        L'activité n'est pas exercée toute l'année.
-        <span class="fr-hint-text">Cochez cette case si cette situation vous concerne.</span>
-      </label>
-    </div>
+    <!-- Groupe affiché uniquement si le salaire est exercé et imposé en France -->
+    <fieldset class="fr-fieldset" id="sa-situation" aria-labelledby="sa-situation-legend" data-sa-france-field hidden>
+      <legend class="fr-fieldset__legend fr-text--regular" id="sa-situation-legend">
+        Cochez la case ou les cases qui correspondent à votre situation : (optionnel)
+      </legend>
+      <div class="fr-fieldset__element">
+        <div class="fr-checkbox-group">
+          <input type="checkbox" id="sa-annee-partielle" name="sa-annee-partielle">
+          <label class="fr-label" for="sa-annee-partielle">L'activité n'est pas exercée toute l'année.</label>
+        </div>
+      </div>
+      <div class="fr-fieldset__element">
+        <div class="fr-checkbox-group">
+          <input type="checkbox" id="sa-gerant" name="sa-gerant">
+          <label class="fr-label" for="sa-gerant">Vous êtes gérant majoritaire de la société qui vous verse cette rémunération.</label>
+        </div>
+      </div>
+      <div class="fr-fieldset__element">
+        <div class="sim-champ-avec-infobulle">
+          <div class="fr-checkbox-group">
+            <input type="checkbox" id="sa-artiste" name="sa-artiste">
+            <label class="fr-label" for="sa-artiste">L'activité correspond à une activité d'artiste.</label>
+          </div>
+          <button class="fr-btn fr-btn--tooltip" id="sa-artiste-btn" aria-describedby="sa-artiste-tooltip" type="button">
+            Informations sur les activités d'artiste
+          </button>
+          <span class="fr-tooltip fr-placement" id="sa-artiste-tooltip" role="tooltip">
+            Par artistes, il convient d'entendre notamment les acteurs de cinéma, les artistes lyriques, les artistes dramatiques, les artistes chorégraphiques, les artistes de variété, les musiciens-interprètes, les chansonniers, les artistes de complément, les chefs d’orchestre, les arrangeurs-orchestrateurs et, pour l’exécution matérielle de leur conception artistique, les metteurs en scène, etc.<br><br>
+            Les artistes plasticiens dont les œuvres sont normalement destinées à la vente (peintres, sculpteurs, etc.) ne sont pas concernés. Leurs revenus relèvent des dispositions relatives aux professions libérales (revenus BNC).
+          </span>
+        </div>
+      </div>
+      <div class="fr-fieldset__element">
+        <div class="sim-champ-avec-infobulle">
+          <div class="fr-checkbox-group">
+            <input type="checkbox" id="sa-sportif" name="sa-sportif">
+            <label class="fr-label" for="sa-sportif">L'activité correspond à une activité sportive.</label>
+          </div>
+          <button class="fr-btn fr-btn--tooltip" id="sa-sportif-btn" aria-describedby="sa-sportif-tooltip" type="button">
+            Informations sur les activités sportives
+          </button>
+          <span class="fr-tooltip fr-placement" id="sa-sportif-tooltip" role="tooltip">
+            Le terme d'activités sportives est entendu au sens large : athlètes (course, saut, lancer, etc.) et autres sportifs tels que les joueurs de football, de golf, de tennis, les jockeys, les boxeurs, les coureurs cyclistes et les pilotes de course.
+          </span>
+        </div>
+      </div>
+      <div class="fr-fieldset__element">
+        <div class="fr-checkbox-group">
+          <input type="checkbox" id="sa-outremer" name="sa-outremer">
+          <label class="fr-label" for="sa-outremer">L'activité est exercée dans un département ou région d'Outre-mer.</label>
+        </div>
+      </div>
+    </fieldset>
 
-    <div class="sim-double-champs" data-sa-dates hidden>
+    <div data-sa-dates hidden>
       <div class="fr-input-group">
         <label class="fr-label" for="sa-date-debut">Date de début d'activité</label>
         <input class="fr-input" type="date" id="sa-date-debut" name="sa-date-debut"
@@ -124,19 +169,6 @@ export function template() {
                data-resume-label="Fin d'activité">
       </div>
     </div>
-
-    <hr class="fr-hr" data-sa-france-field hidden>
-
-    <!-- Case affichée uniquement si le salaire est exercé et imposé en France -->
-    <div class="fr-checkbox-group sim-checkbox-group--espacee" data-sa-france-field hidden>
-      <input type="checkbox" id="sa-outremer" name="sa-outremer">
-      <label class="fr-label" for="sa-outremer">
-        L'activité est exercée dans un département ou région d'Outre-mer.
-        <span class="fr-hint-text">Cochez cette case si cette situation vous concerne.</span>
-      </label>
-    </div>
-
-    <hr class="fr-hr" data-sa-france-field hidden>
   `;
 }
 
