@@ -861,3 +861,10 @@
     gap: 0.5rem;
   }
 }
+
+/* ── PIED DE PAGE ───────────────────────────────────────────────────────────── */
+
+/* Logo DGFiP : 194,161 px de large dans la maquette */
+.sim-footer__dgfip {
+  max-width: 12.135rem;
+}

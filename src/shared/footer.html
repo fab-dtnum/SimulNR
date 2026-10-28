@@ -1,16 +1,26 @@
-<footer class="fr-footer" role="contentinfo">
+<footer class="fr-footer sim-footer" role="contentinfo" id="footer">
   <div class="fr-container">
     <div class="fr-footer__body">
       <div class="fr-footer__brand fr-enlarge-link">
         <p class="fr-logo">République<br>Française</p>
+        <a class="fr-footer__brand-link" href="https://www.impots.gouv.fr" title="Retour à l’accueil du site - impots.gouv.fr - République Française">
+          <img class="fr-footer__logo fr-responsive-img sim-footer__dgfip" src="./shared/assets/logo-dgfip.svg" alt="Direction générale des Finances publiques">
+        </a>
       </div>
       <div class="fr-footer__content">
+        <p class="fr-footer__content-desc">Un produit de la Direction générale des Finances publiques.</p>
         <ul class="fr-footer__content-list">
           <li class="fr-footer__content-item">
-            <a class="fr-footer__content-link" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+            <a class="fr-footer__content-link" target="_blank" rel="noopener noreferrer" title="info.gouv.fr - nouvelle fenêtre" href="https://info.gouv.fr">info.gouv.fr</a>
           </li>
           <li class="fr-footer__content-item">
-            <a class="fr-footer__content-link" href="https://impots.gouv.fr">impots.gouv.fr</a>
+            <a class="fr-footer__content-link" target="_blank" rel="noopener noreferrer" title="service-public.fr - nouvelle fenêtre" href="https://service-public.fr">service-public.fr</a>
+          </li>
+          <li class="fr-footer__content-item">
+            <a class="fr-footer__content-link" target="_blank" rel="noopener noreferrer" title="legifrance.gouv.fr - nouvelle fenêtre" href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+          </li>
+          <li class="fr-footer__content-item">
+            <a class="fr-footer__content-link" target="_blank" rel="noopener noreferrer" title="data.gouv.fr - nouvelle fenêtre" href="https://data.gouv.fr">data.gouv.fr</a>
           </li>
         </ul>
       </div>
@@ -23,7 +33,68 @@
         <li class="fr-footer__bottom-item">
           <a class="fr-footer__bottom-link" href="#">Mentions légales</a>
         </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Données personnelles</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Gestion des cookies</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Plan du site</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <button class="fr-footer__bottom-link fr-icon-theme-fill fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-theme-modal">Paramètres d’affichage</button>
+        </li>
       </ul>
+      <div class="fr-footer__bottom-copy">
+        <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener noreferrer" title="licence etalab-2.0 - nouvelle fenêtre">licence etalab-2.0</a></p>
+      </div>
     </div>
   </div>
 </footer>
+
+<dialog id="fr-theme-modal" class="fr-modal" role="dialog" aria-labelledby="fr-theme-modal-title">
+  <div class="fr-container fr-container--fluid fr-container-md">
+    <div class="fr-grid-row fr-grid-row--center">
+      <div class="fr-col-12 fr-col-md-6 fr-col-lg-4">
+        <div class="fr-modal__body">
+          <div class="fr-modal__header">
+            <button class="fr-btn--close fr-btn" aria-controls="fr-theme-modal" title="Fermer">Fermer</button>
+          </div>
+          <div class="fr-modal__content">
+            <h1 id="fr-theme-modal-title" class="fr-modal__title">Paramètres d’affichage</h1>
+            <div id="fr-display" class="fr-display">
+              <div class="fr-form-group">
+                <fieldset class="fr-fieldset">
+                  <legend class="fr-fieldset__legend fr-text--regular" id="fr-display-legend">
+                    Choisissez un thème pour personnaliser l’apparence du site.
+                  </legend>
+                  <div class="fr-fieldset__element">
+                    <div class="fr-radio-group fr-radio-rich">
+                      <input value="light" type="radio" id="fr-radios-theme-light" name="fr-radios-theme">
+                      <label class="fr-label" for="fr-radios-theme-light">Thème clair</label>
+                    </div>
+                  </div>
+                  <div class="fr-fieldset__element">
+                    <div class="fr-radio-group fr-radio-rich">
+                      <input value="dark" type="radio" id="fr-radios-theme-dark" name="fr-radios-theme">
+                      <label class="fr-label" for="fr-radios-theme-dark">Thème sombre</label>
+                    </div>
+                  </div>
+                  <div class="fr-fieldset__element">
+                    <div class="fr-radio-group fr-radio-rich">
+                      <input value="system" type="radio" id="fr-radios-theme-system" name="fr-radios-theme">
+                      <label class="fr-label" for="fr-radios-theme-system">Système
+                        <span class="fr-hint-text">Utilise les paramètres système.</span>
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
