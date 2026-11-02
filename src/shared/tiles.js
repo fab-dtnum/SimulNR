@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mettreAJourCompteursSalaires();
         mettreAJourCompteursPensions();
         mettreAJourCompteursBnc();
+        mettreAJourCompteursBic();
         if (btnAjouter) btnAjouter.focus();
       }
       majExonerationCsgDisabled();
@@ -128,8 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cible === 'bnc' && wrapper?.closest('#vue-ensemble')) {
           cible = 'bncHub';
         }
+        if (cible === 'bic' && wrapper?.closest('#vue-ensemble')) {
+          cible = 'bicHub';
+        }
         naviguerVersFormulaire(cible);
       }
+      return;
+    }
+
+    // Alerte DSFR fermable (bouton "Masquer le message") : masquée partout où
+    // elle est répétée (ex : formulaire général et hub BIC).
+    const btnFermerAlerte = e.target.closest('.fr-alert .fr-btn--close');
+    if (btnFermerAlerte) {
+      const alerte = btnFermerAlerte.closest('.fr-alert');
+      const cle = alerte.dataset.alerteFermable;
+      const cibles = cle ? document.querySelectorAll(`.fr-alert[data-alerte-fermable="${cle}"]`) : [alerte];
+      cibles.forEach(a => { a.hidden = true; });
       return;
     }
 
@@ -214,6 +229,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (tileName === 'bicActivite') {
+        naviguerVersFormulaire('bicHub');
+        return;
+      }
+      if (tileName === 'bic') {
+        const generalDejaEnregistre = !!document
+          .querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"] .sim-tuile-ouvert--b')
+          ?.dataset.formValues;
+        if (generalDejaEnregistre) {
+          naviguerVersFormulaire('bicHub');
+          return;
+        }
+      }
+      if (tileName === 'bicHub') {
+        const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"]');
+        const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
+        naviguerVersVueEnsemble({ focusEl });
+        return;
+      }
+
       if (tileName === 'pension') {
         naviguerVersFormulaire('pensions');
         return;
@@ -275,6 +310,7 @@ function naviguerVersFormulaire(tileName) {
   if (tileName === 'salaires') construireSectionsSalairesParPersonne();
   if (tileName === 'pensions') construireSectionsPensionsParPersonne();
   if (tileName === 'bncHub') construireSectionsBncParPersonne();
+  if (tileName === 'bicHub') construireSectionsBicParPersonne();
   // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
   // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
   // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
@@ -902,6 +938,130 @@ function enregistrerFormulaire(formPage) {
     return;
   }
 
+  // ── Cas spécial : écran "Général" des BIC ───────────────────────────────────
+  // Même logique que "locationsMeublees" : le résumé est stocké mais la tuile de
+  // synthèse de la vue d'ensemble n'est révélée qu'à la validation du hub.
+  if (tileName === 'bic') {
+    const lignes = collecterResume(formPage);
+    const resumeHtml = lignesVersResumeHtml(lignes);
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (panelB) {
+      const resumeEl = panelB.querySelector('.sim-resume');
+      if (resumeEl) { resumeEl.innerHTML = resumeHtml; resumeEl.hidden = lignes.length === 0; }
+      panelB.dataset.formValues = JSON.stringify(serialiserChamps(formPage));
+      panelB.dataset.generalResumeHtml = resumeHtml;
+    }
+
+    const hubResumeEl = document.querySelector('.sim-sous-formulaire[data-tile="bicHub"] .sim-resume');
+    if (hubResumeEl) { hubResumeEl.innerHTML = resumeHtml; hubResumeEl.hidden = lignes.length === 0; }
+
+    naviguerVersFormulaire('bicHub');
+    return;
+  }
+
+  // ── Cas spécial : formulaire d'une activité non commerciale ─────────────────
+  // Même logique que "pension" : plusieurs wrappers physiques partagent
+  // data-tile="bicActivite", un par section Vous/Conjoint/Personne à charge,
+  // distingués par data-personne.
+  if (tileName === 'bicActivite') {
+    let wrapperCible = null;
+    if (_cloneEnCoursDEdition?.dataset.personne !== undefined) {
+      wrapperCible = document.querySelector(
+        `.sim-tuile-wrapper[data-tile="bicActivite"][data-personne="${_cloneEnCoursDEdition.dataset.personne}"]`
+      );
+    }
+    if (!wrapperCible && _wrapperCibleRepetable?.dataset.tile === 'bicActivite') {
+      wrapperCible = _wrapperCibleRepetable;
+    }
+    if (!wrapperCible) {
+      naviguerVersFormulaire('bicHub');
+      return;
+    }
+
+    const lignes = collecterResume(formPage);
+    const panelTemplate = wrapperCible.querySelector('.sim-tuile-ouvert--b');
+
+    if (panelTemplate) {
+      const clone = panelTemplate.cloneNode(true);
+      clone.dataset.tile = tileName;
+      clone.dataset.personne = wrapperCible.dataset.personne;
+      clone.hidden = false;
+
+      const existantes = [...document.querySelectorAll(
+        `.sim-tuile-ouvert[data-tile="bicActivite"][data-personne="${wrapperCible.dataset.personne}"]`
+      )];
+      const index = _cloneEnCoursDEdition
+        ? existantes.indexOf(_cloneEnCoursDEdition) + 1
+        : existantes.length + 1;
+
+      const nom = formPage.querySelector('input[name="bic-act-nom"]')?.value.trim();
+      const titre = nom || `Activité ${index}`;
+      const nomEl = clone.querySelector('[data-bic-nom]');
+      if (nomEl) nomEl.textContent = titre;
+
+      const resumeEl = clone.querySelector('.sim-resume');
+      if (resumeEl && lignes.length > 0) {
+        resumeEl.innerHTML = lignesVersResumeHtml(lignes);
+        resumeEl.hidden = false;
+      }
+
+      const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
+      if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${titre}`);
+
+      clone.dataset.formValues = JSON.stringify(serialiserChamps(formPage));
+
+      if (_cloneEnCoursDEdition) {
+        _cloneEnCoursDEdition.replaceWith(clone);
+        _cloneEnCoursDEdition = null;
+      } else {
+        wrapperCible.before(clone);
+      }
+    }
+
+    formPage.querySelectorAll('[data-fields]').forEach(el => {
+      el.innerHTML = '';
+      delete el.dataset.injected;
+    });
+
+    mettreAJourCompteursBic();
+    document.getElementById('erreur-bic-hub')?.setAttribute('hidden', '');
+    naviguerVersFormulaire('bicHub');
+    return;
+  }
+
+  // ── Cas spécial : hub des BIC (validation finale) ───────────────────────────
+  if (tileName === 'bicHub') {
+    const nbActivites = document.querySelectorAll('.sim-tuile-ouvert[data-tile="bicActivite"]').length;
+    const erreurId = 'erreur-bic-hub';
+    let erreurEl = document.getElementById(erreurId);
+
+    if (nbActivites === 0) {
+      if (!erreurEl) {
+        erreurEl = document.createElement('div');
+        erreurEl.id = erreurId;
+        erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+        erreurEl.innerHTML = '<p>Veuillez ajouter une activité.</p>';
+        formPage.querySelector('[data-bic-personnes]')?.after(erreurEl);
+      }
+      erreurEl.hidden = false;
+      erreurEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (erreurEl) erreurEl.hidden = true;
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
+    construireResumeVueEnsembleBic();
+    if (panelB) panelB.hidden = false;
+    const btnModifierBic = panelB?.querySelector('.sim-tuile__btn--modifier');
+
+    naviguerVersVueEnsemble({ focusEl: btnModifierBic ?? null });
+    return;
+  }
+
   // Non scopé à #vue-ensemble : contrairement à "locationsMeublees"/"fonciers"
   // (traités plus haut), les wrappers répétables "locationsMeubleesLogement" et
   // "fonciersBien" vivent dans leur écran hub respectif.
@@ -1508,6 +1668,89 @@ function construireResumeVueEnsembleBnc() {
   resumeEl.hidden = false;
 }
 
+// ── BIC : sections par personne (Vous / Conjoint / Personnes à charge) ──────
+// Même logique que les fonctions "Salaires"/"Pensions" ci-dessus.
+
+function construireSectionsBicParPersonne() {
+  const hub = document.querySelector('.sim-sous-formulaire[data-tile="bicHub"]');
+  const conteneur = hub?.querySelector('[data-bic-personnes]');
+  const template = conteneur?.querySelector('[data-personne-section-template]');
+  if (!conteneur || !template) return;
+
+  const sectionConjoint = conteneur.querySelector('[data-personne-section="conjoint"]');
+  if (sectionConjoint) sectionConjoint.hidden = !estMariagePacs();
+
+  const pacsActuels = [...document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]')];
+  const idsPacActuels = new Set(pacsActuels.map(p => p.dataset.pacId).filter(Boolean));
+
+  conteneur.querySelectorAll('[data-personne-section^="pac-"]').forEach(section => {
+    if (!idsPacActuels.has(section.dataset.personneSection)) section.remove();
+  });
+
+  pacsActuels.forEach(pac => {
+    const id = pac.dataset.pacId;
+    if (!id) return;
+    const prenom = pac.querySelector('[data-pac-prenom]')?.textContent.trim() || 'Personne à charge';
+
+    let section = conteneur.querySelector(`[data-personne-section="${id}"]`);
+    if (!section) {
+      section = template.cloneNode(true);
+      section.hidden = false;
+      section.removeAttribute('data-personne-section-template');
+      section.dataset.personneSection = id;
+      section.querySelectorAll('.sim-tuile-wrapper[data-tile="bicActivite"]').forEach(w => { w.dataset.personne = id; });
+      template.before(section);
+    }
+    const nomEl = section.querySelector('[data-personne-nom]');
+    if (nomEl) nomEl.textContent = prenom;
+  });
+
+  mettreAJourCompteursBic();
+}
+
+function mettreAJourCompteursBic() {
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="bicHub"] [data-personne-section]').forEach(section => {
+    const compteEl = section.querySelector('[data-personne-compte]');
+    if (!compteEl) return;
+    const n = document.querySelectorAll(
+      `.sim-tuile-ouvert[data-tile="bicActivite"][data-personne="${section.dataset.personneSection}"]`
+    ).length;
+    compteEl.textContent = n === 1 ? '1 activité' : `${n} activités`;
+  });
+}
+
+// Résumé de la tuile "BIC" en vue d'ensemble : le résumé général (catégorie,
+// régime, déficits), puis les activités groupées par personne.
+function construireResumeVueEnsembleBic() {
+  const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"]');
+  const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+  const resumeEl = panelB?.querySelector('.sim-resume');
+  if (!panelB || !resumeEl) return;
+
+  resumeEl.innerHTML = '';
+
+  if (panelB.dataset.generalResumeHtml) {
+    const general = document.createElement('div');
+    general.className = 'sim-resume__section-personne';
+    const lignes = document.createElement('div');
+    lignes.innerHTML = panelB.dataset.generalResumeHtml; // déjà échappé
+    general.appendChild(lignes);
+    resumeEl.appendChild(general);
+  }
+
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="bicHub"] [data-personne-section]').forEach(section => {
+    const activites = [...section.querySelectorAll('.sim-tuile-ouvert[data-tile="bicActivite"]')];
+    if (activites.length === 0) return;
+
+    const nomPersonne = section.querySelector('.sim-entete-personne__nom')?.textContent.trim() ?? '';
+    resumeEl.appendChild(
+      construireSectionResumePersonne(nomPersonne, activites, { nomAttribut: '[data-bic-nom]' })
+    );
+  });
+
+  resumeEl.hidden = false;
+}
+
 // Valeurs saisies d'un formulaire, pour la ré-édition (radios/cases : seulement
 // celles cochées).
 function serialiserChamps(formPage) {
@@ -1578,6 +1821,14 @@ function supprimerTuile(wrapper) {
     if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
     document.getElementById('erreur-bnc-hub')?.setAttribute('hidden', '');
     mettreAJourCompteursBnc();
+  }
+  // BIC : le hub (activités par personne) vit dans un sous-formulaire séparé.
+  if (wrapper.dataset.tile === 'bic') {
+    document.querySelectorAll('.sim-tuile-ouvert[data-tile="bicActivite"]').forEach(el => el.remove());
+    const hubResume = document.querySelector('.sim-sous-formulaire[data-tile="bicHub"] .sim-resume');
+    if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
+    document.getElementById('erreur-bic-hub')?.setAttribute('hidden', '');
+    mettreAJourCompteursBic();
   }
   // Pensions : même remarque que Salaires ci-dessus.
   if (wrapper.dataset.tile === 'pensions') {

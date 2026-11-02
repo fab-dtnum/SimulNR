@@ -60,3 +60,16 @@ function valeursGeneralBnc() {
 // le montant des charges déductibles.
 export const estBncDeclarationControlee = () =>
   valeursGeneralBnc()['bnc-regime'] === 'oui';
+
+// Scopé à #vue-ensemble : le résumé partiel du hub BIC réutilise le même
+// data-tile="bic" pour son propre bouton Modifier.
+function valeursGeneralBic() {
+  const panelB = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"] .sim-tuile-ouvert--b');
+  if (!panelB?.dataset.formValues) return {};
+  return JSON.parse(panelB.dataset.formValues);
+}
+
+// "Êtes-vous au régime réel ?" = Oui : les activités demandent alors le montant
+// des charges déductibles.
+export const estBicRegimeReel = () =>
+  valeursGeneralBic()['bic-regime'] === 'oui';
