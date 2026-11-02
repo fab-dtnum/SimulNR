@@ -16,6 +16,7 @@ import {
   hasFonciersOuverts, hasLocationsMeubleesOuverts,
   estFonciersRegimeReel,
   estLocationsMeubleesRegimeReel, estLocationsMeubleesCategorieLmnp,
+  estBncDeclarationControlee, estBicRegimeReel, estAgricolesRegimeReel,
   estMariagePacs,
 } from './state.js';
 
@@ -334,8 +335,11 @@ function naviguerVersFormulaire(tileName) {
   if (tileName === 'salaires') construireSectionsSalairesParPersonne();
   if (tileName === 'pensions') construireSectionsPensionsParPersonne();
   if (tileName === 'bncHub') construireSectionsBncParPersonne();
+  if (tileName === 'bncHub') verifierActivitesBncIncompletes();
   if (tileName === 'agricolesHub') construireSectionsAgricolesParPersonne();
+  if (tileName === 'agricolesHub') verifierActivitesAgricolesIncompletes();
   if (tileName === 'bicHub') construireSectionsBicParPersonne();
+  if (tileName === 'bicHub') verifierActivitesBicIncompletes();
   // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
   // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
   // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
@@ -952,6 +956,14 @@ function enregistrerFormulaire(formPage) {
     }
     if (erreurEl) erreurEl.hidden = true;
 
+    // Une activité devenue incomplète (régime modifié depuis le Général) doit
+    // être mise à jour avant de pouvoir valider la page.
+    const activiteEnErreur = document.querySelector('.sim-tuile-ouvert--erreur[data-tile="bncActivite"]');
+    if (activiteEnErreur) {
+      activiteEnErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"]');
     const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
     if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
@@ -1076,6 +1088,14 @@ function enregistrerFormulaire(formPage) {
     }
     if (erreurEl) erreurEl.hidden = true;
 
+    // Une activité devenue incomplète (régime modifié depuis le Général) doit
+    // être mise à jour avant de pouvoir valider la page.
+    const activiteEnErreur = document.querySelector('.sim-tuile-ouvert--erreur[data-tile="bicActivite"]');
+    if (activiteEnErreur) {
+      activiteEnErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bic"]');
     const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
     if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
@@ -1199,6 +1219,14 @@ function enregistrerFormulaire(formPage) {
       return;
     }
     if (erreurEl) erreurEl.hidden = true;
+
+    // Une activité devenue incomplète (régime modifié depuis le Général) doit
+    // être mise à jour avant de pouvoir valider la page.
+    const activiteEnErreur = document.querySelector('.sim-tuile-ouvert--erreur[data-tile="agricolesActivite"]');
+    if (activiteEnErreur) {
+      activiteEnErreur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
 
     const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="agricoles"]');
     const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
@@ -2161,6 +2189,54 @@ function verifierBiensFonciersIncomplets() {
 
     clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
     const msgEl = clone.querySelector('[data-fo-bien-erreur]');
+    if (msgEl) msgEl.hidden = !incomplet;
+  });
+}
+
+// ── BNC / BIC / revenus agricoles : activités devenues incomplètes ──────────
+
+// Modifier le régime dans le Général peut rendre incomplètes des fiches activité
+// déjà enregistrées (ex : charges déductibles jamais demandées si l'on était
+// en micro, recettes des trois dernières années jamais demandées si l'on était
+// au réel). On marque ces fiches en erreur tant qu'elles n'ont pas été rouvertes
+// et complétées via "Modifier".
+function verifierActivitesBncIncompletes() {
+  const controlee = estBncDeclarationControlee();
+
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="bncActivite"]').forEach(clone => {
+    const valeurs = clone.dataset.formValues ? JSON.parse(clone.dataset.formValues) : {};
+    const incomplet = controlee && !valeurs['bnc-act-charges'];
+
+    clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
+    const msgEl = clone.querySelector('[data-bnc-erreur]');
+    if (msgEl) msgEl.hidden = !incomplet;
+  });
+}
+
+function verifierActivitesBicIncompletes() {
+  const reel = estBicRegimeReel();
+
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="bicActivite"]').forEach(clone => {
+    const valeurs = clone.dataset.formValues ? JSON.parse(clone.dataset.formValues) : {};
+    const incomplet = reel && !valeurs['bic-act-charges'];
+
+    clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
+    const msgEl = clone.querySelector('[data-bic-erreur]');
+    if (msgEl) msgEl.hidden = !incomplet;
+  });
+}
+
+function verifierActivitesAgricolesIncompletes() {
+  const reel = estAgricolesRegimeReel();
+  const champsReel = ['agri-act-recettes', 'agri-act-charges'];
+  const champsMicro = ['agri-act-recettes-2025', 'agri-act-recettes-2024', 'agri-act-recettes-2023'];
+
+  document.querySelectorAll('.sim-tuile-ouvert[data-tile="agricolesActivite"]').forEach(clone => {
+    const valeurs = clone.dataset.formValues ? JSON.parse(clone.dataset.formValues) : {};
+    const incomplet = (reel ? champsReel : champsMicro).some(champ => !valeurs[champ]);
+
+    clone.classList.toggle('sim-tuile-ouvert--erreur', incomplet);
+    const msgEl = clone.querySelector('[data-agri-erreur]');
     if (msgEl) msgEl.hidden = !incomplet;
   });
 }

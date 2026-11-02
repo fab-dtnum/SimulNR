@@ -519,13 +519,17 @@
   border: 1px solid var(--border-default-blue-france);
 }
 
-/* Logement devenu incomplet suite à une modification des infos générales
-   des locations meublées (régime/catégorie) : bordure et titre en rouge. */
+/* Logement/activité devenu incomplet suite à une modification des infos
+   générales (locations meublées, BNC, BIC, revenus agricoles) : bordure et
+   titre en rouge. */
 .sim-tuile-ouvert--b.sim-tuile-ouvert--erreur {
   border: 2px solid var(--border-plain-error);
 }
 
 .sim-tuile-ouvert--erreur [data-lm-logement-nom],
+.sim-tuile-ouvert--erreur [data-bnc-nom],
+.sim-tuile-ouvert--erreur [data-bic-nom],
+.sim-tuile-ouvert--erreur [data-agri-nom],
 .sim-tuile-ouvert--erreur .sim-tuile__icone {
   color: var(--text-default-error);
 }
@@ -534,7 +538,10 @@
    non teintable) en plus de l'icône masquée (mask-image + currentColor) — la
    première l'emporte ici. On neutralise l'image et on reconstruit le masque
    nous-mêmes pour que l'icône soit teintée exactement comme le titre. */
-.sim-tuile-ouvert--erreur [data-lm-logement-erreur] .fr-message--error::before {
+.sim-tuile-ouvert--erreur [data-lm-logement-erreur] .fr-message--error::before,
+.sim-tuile-ouvert--erreur [data-bnc-erreur] .fr-message--error::before,
+.sim-tuile-ouvert--erreur [data-bic-erreur] .fr-message--error::before,
+.sim-tuile-ouvert--erreur [data-agri-erreur] .fr-message--error::before {
   background-image: none;
   background-color: var(--text-default-error);
   -webkit-mask-image: url("https://unpkg.com/@gouvfr/dsfr@1.14.4/dist/icons/system/fr--error-fill.svg");
