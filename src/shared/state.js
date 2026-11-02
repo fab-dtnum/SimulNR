@@ -73,3 +73,16 @@ function valeursGeneralBic() {
 // des charges déductibles.
 export const estBicRegimeReel = () =>
   valeursGeneralBic()['bic-regime'] === 'oui';
+
+// Scopé à #vue-ensemble : le résumé partiel du hub des revenus agricoles
+// réutilise le même data-tile="agricoles" pour son propre bouton Modifier.
+function valeursGeneralAgricoles() {
+  const panelB = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="agricoles"] .sim-tuile-ouvert--b');
+  if (!panelB?.dataset.formValues) return {};
+  return JSON.parse(panelB.dataset.formValues);
+}
+
+// "Êtes-vous au régime réel ?" = Oui : les activités demandent alors recettes et
+// charges déductibles ; sinon (micro-BA), les recettes des trois dernières années.
+export const estAgricolesRegimeReel = () =>
+  valeursGeneralAgricoles()['agri-regime'] === 'oui';
