@@ -660,6 +660,8 @@ function enregistrerFormulaire(formPage) {
       document.querySelectorAll('.sim-tuile-ouvert[data-tile="pension"]').forEach(autre => {
         if (autre === _cloneEnCoursDEdition || !autre.dataset.formValues) return;
         const valeurs = JSON.parse(autre.dataset.formValues);
+        // La case n'existe pas pour une rente viagère à titre onéreux.
+        if (valeurs['pe-rente-viagere'] === 'oui') return;
         if (valeurs['pe-polynesie'] !== 'on') {
           valeurs['pe-polynesie'] = 'on';
           autre.dataset.formValues = JSON.stringify(valeurs);
@@ -681,7 +683,7 @@ function enregistrerFormulaire(formPage) {
         : existingFiches.length + 1;
 
       const nom = formPage.querySelector('input[name="pe-nom"]')?.value.trim();
-      const titre = nom || `Pension ${index}`;
+      const titre = nom || `Pension ou rente ${index}`;
       const nomEl = clone.querySelector('[data-pe-nom]');
       if (nomEl) nomEl.textContent = titre;
 
@@ -731,7 +733,7 @@ function enregistrerFormulaire(formPage) {
         erreurEl = document.createElement('div');
         erreurEl.id = erreurId;
         erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
-        erreurEl.innerHTML = '<p>Veuillez ajouter une pension.</p>';
+        erreurEl.innerHTML = '<p>Veuillez ajouter une pension ou une rente viagère.</p>';
         formPage.querySelector('[data-pensions-personnes]')?.after(erreurEl);
       }
       erreurEl.hidden = false;
@@ -1249,7 +1251,7 @@ function mettreAJourCompteursPensions() {
     const n = document.querySelectorAll(
       `.sim-tuile-ouvert[data-tile="pension"][data-personne="${section.dataset.personneSection}"]`
     ).length;
-    compteEl.textContent = `${n} pension${n > 1 ? 's' : ''}`;
+    compteEl.textContent = n === 1 ? '1 pension ou rente' : `${n} pensions ou rentes`;
   });
 }
 
