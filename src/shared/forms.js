@@ -15,6 +15,7 @@ import * as fraisReels from './forms/frais-reels.js';
 import * as locationsMeubleesGeneral from './forms/locations-meublees-general.js';
 import * as locationsMeubleesLogement from './forms/locations-meublees-logement.js';
 import * as bnc       from './forms/bnc.js';
+import * as bncActivite from './forms/bnc-activite.js';
 import * as bic       from './forms/bic.js';
 import * as agricoles       from './forms/agricoles.js';
 import * as deficitsGlobaux from './forms/deficits-globaux.js';
@@ -25,5 +26,5 @@ export {
   situationPersonnelle, personneACharge, pension, salaire, fraisReels,
   fonciersGeneral as fonciers, fonciersBien,
   locationsMeubleesGeneral as locationsMeublees, locationsMeubleesLogement,
-  bnc, bic, agricoles, deficitsGlobaux, pensionsAlimentaires, exonerationCsg,
+  bnc, bncActivite, bic, agricoles, deficitsGlobaux, pensionsAlimentaires, exonerationCsg,
 };

@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mettreAJourNombreParts();
         mettreAJourCompteursSalaires();
         mettreAJourCompteursPensions();
+        mettreAJourCompteursBnc();
         if (btnAjouter) btnAjouter.focus();
       }
       majExonerationCsgDisabled();
@@ -123,6 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (cible === 'fonciers' && wrapper?.closest('#vue-ensemble')) {
           cible = 'fonciersHub';
+        }
+        if (cible === 'bnc' && wrapper?.closest('#vue-ensemble')) {
+          cible = 'bncHub';
         }
         naviguerVersFormulaire(cible);
       }
@@ -190,6 +194,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (tileName === 'bncActivite') {
+        naviguerVersFormulaire('bncHub');
+        return;
+      }
+      if (tileName === 'bnc') {
+        const generalDejaEnregistre = !!document
+          .querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"] .sim-tuile-ouvert--b')
+          ?.dataset.formValues;
+        if (generalDejaEnregistre) {
+          naviguerVersFormulaire('bncHub');
+          return;
+        }
+      }
+      if (tileName === 'bncHub') {
+        const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"]');
+        const focusEl = wrapperVue?.querySelector('.sim-tuile:not([hidden]), .sim-tuile-ouvert--b .sim-tuile__btn--modifier');
+        naviguerVersVueEnsemble({ focusEl });
+        return;
+      }
+
       if (tileName === 'pension') {
         naviguerVersFormulaire('pensions');
         return;
@@ -250,6 +274,7 @@ function naviguerVersFormulaire(tileName) {
   if (tileName === 'fonciersHub') verifierBiensFonciersIncomplets();
   if (tileName === 'salaires') construireSectionsSalairesParPersonne();
   if (tileName === 'pensions') construireSectionsPensionsParPersonne();
+  if (tileName === 'bncHub') construireSectionsBncParPersonne();
   // Fiche rouverte alors qu'elle était en erreur (cf. verifierLogementsIncomplets) :
   // signale tout de suite le(s) champ(s) devenu(s) obligatoire(s) à compléter, sans
   // attendre une tentative d'enregistrement. La validation doit avoir lieu une fois
@@ -750,6 +775,130 @@ function enregistrerFormulaire(formPage) {
     const btnModifierPensions = panelB?.querySelector('.sim-tuile__btn--modifier');
 
     naviguerVersVueEnsemble({ focusEl: btnModifierPensions ?? null });
+    return;
+  }
+
+  // ── Cas spécial : écran "Général" des BNC ───────────────────────────────────
+  // Même logique que "locationsMeublees" : le résumé est stocké mais la tuile de
+  // synthèse de la vue d'ensemble n'est révélée qu'à la validation du hub.
+  if (tileName === 'bnc') {
+    const lignes = collecterResume(formPage);
+    const resumeHtml = lignesVersResumeHtml(lignes);
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (panelB) {
+      const resumeEl = panelB.querySelector('.sim-resume');
+      if (resumeEl) { resumeEl.innerHTML = resumeHtml; resumeEl.hidden = lignes.length === 0; }
+      panelB.dataset.formValues = JSON.stringify(serialiserChamps(formPage));
+      panelB.dataset.generalResumeHtml = resumeHtml;
+    }
+
+    const hubResumeEl = document.querySelector('.sim-sous-formulaire[data-tile="bncHub"] .sim-resume');
+    if (hubResumeEl) { hubResumeEl.innerHTML = resumeHtml; hubResumeEl.hidden = lignes.length === 0; }
+
+    naviguerVersFormulaire('bncHub');
+    return;
+  }
+
+  // ── Cas spécial : formulaire d'une activité non commerciale ─────────────────
+  // Même logique que "pension" : plusieurs wrappers physiques partagent
+  // data-tile="bncActivite", un par section Vous/Conjoint/Personne à charge,
+  // distingués par data-personne.
+  if (tileName === 'bncActivite') {
+    let wrapperCible = null;
+    if (_cloneEnCoursDEdition?.dataset.personne !== undefined) {
+      wrapperCible = document.querySelector(
+        `.sim-tuile-wrapper[data-tile="bncActivite"][data-personne="${_cloneEnCoursDEdition.dataset.personne}"]`
+      );
+    }
+    if (!wrapperCible && _wrapperCibleRepetable?.dataset.tile === 'bncActivite') {
+      wrapperCible = _wrapperCibleRepetable;
+    }
+    if (!wrapperCible) {
+      naviguerVersFormulaire('bncHub');
+      return;
+    }
+
+    const lignes = collecterResume(formPage);
+    const panelTemplate = wrapperCible.querySelector('.sim-tuile-ouvert--b');
+
+    if (panelTemplate) {
+      const clone = panelTemplate.cloneNode(true);
+      clone.dataset.tile = tileName;
+      clone.dataset.personne = wrapperCible.dataset.personne;
+      clone.hidden = false;
+
+      const existantes = [...document.querySelectorAll(
+        `.sim-tuile-ouvert[data-tile="bncActivite"][data-personne="${wrapperCible.dataset.personne}"]`
+      )];
+      const index = _cloneEnCoursDEdition
+        ? existantes.indexOf(_cloneEnCoursDEdition) + 1
+        : existantes.length + 1;
+
+      const nom = formPage.querySelector('input[name="bnc-act-nom"]')?.value.trim();
+      const titre = nom || `Activité ${index}`;
+      const nomEl = clone.querySelector('[data-bnc-nom]');
+      if (nomEl) nomEl.textContent = titre;
+
+      const resumeEl = clone.querySelector('.sim-resume');
+      if (resumeEl && lignes.length > 0) {
+        resumeEl.innerHTML = lignesVersResumeHtml(lignes);
+        resumeEl.hidden = false;
+      }
+
+      const btnModifier = clone.querySelector('.sim-tuile__btn--modifier');
+      if (btnModifier) btnModifier.setAttribute('aria-label', `Modifier ${titre}`);
+
+      clone.dataset.formValues = JSON.stringify(serialiserChamps(formPage));
+
+      if (_cloneEnCoursDEdition) {
+        _cloneEnCoursDEdition.replaceWith(clone);
+        _cloneEnCoursDEdition = null;
+      } else {
+        wrapperCible.before(clone);
+      }
+    }
+
+    formPage.querySelectorAll('[data-fields]').forEach(el => {
+      el.innerHTML = '';
+      delete el.dataset.injected;
+    });
+
+    mettreAJourCompteursBnc();
+    document.getElementById('erreur-bnc-hub')?.setAttribute('hidden', '');
+    naviguerVersFormulaire('bncHub');
+    return;
+  }
+
+  // ── Cas spécial : hub des BNC (validation finale) ───────────────────────────
+  if (tileName === 'bncHub') {
+    const nbActivites = document.querySelectorAll('.sim-tuile-ouvert[data-tile="bncActivite"]').length;
+    const erreurId = 'erreur-bnc-hub';
+    let erreurEl = document.getElementById(erreurId);
+
+    if (nbActivites === 0) {
+      if (!erreurEl) {
+        erreurEl = document.createElement('div');
+        erreurEl.id = erreurId;
+        erreurEl.className = 'fr-alert fr-alert--error fr-alert--sm';
+        erreurEl.innerHTML = '<p>Veuillez ajouter une activité.</p>';
+        formPage.querySelector('[data-bnc-personnes]')?.after(erreurEl);
+      }
+      erreurEl.hidden = false;
+      erreurEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (erreurEl) erreurEl.hidden = true;
+
+    const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"]');
+    const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+    if (wrapperVue) wrapperVue.querySelector('.sim-tuile').hidden = true;
+    construireResumeVueEnsembleBnc();
+    if (panelB) panelB.hidden = false;
+    const btnModifierBnc = panelB?.querySelector('.sim-tuile__btn--modifier');
+
+    naviguerVersVueEnsemble({ focusEl: btnModifierBnc ?? null });
     return;
   }
 
@@ -1276,6 +1425,113 @@ function construireResumeVueEnsemblePensions() {
   resumeEl.hidden = false;
 }
 
+// ── BNC : sections par personne (Vous / Conjoint / Personnes à charge) ──────
+// Même logique que les fonctions "Salaires"/"Pensions" ci-dessus.
+
+function construireSectionsBncParPersonne() {
+  const hub = document.querySelector('.sim-sous-formulaire[data-tile="bncHub"]');
+  const conteneur = hub?.querySelector('[data-bnc-personnes]');
+  const template = conteneur?.querySelector('[data-personne-section-template]');
+  if (!conteneur || !template) return;
+
+  const sectionConjoint = conteneur.querySelector('[data-personne-section="conjoint"]');
+  if (sectionConjoint) sectionConjoint.hidden = !estMariagePacs();
+
+  const pacsActuels = [...document.querySelectorAll('.sim-tuile-ouvert[data-tile="personneACharge"]')];
+  const idsPacActuels = new Set(pacsActuels.map(p => p.dataset.pacId).filter(Boolean));
+
+  conteneur.querySelectorAll('[data-personne-section^="pac-"]').forEach(section => {
+    if (!idsPacActuels.has(section.dataset.personneSection)) section.remove();
+  });
+
+  pacsActuels.forEach(pac => {
+    const id = pac.dataset.pacId;
+    if (!id) return;
+    const prenom = pac.querySelector('[data-pac-prenom]')?.textContent.trim() || 'Personne à charge';
+
+    let section = conteneur.querySelector(`[data-personne-section="${id}"]`);
+    if (!section) {
+      section = template.cloneNode(true);
+      section.hidden = false;
+      section.removeAttribute('data-personne-section-template');
+      section.dataset.personneSection = id;
+      section.querySelectorAll('.sim-tuile-wrapper[data-tile="bncActivite"]').forEach(w => { w.dataset.personne = id; });
+      template.before(section);
+    }
+    const nomEl = section.querySelector('[data-personne-nom]');
+    if (nomEl) nomEl.textContent = prenom;
+  });
+
+  mettreAJourCompteursBnc();
+}
+
+function mettreAJourCompteursBnc() {
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="bncHub"] [data-personne-section]').forEach(section => {
+    const compteEl = section.querySelector('[data-personne-compte]');
+    if (!compteEl) return;
+    const n = document.querySelectorAll(
+      `.sim-tuile-ouvert[data-tile="bncActivite"][data-personne="${section.dataset.personneSection}"]`
+    ).length;
+    compteEl.textContent = n === 1 ? '1 activité' : `${n} activités`;
+  });
+}
+
+// Résumé de la tuile "BNC" en vue d'ensemble : le résumé général (catégorie,
+// régime, déficits), puis les activités groupées par personne.
+function construireResumeVueEnsembleBnc() {
+  const wrapperVue = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"]');
+  const panelB = wrapperVue?.querySelector('.sim-tuile-ouvert--b');
+  const resumeEl = panelB?.querySelector('.sim-resume');
+  if (!panelB || !resumeEl) return;
+
+  resumeEl.innerHTML = '';
+
+  if (panelB.dataset.generalResumeHtml) {
+    const general = document.createElement('div');
+    general.className = 'sim-resume__section-personne';
+    const lignes = document.createElement('div');
+    lignes.innerHTML = panelB.dataset.generalResumeHtml; // déjà échappé
+    general.appendChild(lignes);
+    resumeEl.appendChild(general);
+  }
+
+  document.querySelectorAll('.sim-sous-formulaire[data-tile="bncHub"] [data-personne-section]').forEach(section => {
+    const activites = [...section.querySelectorAll('.sim-tuile-ouvert[data-tile="bncActivite"]')];
+    if (activites.length === 0) return;
+
+    const nomPersonne = section.querySelector('.sim-entete-personne__nom')?.textContent.trim() ?? '';
+    resumeEl.appendChild(
+      construireSectionResumePersonne(nomPersonne, activites, { nomAttribut: '[data-bnc-nom]' })
+    );
+  });
+
+  resumeEl.hidden = false;
+}
+
+// Valeurs saisies d'un formulaire, pour la ré-édition (radios/cases : seulement
+// celles cochées).
+function serialiserChamps(formPage) {
+  const valeurs = {};
+  formPage.querySelectorAll('[data-fields] input, [data-fields] select, [data-fields] textarea').forEach(field => {
+    if (!field.name) return;
+    if (field.type === 'radio' || field.type === 'checkbox') {
+      if (field.checked) valeurs[field.name] = field.value;
+    } else {
+      valeurs[field.name] = field.value;
+    }
+  });
+  return valeurs;
+}
+
+function lignesVersResumeHtml(lignes) {
+  return lignes.map(({ label, valeur }) =>
+    `<div class="sim-resume__ligne">
+      <span class="sim-resume__label">${label}</span>
+      <strong class="sim-resume__valeur">${valeur}</strong>
+    </div>`
+  ).join('');
+}
+
 function supprimerTuile(wrapper) {
   if (!wrapper) return;
   const btn = wrapper.querySelector('.sim-tuile');
@@ -1314,6 +1570,14 @@ function supprimerTuile(wrapper) {
     document.querySelectorAll('.sim-tuile-ouvert[data-tile="salaire"]').forEach(el => el.remove());
     document.getElementById('erreur-salaires-hub')?.setAttribute('hidden', '');
     mettreAJourCompteursSalaires();
+  }
+  // BNC : le hub (activités par personne) vit dans un sous-formulaire séparé.
+  if (wrapper.dataset.tile === 'bnc') {
+    document.querySelectorAll('.sim-tuile-ouvert[data-tile="bncActivite"]').forEach(el => el.remove());
+    const hubResume = document.querySelector('.sim-sous-formulaire[data-tile="bncHub"] .sim-resume');
+    if (hubResume) { hubResume.innerHTML = ''; hubResume.hidden = true; }
+    document.getElementById('erreur-bnc-hub')?.setAttribute('hidden', '');
+    mettreAJourCompteursBnc();
   }
   // Pensions : même remarque que Salaires ci-dessus.
   if (wrapper.dataset.tile === 'pensions') {

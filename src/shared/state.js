@@ -47,3 +47,16 @@ export const estLocationsMeubleesRegimeReel = () =>
 
 export const estLocationsMeubleesCategorieLmnp = () =>
   valeursGeneralLocationsMeublees()['lm-categorie'] === 'lmnp';
+
+// Scopé à #vue-ensemble : le résumé partiel du hub BNC réutilise le même
+// data-tile="bnc" pour son propre bouton Modifier.
+function valeursGeneralBnc() {
+  const panelB = document.querySelector('#vue-ensemble .sim-tuile-wrapper[data-tile="bnc"] .sim-tuile-ouvert--b');
+  if (!panelB?.dataset.formValues) return {};
+  return JSON.parse(panelB.dataset.formValues);
+}
+
+// "Êtes-vous à la déclaration contrôlée ?" = Oui : les activités demandent alors
+// le montant des charges déductibles.
+export const estBncDeclarationControlee = () =>
+  valeursGeneralBnc()['bnc-regime'] === 'oui';
